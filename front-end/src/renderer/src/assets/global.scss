@@ -1,0 +1,21 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+body #app {
+  display: flex;
+}
+
+.light-theme {
+  --bg: #fff;
+  --text: #000;
+  --primary: #663399;
+  --btn-text: #fff;
+}
+
+.dark-theme {
+  --bg: #000;
+  --text: #fff;
+  --primary: #663399;
+  --btn-text: #fff;
+}

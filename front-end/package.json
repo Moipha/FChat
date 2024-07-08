@@ -9,7 +9,7 @@
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
     "start": "electron-vite preview",
-    "dev": "electron-vite dev",
+    "dev": "electron-vite dev --watch",
     "build": "electron-vite build",
     "postinstall": "electron-builder install-app-deps",
     "build:unpack": "npm run build && electron-builder --dir",
@@ -20,7 +20,8 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
-    "electron-updater": "^6.1.7"
+    "electron-updater": "^6.1.7",
+    "vue-router": "^4.4.0"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config": "^1.0.2",
@@ -33,7 +34,10 @@
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.26.0",
     "prettier": "^3.3.2",
+    "sass": "^1.77.6",
+    "sass-loader": "^14.2.1",
     "vite": "^5.3.1",
+    "vite-plugin-vue-setup-extend": "^0.4.0",
     "vue": "^3.4.30"
   }
 }

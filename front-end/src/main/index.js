@@ -3,36 +3,85 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
-function createWindow() {
+function createWindow({
+  route,
+  width = 900,
+  height = 600,
+  resizable = true,
+  maximizable = true,
+  minimizable = true,
+  barHeight = 20,
+  barColor = '#fff'
+}) {
+  // 配置路径
+  process.env.ROOT = join(__dirname, '../../')
+  const winURL = is.dev
+    ? process.env.ELECTRON_RENDERER_URL
+    : join(process.env.ROOT, 'dist/index.html')
+
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+  const win = new BrowserWindow({
+    width,
+    height,
+    resizable,
+    maximizable,
+    minimizable,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
+    },
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: '#00000000',
+      symbolColor: barColor,
+      height: barHeight
     }
   })
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
+  // 页面加载完成
+  win.on('ready-to-show', () => {
+    win.show()
   })
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
+  win.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+  // 加载页面
+  let $url
+  if (!route) {
+    if (is.dev && process.env.ELECTRON_RENDERER_URL) {
+      $url = process.env.ELECTRON_RENDERER_URL
+    } else {
+      $url = winURL
+    }
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    $url = `${winURL}#${route}`
   }
+  win.loadURL($url)
+
+  // 修改默认标题栏样式
+  ipcMain.on('change-title-bar', (event, [text]) => {
+    const browserWindow = BrowserWindow.fromWebContents(event.sender)
+    if (browserWindow) {
+      browserWindow.setTitleBarOverlay({
+        symbolColor: text
+      })
+    }
+  })
+
+  // 关闭当前页面，打开新的页面
+  ipcMain.on('open-new', (event, settings) => {
+    const browserWindow = BrowserWindow.fromWebContents(event.sender)
+    if (browserWindow) {
+      browserWindow.close()
+    }
+    createWindow(settings)
+  })
 }
 
 // This method will be called when Electron has finished
@@ -52,7 +101,15 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
-  createWindow()
+  createWindow({
+    height: 500,
+    width: 360,
+    route: '/login',
+    resizable: false,
+    maximizable: false,
+    minimizable: false,
+    barHeight: 40
+  })
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

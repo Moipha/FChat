@@ -1,6 +1,7 @@
 import { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import vue from '@vitejs/plugin-vue'
+import setupExtend from 'vite-plugin-vue-setup-extend'
 
 export default defineConfig({
   main: {
@@ -12,9 +13,17 @@ export default defineConfig({
   renderer: {
     resolve: {
       alias: {
-        '@renderer': resolve('src/renderer/src')
+        '@r': resolve('src/renderer/src')
       }
     },
-    plugins: [vue()]
+    plugins: [vue(), setupExtend()],
+    // 默认引入自定义样式变量
+    css: {
+      preprocessorOptions: {
+        scss: {
+          // additionalData: '@import "@r/assets/variables.scss";'
+        }
+      }
+    }
   }
 })
