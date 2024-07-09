@@ -82,6 +82,65 @@ function createWindow({
     }
     createWindow(settings)
   })
+
+  ipcMain.on('open-dialog', (event, settings) => {
+    createModalWin(settings, win)
+  })
+}
+
+// 创建model窗口
+function createModalWin({ route, width = 200, height = 400 }, parent) {
+  const win = new BrowserWindow({
+    width,
+    height,
+    parent,
+    resizable: false,
+    maximizable: false,
+    minimizable: false,
+    show: false,
+    modal: true,
+    autoHideMenuBar: true,
+    ...(process.platform === 'linux' ? { icon } : {}),
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js'),
+      sandbox: false
+    },
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: '#00000000',
+      symbolColor: '#000',
+      height: 20
+    }
+  })
+
+  // 页面加载完成
+  win.on('ready-to-show', () => {
+    win.show()
+  })
+
+  win.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url)
+    return { action: 'deny' }
+  })
+
+  // 配置路径
+  process.env.ROOT = join(__dirname, '../../')
+  const winURL = is.dev
+    ? process.env.ELECTRON_RENDERER_URL
+    : join(process.env.ROOT, 'dist/index.html')
+
+  // 加载页面
+  let $url
+  if (!route) {
+    if (is.dev && process.env.ELECTRON_RENDERER_URL) {
+      $url = process.env.ELECTRON_RENDERER_URL
+    } else {
+      $url = winURL
+    }
+  } else {
+    $url = `${winURL}#${route}`
+  }
+  win.loadURL($url)
 }
 
 // This method will be called when Electron has finished

@@ -1,13 +1,19 @@
 <template>
-  <button @click="test">{{ label }}</button>
+  <button @click="emit('click')">{{ label }}</button>
 </template>
 
 <script lang="ts" setup>
-defineProps(['label'])
-const emit = defineEmits(['click'])
-function test() {
-  emit('click')
-}
+defineProps({
+  label: {
+    type: String,
+    default: 'Label'
+  }
+})
+const emit = defineEmits({
+  click: {
+    default: () => {}
+  }
+})
 </script>
 
 <style lang="scss" scoped>
@@ -48,7 +54,7 @@ button {
 
   &:hover,
   &:focus {
-    color: var(--text);
+    color: var(--primary);
   }
 
   &:hover::before,

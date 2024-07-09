@@ -8,6 +8,9 @@ const api = {
   },
   openNewWindow: (settings) => {
     ipcRenderer.send('open-new', settings)
+  },
+  openDialog: (settings) => {
+    ipcRenderer.send('open-dialog', settings)
   }
 }
 

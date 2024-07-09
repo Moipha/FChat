@@ -1,6 +1,7 @@
 body {
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }
 body #app {
   display: flex;
@@ -9,7 +10,7 @@ body #app {
 .light-theme {
   --bg: #fff;
   --text: #000;
-  --primary: #663399;
+  --primary: #669933;  // 573c89
   --btn-text: #fff;
 }
 
