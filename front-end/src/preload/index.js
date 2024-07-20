@@ -11,6 +11,9 @@ const api = {
   },
   openDialog: (settings) => {
     ipcRenderer.send('open-dialog', settings)
+  },
+  closeDialog: () => {
+    ipcRenderer.send('close-dialog')
   }
 }
 

@@ -47,12 +47,12 @@ const emit = defineEmits(['input', 'update:modelValue'])
 }
 .input-container {
   position: relative;
-  margin: 20px auto;
-  width: 240px;
+  margin: 1.4em auto;
+  width: 15em;
   -webkit-app-region: no-drag;
 
   input {
-    font-size: 20px;
+    font-size: 1.25em;
     width: 100%;
     border: none;
     border-bottom: 2px solid var(--p);
@@ -70,8 +70,8 @@ const emit = defineEmits(['input', 'update:modelValue'])
     &:focus ~,
     &:valid ~ {
       .label {
-        top: -20px;
-        font-size: 16px;
+        top: -1.25em;
+        font-size: 1em;
         opacity: 1;
       }
 

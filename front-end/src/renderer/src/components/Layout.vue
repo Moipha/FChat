@@ -1,44 +1,32 @@
 <template>
-  <aside class="left"></aside>
-  <div class="right">
-    <header></header>
+  <Aside></Aside>
+  <section class="container">
+    <Header></Header>
     <main>
       <router-view />
       <button @click="changeTheme">123</button>
     </main>
-  </div>
+  </section>
 </template>
 
 <script setup>
+import Header from './Header.vue'
+import Aside from './Aside.vue'
 function changeTheme() {
   document.body.classList.toggle('dark-theme')
   // 修改标题栏的样式
   const body = getComputedStyle(document.body)
-  window.api.changeTitleBar([body.getPropertyValue('--btn-text')])
+  window.api.changeTitleBar([body.getPropertyValue('--text')])
 }
 </script>
 
 <style lang="scss" scoped>
-.left {
-  width: 100px;
-  height: 100vh;
-  background-color: var(--primary);
-  -webkit-app-region: drag;
-  transition: 0.2s all;
-}
-
-.right {
-  flex: 1;
+.container {
+  display: flex;
+  flex-direction: column;
+  min-width: 400px;
   height: 100vh;
   background-color: var(--bg);
-  flex-direction: column;
   transition: 0.2s all;
-
-  header {
-    height: 60px;
-    background-color: var(--primary);
-    -webkit-app-region: drag;
-    transition: 0.2s all;
-  }
 }
 </style>

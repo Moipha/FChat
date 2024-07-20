@@ -1,14 +1,14 @@
 <template>
   <main>
     <div class="register">
-      <div ref="signH1" class="secondary-title" @click="hideLogin">Sign up</div>
-      <FInput v-model="newUser.email" label="Email" reverse-color />
-      <FBtn class="btn" label="Continue" @click="verify" />
+      <div ref="signH1" class="secondary-title" @click="hideLogin">注册账户</div>
+      <FInput v-model="newUser.email" label="邮箱" reverse-color />
+      <FBtn class="btn" label="验证邮箱" @click="verify" />
     </div>
     <div ref="login" class="login">
-      <div ref="loginH1" class="primary-title scale-text" @click="hideLogin">Login</div>
-      <FInput v-model="user.email" label="Email" />
-      <FInput v-model="user.password" type="password" label="Password" />
+      <div ref="loginH1" class="primary-title scale-text" @click="hideLogin">登录</div>
+      <FInput v-model="user.email" label="邮箱" />
+      <FInput v-model="user.password" type="password" label="密码" />
       <FBtn class="btn" label="Go!" @click="userLogin" />
     </div>
   </main>
@@ -25,7 +25,8 @@ const newUser = ref({}) // 新注册用户信息
 function userLogin() {
   window.api.openNewWindow({
     height: 600,
-    width: 900
+    width: 900,
+    barColor: '#000'
   })
 }
 
@@ -77,6 +78,7 @@ main {
     .btn {
       width: 200px;
       margin-top: 50px;
+      font-size: 14px;
     }
   }
   .login {

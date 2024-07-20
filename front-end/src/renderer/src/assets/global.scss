@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  font-family: 'STXihei';
 }
 body #app {
   display: flex;
@@ -10,7 +11,7 @@ body #app {
 .light-theme {
   --bg: #fff;
   --text: #000;
-  --primary: #669933;  // 573c89
+  --primary: #336699;  // 573c89
   --btn-text: #fff;
 }
 

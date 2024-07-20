@@ -11,7 +11,7 @@ function createWindow({
   maximizable = true,
   minimizable = true,
   barHeight = 20,
-  barColor = '#fff'
+  barColor = '#000'
 }) {
   // 配置路径
   process.env.ROOT = join(__dirname, '../../')
@@ -141,6 +141,14 @@ function createModalWin({ route, width = 200, height = 400 }, parent) {
     $url = `${winURL}#${route}`
   }
   win.loadURL($url)
+
+  // 关闭窗口
+  ipcMain.on('close-dialog', (event) => {
+    const browserWindow = BrowserWindow.fromWebContents(event.sender)
+    if (browserWindow) {
+      browserWindow.close()
+    }
+  })
 }
 
 // This method will be called when Electron has finished
@@ -167,7 +175,8 @@ app.whenReady().then(() => {
     resizable: false,
     maximizable: false,
     minimizable: false,
-    barHeight: 40
+    barHeight: 40,
+    barColor: '#fff'
   })
 
   app.on('activate', function () {

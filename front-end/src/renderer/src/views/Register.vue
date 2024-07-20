@@ -8,13 +8,20 @@
       <input id="otp-input3" required="required" maxlength="1" type="text" class="otp-input" />
       <input id="otp-input4" required="required" maxlength="1" type="text" class="otp-input" />
     </div>
-    <FBtn class="verifyButton" label="验证" />
+    <FBtn class="verifyButton" label="验证" @click="verifyCode" />
     <p class="resendNote">未收到验证码？<button class="resendBtn">重新发送</button></p>
   </form>
 </template>
 
 <script lang="ts" setup>
 import FBtn from '../components/FBtn.vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+// 检查验证码
+function verifyCode() {
+  router.push('/set-pass')
+}
 </script>
 
 <style lang="scss" scoped>
@@ -80,11 +87,6 @@ import FBtn from '../components/FBtn.vue'
   .verifyButton {
     width: 100%;
     font-size: 14px;
-  }
-
-  .verifyButton:hover {
-    background-color: var(--primary);
-    transition-duration: 0.2s;
   }
 
   .resendNote {
