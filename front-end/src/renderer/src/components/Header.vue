@@ -11,6 +11,6 @@ header {
   background-color: var(--bg);
   -webkit-app-region: drag;
   transition: 0.2s all;
-  border-bottom: 1px solid var(--text);
+  border-bottom: 1px solid var(--border);
 }
 </style>

@@ -20,7 +20,10 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
+    "@mui/icons-material": "^5.16.4",
+    "axios": "^1.7.2",
     "electron-updater": "^6.1.7",
+    "mitt": "^3.0.1",
     "vue-router": "^4.4.0"
   },
   "devDependencies": {
@@ -37,7 +40,6 @@
     "sass": "^1.77.6",
     "sass-loader": "^14.2.1",
     "vite": "^5.3.1",
-    "vite-plugin-vue-setup-extend": "^0.4.0",
     "vue": "^3.4.30"
   }
 }

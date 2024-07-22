@@ -9,15 +9,17 @@ body #app {
 }
 
 .light-theme {
-  --bg: #fff;
+  --bg: #f5f5f5;
   --text: #000;
   --primary: #336699;  // 573c89
   --btn-text: #fff;
+  --border: #D3D3D3;
 }
 
 .dark-theme {
-  --bg: #000;
+  --bg: #212529;
   --text: #fff;
-  --primary: #663399;
+  --primary: #996633;
   --btn-text: #fff;
+  --border: #434343;
 }

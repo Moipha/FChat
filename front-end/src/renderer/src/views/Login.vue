@@ -1,12 +1,12 @@
 <template>
   <main>
     <div class="register">
-      <div ref="signH1" class="secondary-title" @click="hideLogin">注册账户</div>
+      <div ref="signH1" class="secondary-title" @click="hideLogin">Sign up</div>
       <FInput v-model="newUser.email" label="邮箱" reverse-color />
-      <FBtn class="btn" label="验证邮箱" @click="verify" />
+      <FBtn class="btn" label="前往验证" @click="verify" />
     </div>
     <div ref="login" class="login">
-      <div ref="loginH1" class="primary-title scale-text" @click="hideLogin">登录</div>
+      <div ref="loginH1" class="primary-title scale-text" @click="hideLogin">Login</div>
       <FInput v-model="user.email" label="邮箱" />
       <FInput v-model="user.password" type="password" label="密码" />
       <FBtn class="btn" label="Go!" @click="userLogin" />

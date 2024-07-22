@@ -31,7 +31,8 @@ defineProps({
     default: false
   }
 })
-const emit = defineEmits(['input', 'update:modelValue'])
+const emit = defineEmits(['update:modelValue'])
+// const emit = defineEmits(['input', 'update:modelValue'])
 </script>
 
 <style lang="scss" scoped>

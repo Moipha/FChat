@@ -1,11 +1,13 @@
 <template>
-  <Aside></Aside>
   <section class="container">
-    <Header></Header>
-    <main>
-      <router-view />
-      <button @click="changeTheme">123</button>
-    </main>
+    <Aside></Aside>
+    <section class="right-container">
+      <Header></Header>
+      <main>
+        <router-view />
+        <button @click="changeTheme">123</button>
+      </main>
+    </section>
   </section>
 </template>
 
@@ -23,10 +25,14 @@ function changeTheme() {
 <style lang="scss" scoped>
 .container {
   display: flex;
-  flex-direction: column;
-  min-width: 400px;
-  height: 100vh;
-  background-color: var(--bg);
-  transition: 0.2s all;
+
+  .right-container {
+    display: flex;
+    flex-direction: column;
+    min-width: 400px;
+    height: 100vh;
+    background-color: var(--bg);
+    transition: 0.2s all;
+  }
 }
 </style>
