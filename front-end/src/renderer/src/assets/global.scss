@@ -8,18 +8,52 @@ body #app {
   display: flex;
 }
 
+// 自定滚动条样式
+.scroll-bar {
+  overflow-x: hidden;
+  overflow-y: overlay;
+  &:hover::-webkit-scrollbar-thumb {
+    display: block;
+    width: 8px;
+  }
+  &:hover::-webkit-scrollbar-track {
+    display: block;
+  }
+
+  &::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--thumb);
+    border-radius: 10px;
+    display: none;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+    display: none;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--light-text);
+  }
+}
+
 .light-theme {
   --bg: #f5f5f5;
   --text: #000;
-  --primary: #336699;  // 573c89
+  --light-text: #636363;
+  --primary: #336699; // 573c89
   --btn-text: #fff;
-  --border: #D3D3D3;
+  --border: #d3d3d3;
+  --thumb: #a3a3a3;
 }
 
 .dark-theme {
   --bg: #212529;
   --text: #fff;
+  --light-text: #9a9a9a;
   --primary: #996633;
   --btn-text: #fff;
   --border: #434343;
+  --thumb: #636363;
 }

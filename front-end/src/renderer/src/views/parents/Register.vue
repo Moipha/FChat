@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import FBtn from '../components/FBtn.vue'
+import FBtn from '@r/components/form/FBtn.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 

@@ -9,8 +9,8 @@
 </template>
 
 <script lang="ts" setup>
-import FBtn from '../components/FBtn.vue'
-import FInput from '../components/FInput.vue'
+import FBtn from '@r/components/form/FBtn.vue'
+import FInput from '@r/components/form/FInput.vue'
 import { ref } from 'vue'
 // 用户
 const user = ref({})

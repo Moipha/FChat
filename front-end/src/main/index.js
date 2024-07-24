@@ -7,6 +7,8 @@ function createWindow({
   route,
   width = 900,
   height = 600,
+  minWidth = 600,
+  minHeight = 400,
   resizable = true,
   maximizable = true,
   minimizable = true,
@@ -23,6 +25,8 @@ function createWindow({
   const win = new BrowserWindow({
     width,
     height,
+    minWidth,
+    minHeight,
     resizable,
     maximizable,
     minimizable,
@@ -171,6 +175,8 @@ app.whenReady().then(() => {
   createWindow({
     height: 500,
     width: 360,
+    minHeight: 0,
+    minWidth: 0,
     route: '/login',
     resizable: false,
     maximizable: false,
