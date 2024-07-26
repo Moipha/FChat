@@ -7,7 +7,7 @@
 <style lang="scss" scoped>
 .home {
   -webkit-app-region: drag;
-  background-color: var(--border);
+  background-color: var(--bg);
   height: 100vh;
   display: flex;
   justify-content: center;

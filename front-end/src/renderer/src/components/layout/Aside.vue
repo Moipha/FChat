@@ -3,10 +3,16 @@
     <div ref="drag" class="resize-handle" @mousedown="startDrag"></div>
     <header>
       <Icon name="menu" class="icon" @click="openMenu"></Icon>
-      <SearchInput />
+      <SearchInput @keydown.enter="changeTheme" />
     </header>
     <nav ref="navBar" class="scroll-bar" @scroll="handleScroll" @click="selectChat">
-      <div v-for="item in list" :key="item.name" :data="item.name" class="chat-list">
+      <div
+        v-for="item in list"
+        :key="item.name"
+        :class="{ active: item.name === activeItem }"
+        :data="item.name"
+        class="chat-list"
+      >
         <Avatar :src="item.avatar" shape="circle" />
         <div class="msg-box">
           <div class="name">{{ item.name }}</div>
@@ -22,10 +28,11 @@
 import { ref, onMounted } from 'vue'
 import SearchInput from '@r/components/form/SearchInput.vue'
 import Icon from '@r/components/form/Icon.vue'
-import request from '@r/utils/request'
 import Avatar from '@r/components/form/Avatar.vue'
 import timeFormat from '@r/utils/timeFormat'
 import router from '@r/router'
+// import request from '@r/utils/request'
+import { useRoute } from 'vue-router'
 
 /**
  * 拖拽动态修改aside的宽度
@@ -64,8 +71,53 @@ function endDrag() {
  */
 const list = ref([])
 async function getList() {
-  const res = await request.get('/get-list')
-  list.value = res.data
+  // const res = await request.get('/get-list')
+  // list.value = res.data
+  list.value = [
+    {
+      name: '张三',
+      time: '2024-07-25 18:21:34',
+      avatar: 'C:\\Users\\Young\\Pictures\\测试图片\\background.jpg',
+      lastMsg: '在吗？'
+    },
+    {
+      name: '李四',
+      time: '2024-07-24 4:08:04',
+      avatar: 'C:\\Users\\Young\\Pictures\\测试图片\\2.jpg',
+      lastMsg: '你在干什么？去不去曾宪梓楼509教室最后一排坐一会？'
+    },
+    {
+      name: '王五',
+      time: '2024-07-23 08:21:54',
+      avatar: 'C:\\Users\\Young\\Pictures\\测试图片\\3.jpg',
+      lastMsg: '你知道吗？我其实什么也不知道。你知不知道？'
+    },
+    {
+      name: '赵六',
+      time: '2024-07-22 08:21:54',
+      avatar: 'C:\\Users\\Young\\Pictures\\测试图片\\3.jpg',
+      lastMsg: '你知道吗今天是周一是周一哦今天是周一啊！'
+    },
+    {
+      name: '你好我的名字特别特别长不要在意因为我是来帮你测试名字过长会发生什么的',
+      time: '2024-07-21 0:12:54',
+      avatar: 'C:\\Users\\Young\\Pictures\\测试图片\\3.jpg',
+      lastMsg:
+        '咱就是说突然想给你发送一条特别特特别长的消息来测试一下你到底能不能正常显示知道了吗所以正常显示了没有让我看看'
+    },
+    {
+      name: '测试',
+      time: '2024-07-20 08:21:54',
+      avatar: 'C:\\Users\\Young\\Pictures\\测试图片\\3.jpg',
+      lastMsg: '这是一条测试数据，我就是想测试一下'
+    },
+    {
+      name: '你好',
+      time: '2024-07-19 08:21:54',
+      avatar: 'C:\\Users\\Young\\Pictures\\测试图片\\3.jpg',
+      lastMsg: 'Hello World'
+    }
+  ]
 }
 getList()
 
@@ -108,16 +160,34 @@ function selectChat(e) {
   }
   const key = cur.attributes.data
   if (key) {
+    // 设置生效的item
+    activeItem.value = key.value
     // 跳转到对应路由
-    router.push('/chat/' + key)
+    router.push('/chat/' + key.value)
   }
 }
+// 记录生效的item
+const activeItem = ref(null)
+// 初始加载时从路由获取当前item
+const route = useRoute()
+activeItem.value = route.params.id
 
 /**
  * 打开菜单
  */
 function openMenu() {
   router.push('/')
+  activeItem.value = null
+}
+
+/**
+ * temp 修改主题
+ */
+function changeTheme() {
+  document.body.classList.toggle('dark-theme')
+  // // 修改标题栏的样式
+  // const body = getComputedStyle(document.body)
+  // window.api.changeTitleBar([body.getPropertyValue('--text')])
 }
 </script>
 
@@ -158,7 +228,6 @@ aside {
 
   nav {
     height: calc(100vh - 60px);
-    user-select: none;
     transition: border 0.2s;
     border-top: 1px solid transparent;
     .chat-list {
@@ -172,9 +241,7 @@ aside {
         0.2s all,
         0s width;
       cursor: pointer;
-      &:active {
-        background-color: var(--primary);
-      }
+
       &:hover {
         background-color: var(--border);
       }
@@ -211,6 +278,15 @@ aside {
         color: var(--light-text);
         font-family: 'consolas';
         transition: color 0.2s;
+      }
+    }
+    .active {
+      background-color: var(--primary);
+      --text: var(--btn-text);
+      --light-text: var(--btn-text);
+      &:hover {
+        background-color: var(--primary);
+        color: var(--btn-text);
       }
     }
   }

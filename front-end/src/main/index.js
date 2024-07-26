@@ -13,7 +13,8 @@ function createWindow({
   maximizable = true,
   minimizable = true,
   barHeight = 20,
-  barColor = '#000'
+  barColor = '#000',
+  frame = false
 }) {
   // 配置路径
   process.env.ROOT = join(__dirname, '../../')
@@ -23,6 +24,7 @@ function createWindow({
 
   // Create the browser window.
   const win = new BrowserWindow({
+    backgroundColor: '#00ffffff',
     width,
     height,
     minWidth,
@@ -37,7 +39,8 @@ function createWindow({
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     },
-    titleBarStyle: 'hidden',
+    frame,
+    titleBarStyle: frame ? 'hidden' : 'default',
     titleBarOverlay: {
       color: '#00000000',
       symbolColor: barColor,
@@ -90,6 +93,40 @@ function createWindow({
   ipcMain.on('open-dialog', (event, settings) => {
     createModalWin(settings, win)
   })
+
+  // 标题栏按钮事件
+  ipcMain.on('minimize', (event) => {
+    const browserWindow = BrowserWindow.fromWebContents(event.sender)
+    if (browserWindow) {
+      browserWindow.minimize()
+    }
+  })
+  ipcMain.on('maximize', (event) => {
+    const browserWindow = BrowserWindow.fromWebContents(event.sender)
+    if (browserWindow) {
+      browserWindow.maximize()
+    }
+  })
+  ipcMain.on('unmaximize', (event) => {
+    const browserWindow = BrowserWindow.fromWebContents(event.sender)
+    if (browserWindow) {
+      browserWindow.unmaximize()
+    }
+  })
+  ipcMain.on('close-window', (event) => {
+    const browserWindow = BrowserWindow.fromWebContents(event.sender)
+    if (browserWindow) {
+      browserWindow.close()
+    }
+  })
+  // 监听窗口最大化
+  win.on('maximize', () => {
+    win.webContents.send('maximized')
+  })
+  // 监听窗口取消最大化
+  win.on('unmaximize', () => {
+    win.webContents.send('unmaximized')
+  })
 }
 
 // 创建model窗口
@@ -113,7 +150,7 @@ function createModalWin({ route, width = 200, height = 400 }, parent) {
     titleBarOverlay: {
       color: '#00000000',
       symbolColor: '#000',
-      height: 20
+      height: 40
     }
   })
 
@@ -182,7 +219,8 @@ app.whenReady().then(() => {
     maximizable: false,
     minimizable: false,
     barHeight: 40,
-    barColor: '#fff'
+    barColor: '#fff',
+    frame: true
   })
 
   app.on('activate', function () {

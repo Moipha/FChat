@@ -25,8 +25,7 @@ const newUser = ref({}) // 新注册用户信息
 function userLogin() {
   window.api.openNewWindow({
     height: 600,
-    width: 900,
-    barColor: '#000'
+    width: 900
   })
 }
 
@@ -72,7 +71,6 @@ main {
       width: 150px;
       margin: 0 auto 50px;
       transition: 0.5s all ease-in-out;
-      user-select: none;
     }
 
     .btn {
@@ -105,7 +103,6 @@ main {
       -webkit-app-region: no-drag;
       cursor: pointer;
       transition: 0.5s all ease-in-out;
-      user-select: none;
     }
 
     .btn {
