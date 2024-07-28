@@ -1,0 +1,14 @@
+{
+  "name": "f-chat",
+  "version": "1.0.0",
+  "description": "chat app with electron and node.js",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "author": "Moipha",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
