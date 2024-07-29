@@ -6,7 +6,7 @@
       <span>online</span>
     </div>
     <div class="else-btn">
-      <Icon name="else" />
+      <Icon class="icon" name="else" />
     </div>
   </header>
 </template>
@@ -70,6 +70,14 @@ header {
     font-size: 25px;
     -webkit-app-region: no-drag;
     cursor: pointer;
+
+    .icon {
+      transition: all 0.2s ease;
+      &:hover {
+        transform: scale(1.2);
+        color: var(--primary);
+      }
+    }
   }
 }
 </style>

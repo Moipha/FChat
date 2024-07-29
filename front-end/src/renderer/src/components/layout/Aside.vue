@@ -219,6 +219,11 @@ aside {
       -webkit-app-region: no-drag;
       margin: 0 10px;
       flex-shrink: 0;
+      transition: all 0.2s ease;
+      &:hover {
+        transform: scale(1.1);
+        color: var(--primary);
+      }
     }
   }
 
