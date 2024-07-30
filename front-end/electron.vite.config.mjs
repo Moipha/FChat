@@ -1,6 +1,8 @@
 import { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import vue from '@vitejs/plugin-vue'
+import config from './config'
+const { PROTOCOL, PORT, IP, PATH } = config
 
 export default defineConfig({
   main: {
@@ -27,9 +29,9 @@ export default defineConfig({
     server: {
       proxy: {
         '/api': {
-          target: 'http://127.0.0.1:4523', // 你的后端服务地址
+          target: `${PROTOCOL}://${IP}:${PORT}`, // 你的后端服务地址
           changeOrigin: true, // 允许跨域
-          rewrite: (path) => path.replace(/^\/api/, '/m1/4865713-0-default/') // 重写请求路径
+          rewrite: (path) => path.replace(/^\/api/, PATH) // 重写请求路径
         }
       }
     }

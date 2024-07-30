@@ -75,7 +75,7 @@ async function getList() {
   // list.value = res.data
   list.value = [
     {
-      name: '张三',
+      name: '66a7bc710d53a00ecd8d3b76',
       time: '2024-07-25 18:21:34',
       avatar: 'C:\\Users\\Young\\Pictures\\测试图片\\background.jpg',
       lastMsg: '在吗？'

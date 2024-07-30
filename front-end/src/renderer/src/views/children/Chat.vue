@@ -2,8 +2,12 @@
   <Header :name="id" />
   <section>
     <div class="msg-container">
-      <ChatMsg :position="'right'" />
-      <ChatMsg :position="'left'" />
+      <ChatMsg
+        v-for="msg in messages"
+        :key="msg._id"
+        :position="msg.senderId === user._id ? 'right' : 'left'"
+        :msg="msg.content"
+      />
     </div>
     <div class="input-area">
       <Icon class="icon" name="link"></Icon>
@@ -22,8 +26,17 @@ import Icon from '@r/components/form/Icon.vue'
 import Wave from '@r/components/form/Wave.vue'
 import ChatMsg from '@r/components/form/ChatMsg.vue'
 import { ref } from 'vue'
+import request from '@r/utils/request'
+import { useUserStore } from '@r/stores/user'
+import { storeToRefs } from 'pinia'
 
-defineProps(['id'])
+// 获取当前用户信息
+const { user } = storeToRefs(useUserStore())
+// 路由参数：用户id
+const props = defineProps(['id'])
+
+// 聊天记录
+const messages = ref([])
 
 // 切换消息模式（语音/文字）
 const mode = ref('audio')
@@ -34,6 +47,14 @@ function changeMsgMode() {
     mode.value = 'text'
   }
 }
+// 载入时获取对话记录
+async function getMessages() {
+  const res = await request.get('/msg/both', { params: { friendId: props.id } })
+  if (res && res.code === 200) {
+    messages.value = res.data.reverse()
+  }
+}
+getMessages()
 </script>
 
 <style lang="scss" scoped>
@@ -47,6 +68,7 @@ section {
     background-color: var(--bg);
     transition: all 0.2s;
   }
+
   .input-area {
     height: 50px;
     padding: 0 10px;
@@ -54,20 +76,24 @@ section {
     display: flex;
     align-items: center;
     transition: all 0.2s;
+
     .icon {
       font-size: 30px;
       color: var(--light-text);
       cursor: pointer;
       margin-right: 10px;
       transition: all 0.2s ease;
+
       &:hover {
         transform: scale(1.1);
         color: var(--primary);
       }
     }
+
     .send {
       margin-left: auto;
     }
+
     input {
       margin-left: 5px;
       height: 45px;
@@ -78,14 +104,17 @@ section {
       background-color: transparent;
       font-size: 16px;
       letter-spacing: 1px;
+
       &::selection {
         background-color: var(--primary);
         color: var(--btn-text);
       }
+
       &::placeholder {
         opacity: 0.7;
       }
     }
+
     .wave {
       margin: auto;
     }

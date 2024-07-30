@@ -1,7 +1,5 @@
 const express = require('express')
 const path = require('path')
-
-const userRouter = require('./routers/UserRouter')
 const { PORT } = require('./config')
 const db = require('./db')
 
@@ -9,17 +7,21 @@ const db = require('./db')
 db(() => {
   // 创建服务器
   const app = express()
-  // 配置中间件
+  // 配置静态资源路径
+  app.use(express.static(path.join(__dirname, 'public')))
+  // body处理中间件
   app.use(express.json())
   app.use(express.urlencoded({ extended: false }))
-  // 配置静态资源路径
-  app.use(express.static(path.join(__dirname, 'public')) )
+  // jwt验证中间件
+  app.use(require('./middlewares/jwtMiddleware'))
+
   // 配置路由
-  app.use('/user', userRouter)
+  app.use('/user', require('./routers/UserRouter'))
+  app.use('/msg', require('./routers/MessageRouter'))
+  app.use('/friendship', require('./routers/FriendshipRouter'))
+  
   // 全局错误处理
-  app.use((err, req, res, next)=>{
-    res.status(500).send('服务器内部错误' + err)
-  })
+  app.use(require('./middlewares/errorMiddleware'))
 
   // 启动服务器
   app.listen(PORT, () => {

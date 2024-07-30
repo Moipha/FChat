@@ -7,8 +7,8 @@
     </div>
     <div ref="login" class="login">
       <div ref="loginH1" class="primary-title scale-text" @click="hideLogin">Login</div>
-      <FInput v-model="user.email" label="邮箱" />
-      <FInput v-model="user.password" type="password" label="密码" />
+      <FInput v-model="curUser.email" label="邮箱" />
+      <FInput v-model="curUser.password" type="password" label="密码" />
       <FBtn class="btn" label="Go!" @click="userLogin" />
     </div>
   </main>
@@ -18,15 +18,34 @@
 import FBtn from '@r/components/form/FBtn.vue'
 import FInput from '@r/components/form/FInput.vue'
 import { ref } from 'vue'
+import request from '@r/utils/request'
+import md5 from 'md5'
+import { useUserStore } from '@r/stores/user'
+import { storeToRefs } from 'pinia'
 
-const user = ref({}) // 用户信息
+// 获取store数据
+const { user, token } = storeToRefs(useUserStore())
+
+const curUser = ref({}) // 用户信息
 const newUser = ref({}) // 新注册用户信息
 // 用户登录
-function userLogin() {
-  window.api.openNewWindow({
-    height: 600,
-    width: 900
-  })
+async function userLogin() {
+  const { email, password } = curUser.value
+  // 输入校验
+  const res = await request.post('/user/login', { email, password: md5(password) })
+  if (res && res.code === 200) {
+    // 在本地保存token
+    token.value = res.data && res.data.token
+    // 本地保存用户信息
+    user.value = res.data && res.data.user
+    // 打开主界面窗口
+    window.api.openNewWindow({
+      height: 600,
+      width: 900
+    })
+  } else {
+    alert('登录失败')
+  }
 }
 
 // ref元素
@@ -79,6 +98,7 @@ main {
       font-size: 14px;
     }
   }
+
   .login {
     background-color: var(--bg);
     border-radius: 60% / 10%;
@@ -115,6 +135,7 @@ main {
 .hide-login {
   transform: translateY(300px) !important;
 }
+
 .scale-text {
   font-size: 36px !important;
   margin-top: 0 !important;

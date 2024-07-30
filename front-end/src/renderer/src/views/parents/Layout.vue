@@ -2,7 +2,7 @@
   <section class="container">
     <Aside />
     <main>
-      <router-view />
+      <router-view :key="$route.params.id" />
     </main>
   </section>
   <Titlebar />

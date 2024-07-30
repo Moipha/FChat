@@ -23,7 +23,10 @@
     "@mui/icons-material": "^5.16.4",
     "axios": "^1.7.2",
     "electron-updater": "^6.1.7",
+    "md5": "^2.3.0",
     "mitt": "^3.0.1",
+    "pinia": "^2.2.0",
+    "pinia-plugin-persist": "^1.0.0",
     "vue-router": "^4.4.0"
   },
   "devDependencies": {
