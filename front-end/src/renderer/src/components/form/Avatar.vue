@@ -1,10 +1,13 @@
 <template>
   <img
     loading="lazy"
-    :width="`${size}px`"
-    src="@r/assets/img/test1.jpg"
+    :src="src"
     alt="Avatar"
-    :style="shape === 'circle' ? `clip-path: circle(${size / 2}px)` : ''"
+    :style="{
+      clipPath: shape === 'circle' ? `circle(${size / 2}px)` : 'none',
+      width: `${size}px`,
+      height: `${size}px`
+    }"
   />
 </template>
 
@@ -13,7 +16,7 @@ defineProps({
   src: {
     type: String,
     default: '',
-    required: true
+    required: false
   },
   size: {
     type: Number,
@@ -34,6 +37,6 @@ defineProps({
 
 <style lang="scss" scoped>
 img {
-  aspect-ratio: 1;
+  object-fit: cover;
 }
 </style>

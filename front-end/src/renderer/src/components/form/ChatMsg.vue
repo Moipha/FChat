@@ -1,11 +1,11 @@
 <template>
-  <div v-if="position === 'left'" class="chat-msg left">
-    <Avatar src="" class="avatar" shape="circle" :size="40" />
+  <div
+    class="chat-msg"
+    :class="position"
+    :style="{ flexDirection: position === 'left' ? 'row' : 'row-reverse' }"
+  >
+    <Avatar :src="user.avatar" class="avatar" shape="circle" :size="40" />
     <div class="msg-box">{{ msg }}</div>
-  </div>
-  <div v-else class="chat-msg right">
-    <div class="msg-box">{{ msg }}</div>
-    <Avatar src="" class="avatar" shape="circle" :size="40" />
   </div>
 </template>
 
@@ -23,6 +23,10 @@ defineProps({
   avatar: {
     type: String,
     default: ''
+  },
+  user: {
+    type: Object,
+    default: () => {}
   }
 })
 </script>
@@ -41,14 +45,17 @@ defineProps({
     font-weight: 600;
     display: flex;
     align-items: center;
+    transition: all 0.2s;
+    user-select: text;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
 
     &::before {
       content: '';
       position: absolute;
-      bottom: -5.5px;
-      border-left: 6px transparent solid;
-      border-right: 6px transparent solid;
-      border-bottom: 6px transparent solid;
+      bottom: 0;
+      border-top: 6px transparent solid;
+      transition: all 0.2s;
     }
   }
 
@@ -58,8 +65,6 @@ defineProps({
   }
 
   &.left {
-    justify-content: flex-start;
-
     .msg-box {
       border-radius: 5px 5px 5px 0;
       background-color: var(--border);
@@ -67,24 +72,34 @@ defineProps({
 
       &::before {
         left: -6px;
-        transform: rotate(-45deg);
-        border-top: 6px var(--border) solid;
+        border-bottom: 6px var(--border) solid;
+        border-left: 6px transparent solid;
+        border-right: 6px var(--border) solid;
+      }
+
+      &::selection {
+        background-color: var(--primary);
+        color: var(--btn-text);
       }
     }
   }
 
   &.right {
-    justify-content: flex-end;
-
     .msg-box {
       border-radius: 5px 5px 0 5px;
       background-color: var(--primary);
       color: var(--btn-text);
 
       &::before {
-        right: -5.5px;
-        transform: rotate(45deg);
-        border-top: 6px var(--primary) solid;
+        right: -6px;
+        border-bottom: 6px var(--primary) solid;
+        border-left: 6px var(--primary) solid;
+        border-right: 6px transparent solid;
+      }
+
+      &::selection {
+        background-color: var(--bg);
+        color: var(--text);
       }
     }
   }

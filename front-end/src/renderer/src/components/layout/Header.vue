@@ -1,9 +1,9 @@
 <template>
   <header>
-    <div class="title">{{ name }}</div>
+    <div class="title">{{ friend.username }}</div>
     <div class="status">
       <div class="status-dot"></div>
-      <span>online</span>
+      <span>{{ friend.status }}</span>
     </div>
     <div class="else-btn">
       <Icon class="icon" name="else" />
@@ -13,11 +13,12 @@
 
 <script lang="ts" setup>
 import Icon from '@r/components/form/Icon.vue'
+// 接收用户对象
 defineProps({
-  name: {
-    type: String,
-    default: '未知用户',
-    require: true
+  friend: {
+    type: Object,
+    required: true,
+    default: () => {}
   }
 })
 </script>

@@ -16,7 +16,7 @@ module.exports = (user) => {
     return fixPath(user)
   }
   function fixPath(user) {
-    if (!user.avatar) throw new Error('No avatar')
+    if (!user.avatar) return user
     user.avatar = `${PROTOCOL}://${IP}:${PORT}${user.avatar}`
     return user
   }

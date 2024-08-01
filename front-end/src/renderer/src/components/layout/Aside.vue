@@ -8,17 +8,17 @@
     <nav ref="navBar" class="scroll-bar" @scroll="handleScroll" @click="selectChat">
       <div
         v-for="item in list"
-        :key="item.name"
-        :class="{ active: item.name === activeItem }"
-        :data="item.name"
+        :key="item.id"
+        :class="{ active: item.id === activeItem }"
+        :data="item.id"
         class="chat-list"
       >
         <Avatar :src="item.avatar" shape="circle" />
         <div class="msg-box">
           <div class="name">{{ item.name }}</div>
-          <div class="msg">{{ item.lastMsg }}</div>
+          <div class="msg">{{ item.msg }}</div>
         </div>
-        <div class="time-box">{{ timeFormat(item.time) }}</div>
+        <div class="time-box">{{ timeFormat(item.createdTime) }}</div>
       </div>
     </nav>
   </aside>
@@ -31,7 +31,7 @@ import Icon from '@r/components/form/Icon.vue'
 import Avatar from '@r/components/form/Avatar.vue'
 import timeFormat from '@r/utils/timeFormat'
 import router from '@r/router'
-// import request from '@r/utils/request'
+import request from '@r/utils/request'
 import { useRoute } from 'vue-router'
 
 /**
@@ -71,53 +71,8 @@ function endDrag() {
  */
 const list = ref([])
 async function getList() {
-  // const res = await request.get('/get-list')
-  // list.value = res.data
-  list.value = [
-    {
-      name: '66a7bc710d53a00ecd8d3b76',
-      time: '2024-07-25 18:21:34',
-      avatar: 'C:\\Users\\Young\\Pictures\\测试图片\\background.jpg',
-      lastMsg: '在吗？'
-    },
-    {
-      name: '李四',
-      time: '2024-07-24 4:08:04',
-      avatar: 'C:\\Users\\Young\\Pictures\\测试图片\\2.jpg',
-      lastMsg: '你在干什么？去不去曾宪梓楼509教室最后一排坐一会？'
-    },
-    {
-      name: '王五',
-      time: '2024-07-23 08:21:54',
-      avatar: 'C:\\Users\\Young\\Pictures\\测试图片\\3.jpg',
-      lastMsg: '你知道吗？我其实什么也不知道。你知不知道？'
-    },
-    {
-      name: '赵六',
-      time: '2024-07-22 08:21:54',
-      avatar: 'C:\\Users\\Young\\Pictures\\测试图片\\3.jpg',
-      lastMsg: '你知道吗今天是周一是周一哦今天是周一啊！'
-    },
-    {
-      name: '你好我的名字特别特别长不要在意因为我是来帮你测试名字过长会发生什么的',
-      time: '2024-07-21 0:12:54',
-      avatar: 'C:\\Users\\Young\\Pictures\\测试图片\\3.jpg',
-      lastMsg:
-        '咱就是说突然想给你发送一条特别特特别长的消息来测试一下你到底能不能正常显示知道了吗所以正常显示了没有让我看看'
-    },
-    {
-      name: '测试',
-      time: '2024-07-20 08:21:54',
-      avatar: 'C:\\Users\\Young\\Pictures\\测试图片\\3.jpg',
-      lastMsg: '这是一条测试数据，我就是想测试一下'
-    },
-    {
-      name: '你好',
-      time: '2024-07-19 08:21:54',
-      avatar: 'C:\\Users\\Young\\Pictures\\测试图片\\3.jpg',
-      lastMsg: 'Hello World'
-    }
-  ]
+  const res = await request.get('/user/aside')
+  list.value = res.data
 }
 getList()
 
@@ -246,7 +201,9 @@ aside {
         0.2s all,
         0s width;
       cursor: pointer;
-
+      img {
+        align-self: center;
+      }
       &:hover {
         background-color: var(--border);
       }

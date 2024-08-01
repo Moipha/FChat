@@ -1,9 +1,10 @@
 // 数据处理：格式化时间
-export default function timeFormat(time) {
+export default function timeFormat(time, strict = false) {
+  if (!time) return ''
   const now = new Date()
   const inputDate = new Date(time)
 
-  // 1. 当天的时间格式化为 HH:mm AM/PM
+  // 当天的时间格式化为 HH:mm AM/PM
   function formatTimeAs12Hour(date) {
     const hours = date.getHours() % 12 || 12 // 转换为12小时制，并处理0小时的情况
     const minutes = String(date.getMinutes()).padStart(2, '0')
@@ -40,17 +41,17 @@ export default function timeFormat(time) {
     return formatTimeAs12Hour(inputDate)
   } else if (getDaysDiff(now, inputDate) === 1) {
     // 2. 昨天的时间
-    return '昨天'
+    return '昨天 ' + (strict ? formatTimeAs12Hour(inputDate) : '')
   } else {
     // 将周日由0处理为7
     const curDay = now.getDay() || 7
     const inputDay = inputDate.getDay() || 7
     if (inputDay < curDay) {
       // 3. 本周的时间
-      return getDayOfWeek(inputDay)
+      return getDayOfWeek(inputDay) + ' ' + (strict ? formatTimeAs12Hour(inputDate) : '')
     } else {
       // 4. 非本周的时间
-      return formatDateAsYYMMDD(inputDate)
+      return formatDateAsYYMMDD(inputDate) + ' ' + (strict ? formatTimeAs12Hour(inputDate) : '')
     }
   }
 }

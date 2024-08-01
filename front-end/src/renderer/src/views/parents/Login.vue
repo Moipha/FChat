@@ -32,19 +32,22 @@ const newUser = ref({}) // 新注册用户信息
 async function userLogin() {
   const { email, password } = curUser.value
   // 输入校验
-  const res = await request.post('/user/login', { email, password: md5(password) })
-  if (res && res.code === 200) {
-    // 在本地保存token
-    token.value = res.data && res.data.token
-    // 本地保存用户信息
-    user.value = res.data && res.data.user
-    // 打开主界面窗口
-    window.api.openNewWindow({
-      height: 600,
-      width: 900
-    })
-  } else {
-    alert('登录失败')
+  try {
+    const res = await request.post('/user/login', { email, password: md5(password) })
+    if (res && res.code === 200) {
+      // 在本地保存token
+      token.value = res.data && res.data.token
+      // 本地保存用户信息
+      user.value = res.data && res.data.user
+      // 打开主界面窗口
+      window.api.openNewWindow({
+        height: 600,
+        width: 900
+      })
+    }
+  } catch (err) {
+    alert('账号或密码有误')
+    console.log(err)
   }
 }
 

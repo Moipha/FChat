@@ -11,12 +11,35 @@
 <script setup>
 import Aside from '@r/components/layout/Aside.vue'
 import Titlebar from '@r/components/layout/Titlebar.vue'
+import config from '@/config'
+import { io } from 'socket.io-client'
+import { useUserStore } from '@r/stores/user'
+import { storeToRefs } from 'pinia'
+import { provide } from 'vue'
+
+// 获取配置
+const { PROTOCOL, PORT, IP } = config
+// 获取当前用户信息
+const { user, token } = storeToRefs(useUserStore())
+// 建立socket连接
+const socket = io(`${PROTOCOL}://${IP}:${PORT}`, {
+  extraHeaders: {
+    Authorization: token.value
+  }
+})
+socket.on('connect', () => {
+  console.log('连接到服务器')
+  socket.emit('login', user.value._id)
+})
+// 注入socket
+provide('socket', socket)
 </script>
 
 <style lang="scss" scoped>
 .container {
   display: flex;
   width: 100vw;
+
   main {
     display: flex;
     flex: 1;
