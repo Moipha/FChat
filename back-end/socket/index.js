@@ -50,17 +50,16 @@ module.exports = (server) => {
       console.log('用户断开连接...')
       // 更改数据库中你的状态
       userService.updateStatus(uid, 'offline')
-
       // 告诉在线的好友你下线了
       const ids = await userService.getFriendIds(uid)
       ids.forEach((id) => {
         if (clientSockets.has(id.toString())) {
-          console.log(id, '发送事件', uid, 'offline')
           clientSockets.get(id.toString()).emit(uid, 'offline')
         }
       })
       // 清理存储的用户socket实例
       clientSockets.delete(uid)
+      console.log('当前用户：', clientSockets.size)
     })
   })
 }

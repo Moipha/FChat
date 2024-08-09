@@ -1,7 +1,12 @@
 <template>
   <header>
     <div class="title">{{ friend.username }}</div>
-    <div class="status">
+    <div
+      class="status"
+      :style="{
+        '--dot': friend.status === 'online' ? 'var(--primary)' : 'var(--error)'
+      }"
+    >
       <div class="status-dot"></div>
       <span>{{ friend.status }}</span>
     </div>
@@ -50,19 +55,22 @@ header {
     margin-top: 3px;
     display: flex;
     align-items: center;
+
     .status-dot {
-      background-color: var(--primary);
+      background-color: var(--dot);
       width: 8px;
       aspect-ratio: 1;
       border-radius: 50%;
     }
+
     span {
       font-weight: bolder;
       font-size: 14px;
-      color: var(--primary);
+      color: var(--dot);
       margin-left: 3px;
     }
   }
+
   .else-btn {
     position: absolute;
     right: 10px;
@@ -74,6 +82,7 @@ header {
 
     .icon {
       transition: all 0.2s ease;
+
       &:hover {
         transform: scale(1.2);
         color: var(--primary);

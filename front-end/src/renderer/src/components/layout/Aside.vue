@@ -5,7 +5,8 @@
       <Icon name="menu" class="icon" @click="openMenu"></Icon>
       <SearchInput @keydown.enter="changeTheme" />
     </header>
-    <nav ref="navBar" class="scroll-bar" @scroll="handleScroll" @click="selectChat">
+    <Nav />
+    <nav ref="navBar" class="nav scroll-bar" @scroll="handleScroll" @click="selectChat">
       <div
         v-for="item in list"
         :key="item.id"
@@ -25,14 +26,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import SearchInput from '@r/components/form/SearchInput.vue'
 import Icon from '@r/components/form/Icon.vue'
 import Avatar from '@r/components/form/Avatar.vue'
+import Nav from '@r/components/layout/Nav.vue'
 import timeFormat from '@r/utils/timeFormat'
 import router from '@r/router'
 import request from '@r/utils/request'
 import { useRoute } from 'vue-router'
+import bus from '@r/utils/bus'
 
 /**
  * 拖拽动态修改aside的宽度
@@ -131,8 +134,10 @@ activeItem.value = route.params.id
  * 打开菜单
  */
 function openMenu() {
-  router.push('/')
-  activeItem.value = null
+  // router.push('/')
+  // activeItem.value = null
+  // 弹出Nav
+  bus.emit('nav-toggle', true)
 }
 
 /**
@@ -144,6 +149,29 @@ function changeTheme() {
   // const body = getComputedStyle(document.body)
   // window.api.changeTitleBar([body.getPropertyValue('--text')])
 }
+
+/**
+ * 更新最后一条消息
+ */
+bus.on('update-aside', ([content, id, time]) => {
+  const targetIndex = list.value.findIndex((item) => item.id === id)
+  // 检查是否找到了对应的item
+  if (targetIndex === -1) return
+  // 获取对应的item
+  const target = list.value[targetIndex]
+  // 更新内容
+  target.msg = content
+  target.createdTime = time
+  // 如果该item不是第一个，则将其提到最前面
+  if (targetIndex !== 0) {
+    // 移除原来的item，然后将其添加到数组前面
+    list.value = [target, ...list.value.slice(0, targetIndex), ...list.value.slice(targetIndex + 1)]
+  }
+})
+
+onBeforeUnmount(() => {
+  bus.off('update-aside')
+})
 </script>
 
 <style lang="scss" scoped>
@@ -186,7 +214,7 @@ aside {
     border-top: 1px solid var(--border);
   }
 
-  nav {
+  .nav {
     height: calc(100vh - 60px);
     transition: border 0.2s;
     border-top: 1px solid transparent;
@@ -260,6 +288,7 @@ aside {
     right: -3px;
     top: 0;
     cursor: ew-resize;
+    z-index: 2;
   }
 }
 </style>

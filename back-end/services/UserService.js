@@ -65,6 +65,7 @@ async function getAsideMessages(userId) {
   const friends = await getFriends(userId)
   const ans = []
   for (const friend of imgPathFix(friends)) {
+    // 获取最后一条消息
     const msg = await Message.findOne({
       $or: [
         { senderId: userId, receiverId: friend._id },
@@ -103,11 +104,18 @@ async function updateStatus(userId, status) {
   await User.updateOne({ _id: userId }, { status })
 }
 
+// 获取指定用户的信息
+async function getUserById(id) {
+  const user = await User.findById(id)
+  return imgPathFix(user)
+}
+
 module.exports = {
   registerUser,
   loginUser,
   getFriends,
   getFriendIds,
   getAsideMessages,
-  updateStatus
+  updateStatus,
+  getUserById
 }

@@ -2,7 +2,11 @@
   <section class="container">
     <Aside />
     <main>
-      <router-view :key="$route.params.id" />
+      <router-view :key="$route.params.id" v-slot="{ Component }">
+        <KeepAlive>
+          <component :is="Component" />
+        </KeepAlive>
+      </router-view>
     </main>
   </section>
   <Titlebar />

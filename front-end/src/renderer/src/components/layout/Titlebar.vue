@@ -51,7 +51,7 @@ nav {
     }
   }
   .exit:hover {
-    background-color: salmon;
+    background-color: var(--error);
     color: white;
   }
 }
