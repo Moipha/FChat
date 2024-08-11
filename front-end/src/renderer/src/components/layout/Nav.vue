@@ -6,6 +6,11 @@
     }"
   >
     <Icon class="close" name="return" @click="navShow = false"></Icon>
+    <div class="profile">
+      <Avatar :size="75" shape="circle" :src="user.avatar" />
+      <span class="title">{{ user.username }}</span>
+      <Status :value="user.status" />
+    </div>
     <div class="options">
       <div class="option">
         <Icon class="icon" name="nav-chats" /><span class="text">Chats</span>
@@ -29,8 +34,14 @@
 
 <script lang="ts" setup>
 import Icon from '@r/components/form/Icon.vue'
+import Avatar from '@r/components/form/Avatar.vue'
+import Status from '@r/components/form/Status.vue'
 import bus from '@r/utils/bus'
 import { ref, onBeforeUnmount } from 'vue'
+import { useUserStore } from '@r/stores/user'
+
+// 获取用户信息
+const { user } = useUserStore()
 
 // 显示状态
 const navShow = ref(false)
@@ -57,6 +68,8 @@ onBeforeUnmount(() => {
   filter: brightness(0.9);
   -webkit-app-region: no-drag;
   display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 
   .close {
     position: absolute;
@@ -68,34 +81,46 @@ onBeforeUnmount(() => {
     transition: all 0.2s ease;
     margin-left: auto;
     margin-right: 10px;
+
     &:hover {
       transform: scale(1.1);
       color: var(--primary);
     }
   }
+  .profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .title {
+      font-size: 18px;
+      font-weight: bolder;
+      margin: 10px 0 5px;
+      color: var(--text);
+    }
+  }
   .options {
-    margin: auto;
     width: 100%;
-
     .option {
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px 0;
-      font-size: 25px;
+      font-size: 20px;
       cursor: pointer;
       color: var(--text);
 
       .text {
-        width: 100px;
+        width: 80px;
         margin-left: 10px;
       }
+
       &:hover {
         background-color: var(--primary);
         color: var(--btn-text);
       }
     }
   }
+
   .version {
     position: absolute;
     bottom: 5px;

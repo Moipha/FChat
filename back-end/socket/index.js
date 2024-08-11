@@ -39,7 +39,7 @@ module.exports = (server) => {
       // 保存消息至数据库
       const savedMsg = await messageService.createMessage(msg.content, msg.senderId, msg.receiverId)
       // 发送给当前用户
-      socket.emit('receive-msg', savedMsg)
+      socket.emit('callback-msg', savedMsg)
       // 发送给目标用户
       if (clientSockets.has(msg.receiverId)) {
         clientSockets.get(msg.receiverId).emit('receive-msg', savedMsg)

@@ -8,7 +8,7 @@ function createWindow({
   width = 900,
   height = 600,
   minWidth = 600,
-  minHeight = 400,
+  minHeight = 500,
   resizable = true,
   maximizable = true,
   minimizable = true,

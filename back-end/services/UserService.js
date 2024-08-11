@@ -26,6 +26,9 @@ async function loginUser(loginInfo) {
     throw new Error('用户不存在')
   }
   const token = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: '24h' })
+  // 更改数据库中的状态
+  // await updateStatus(user._id, 'online')
+  user.status = 'online'
   return { user: imgPathFix(user), token }
 }
 

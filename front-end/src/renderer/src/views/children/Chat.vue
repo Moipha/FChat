@@ -44,7 +44,7 @@ import Header from '@r/components/layout/Header.vue'
 import Icon from '@r/components/form/Icon.vue'
 import Wave from '@r/components/form/Wave.vue'
 import ChatMsg from '@r/components/form/ChatMsg.vue'
-import { ref, nextTick, inject, watch, onDeactivated, onActivated } from 'vue'
+import { ref, nextTick, inject, watch, onDeactivated, onActivated, onUnmounted } from 'vue'
 import request from '@r/utils/request'
 import { useUserStore } from '@r/stores/user'
 import { useMsgStore } from '@r/stores/msg'
@@ -64,14 +64,14 @@ const socket = inject('socket')
 
 // 接收服务器发来的消息
 function receiveMsg() {
-  socket.on('receive-msg', (savedMsg) => {
+  socket.on('callback-msg', (savedMsg) => {
     messages.value.push(savedMsg)
+    // 告诉aside更新最后一条消息
+    bus.emit('update-aside', [savedMsg.content, friend.value._id, savedMsg.createdTime])
     // 滚动到底部
     nextTick(() => {
       scrollToBottom(true)
     })
-    // 告诉aside更新最后一条消息
-    bus.emit('update-aside', [savedMsg.content, friend.value._id, savedMsg.createdTime])
   })
 }
 
@@ -139,6 +139,15 @@ function scrollToBottom(smooth) {
   }
 }
 
+// 滚动到底部事件
+bus.on('bottom', () => {
+  nextTick(() => {
+    scrollToBottom(true)
+  })
+})
+onUnmounted(() => {
+  bus.off('bottom')
+})
 // 滚动到顶端，进行分页数据获取
 function handleScroll() {
   // 不是最后一页时才获取
@@ -257,11 +266,10 @@ onActivated(async () => {
   await getFriend()
   load()
   receiveMsg()
-  watchFriend()
 })
 onDeactivated(() => {
   // 解绑事件
-  socket.off('receive-msg')
+  socket.off('callback-msg')
   socket.off(friend.value._id)
 })
 </script>

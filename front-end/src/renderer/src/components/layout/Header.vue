@@ -1,15 +1,7 @@
 <template>
   <header>
     <div class="title">{{ friend.username }}</div>
-    <div
-      class="status"
-      :style="{
-        '--dot': friend.status === 'online' ? 'var(--primary)' : 'var(--error)'
-      }"
-    >
-      <div class="status-dot"></div>
-      <span>{{ friend.status }}</span>
-    </div>
+    <Status class="status" :value="friend.status" />
     <div class="else-btn">
       <Icon class="icon" name="else" />
     </div>
@@ -18,6 +10,7 @@
 
 <script lang="ts" setup>
 import Icon from '@r/components/form/Icon.vue'
+import Status from '@r/components/form/Status.vue'
 // 接收用户对象
 defineProps({
   friend: {
@@ -37,6 +30,11 @@ header {
   transition: 0.2s all;
   border-bottom: 1px solid var(--border);
 
+  .status {
+    margin-left: 20px;
+    margin-top: 3px;
+  }
+
   .title {
     width: calc(100% - 160px);
     font-size: 16px;
@@ -48,27 +46,6 @@ header {
     overflow: hidden;
     white-space: nowrap;
     margin-top: 12px;
-  }
-
-  .status {
-    margin-left: 20px;
-    margin-top: 3px;
-    display: flex;
-    align-items: center;
-
-    .status-dot {
-      background-color: var(--dot);
-      width: 8px;
-      aspect-ratio: 1;
-      border-radius: 50%;
-    }
-
-    span {
-      font-weight: bolder;
-      font-size: 14px;
-      color: var(--dot);
-      margin-left: 3px;
-    }
   }
 
   .else-btn {
