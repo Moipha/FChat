@@ -62,11 +62,13 @@ onBeforeUnmount(() => {
   background-color: var(--bg);
   position: absolute;
   z-index: 1;
-  transition: left 0.5s;
+  transition: left 0.5s ease;
   left: -110%;
-  box-shadow: 5px 0px 20px var(--border);
+  box-shadow:
+    5px 0px 20px var(--border),
+    inset 5px 0px 10px var(--border);
   filter: brightness(0.9);
-  -webkit-app-region: no-drag;
+  -webkit-app-region: drag;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -81,16 +83,19 @@ onBeforeUnmount(() => {
     transition: all 0.2s ease;
     margin-left: auto;
     margin-right: 10px;
+    -webkit-app-region: no-drag;
 
     &:hover {
       transform: scale(1.1);
       color: var(--primary);
     }
   }
+
   .profile {
     display: flex;
     flex-direction: column;
     align-items: center;
+
     .title {
       font-size: 18px;
       font-weight: bolder;
@@ -98,8 +103,11 @@ onBeforeUnmount(() => {
       color: var(--text);
     }
   }
+
   .options {
     width: 100%;
+    -webkit-app-region: no-drag;
+
     .option {
       display: flex;
       justify-content: center;

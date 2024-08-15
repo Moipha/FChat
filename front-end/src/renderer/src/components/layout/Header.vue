@@ -2,7 +2,7 @@
   <header>
     <div class="title">{{ friend.username }}</div>
     <Status class="status" :value="friend.status" />
-    <div class="else-btn">
+    <div class="else-btn" @click.stop="showFriendDetail">
       <Icon class="icon" name="else" />
     </div>
   </header>
@@ -11,6 +11,7 @@
 <script lang="ts" setup>
 import Icon from '@r/components/form/Icon.vue'
 import Status from '@r/components/form/Status.vue'
+import bus from '@r/utils/bus'
 // 接收用户对象
 defineProps({
   friend: {
@@ -19,6 +20,11 @@ defineProps({
     default: () => {}
   }
 })
+
+// 弹出右边栏
+function showFriendDetail() {
+  bus.emit('show-friend-detail')
+}
 </script>
 
 <style lang="scss" scoped>

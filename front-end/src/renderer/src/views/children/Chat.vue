@@ -1,5 +1,6 @@
 <template>
   <Header :friend="friend" />
+  <Friend :friend="friend" />
   <section>
     <div ref="msgContainer" class="msg-container scroll-bar" @wheel="throttledScroll">
       <!-- 不是最后一页时，显示获取消息按钮 -->
@@ -44,6 +45,7 @@ import Header from '@r/components/layout/Header.vue'
 import Icon from '@r/components/form/Icon.vue'
 import Wave from '@r/components/form/Wave.vue'
 import ChatMsg from '@r/components/form/ChatMsg.vue'
+import Friend from '@r/components/layout/Friend.vue'
 import { ref, nextTick, inject, watch, onDeactivated, onActivated, onUnmounted } from 'vue'
 import request from '@r/utils/request'
 import { useUserStore } from '@r/stores/user'

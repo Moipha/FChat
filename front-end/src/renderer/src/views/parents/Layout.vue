@@ -46,9 +46,9 @@ provide('socket', socket)
 
   main {
     display: flex;
+    position: relative;
     flex: 1;
     min-width: 400px;
-    overflow: hidden;
     flex-direction: column;
     height: 100vh;
     background-color: var(--bg);

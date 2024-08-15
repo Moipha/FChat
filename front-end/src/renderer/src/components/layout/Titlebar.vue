@@ -36,6 +36,7 @@ nav {
   top: 0;
   right: 0;
   display: flex;
+  z-index: 999;
   -webkit-app-region: no-drag;
   .icon {
     font-size: 12px;
