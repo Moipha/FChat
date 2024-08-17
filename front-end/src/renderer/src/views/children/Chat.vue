@@ -21,32 +21,16 @@
         />
       </div>
     </div>
-    <div class="input-area">
-      <Icon class="icon" name="link"></Icon>
-      <Icon class="icon" name="emoji"></Icon>
-      <Icon class="icon" :name="mode" @click="changeMsgMode"></Icon>
-      <textarea
-        v-if="mode === 'audio'"
-        ref="textarea"
-        v-model="newMsg"
-        class="scroll-bar"
-        rows="1"
-        placeholder="请输入消息..."
-        @keydown.enter="handleKeyup"
-      />
-      <Wave v-else class="wave" />
-      <Icon class="icon send" name="send" @click="sendMessage"></Icon>
-    </div>
+    <InputArea v-if="friend._id" :friend="friend" :user="user" :socket="socket" />
   </section>
 </template>
 
 <script lang="ts" setup>
 import Header from '@r/components/layout/Header.vue'
-import Icon from '@r/components/form/Icon.vue'
-import Wave from '@r/components/form/Wave.vue'
 import ChatMsg from '@r/components/form/ChatMsg.vue'
 import Friend from '@r/components/layout/Friend.vue'
-import { ref, nextTick, inject, watch, onDeactivated, onActivated, onUnmounted } from 'vue'
+import InputArea from '@r/components/layout/InputArea.vue'
+import { ref, nextTick, inject, onDeactivated, onActivated, onUnmounted } from 'vue'
 import request from '@r/utils/request'
 import { useUserStore } from '@r/stores/user'
 import { useMsgStore } from '@r/stores/msg'
@@ -75,55 +59,6 @@ function receiveMsg() {
       scrollToBottom(true)
     })
   })
-}
-
-/**
- * 发送消息
- */
-
-// 当前要发送的消息
-const newMsg = ref('')
-// 通过websocket发送消息
-function sendMessage() {
-  // 检查
-  if (!checkMsg(newMsg.value)) return
-  socket.emit('chat', {
-    content: newMsg.value,
-    senderId: user.value._id,
-    receiverId: friend.value._id
-  })
-  newMsg.value = ''
-}
-// 输入框中按下回车
-function handleKeyup(e) {
-  // 如果没有同时按下shift键，则发送消息
-  if (!e.shiftKey) {
-    e.preventDefault()
-    sendMessage()
-  }
-}
-
-/**
- * 输入框调整
- */
-
-// 调整输入框的高度
-const textarea = ref(null)
-watch(newMsg, () => {
-  nextTick(() => {
-    textarea.value.style.height = 'inherit'
-    textarea.value.style.height = textarea.value.scrollHeight + 'px'
-  })
-})
-
-// 切换消息模式（语音/文字）
-const mode = ref('audio')
-function changeMsgMode() {
-  if (mode.value === 'text') {
-    mode.value = 'audio'
-  } else {
-    mode.value = 'text'
-  }
 }
 
 /**
@@ -183,14 +118,6 @@ function needTime(time1, time2) {
       date1.getFullYear() === date2.getFullYear()
     )
   )
-}
-// 对输入文本进行过滤
-function checkMsg(msg) {
-  if (msg.trim() !== '') {
-    return true
-  } else {
-    return false
-  }
 }
 
 /**
@@ -309,66 +236,6 @@ section {
       &:hover {
         text-decoration: underline;
       }
-    }
-  }
-
-  .input-area {
-    min-height: 50px;
-    padding: 0 10px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: flex-end;
-    transition: all 0.2s;
-
-    .icon {
-      font-size: 30px;
-      color: var(--light-text);
-      cursor: pointer;
-      margin: 0 5px 10px;
-      transition: all 0.2s ease;
-
-      &:hover {
-        transform: scale(1.1);
-        color: var(--primary);
-      }
-    }
-
-    .send {
-      margin-left: auto;
-    }
-
-    textarea {
-      margin-left: 5px;
-      background-color: transparent;
-      padding-top: 12.5px;
-      padding-bottom: 12.5px;
-      height: 50px;
-      max-height: 40vh;
-      box-sizing: border-box;
-      line-height: 25px;
-      flex-grow: 1;
-      border: none;
-      outline: none;
-      resize: none;
-      color: var(--text);
-      font-size: 16px;
-      font-weight: 600;
-      font-family: 'STXihei';
-      letter-spacing: 1px;
-      transition: all 0.2s;
-
-      &::selection {
-        background-color: var(--primary);
-        color: var(--btn-text);
-      }
-
-      &::placeholder {
-        opacity: 0.7;
-      }
-    }
-
-    .wave {
-      margin: auto;
     }
   }
 }

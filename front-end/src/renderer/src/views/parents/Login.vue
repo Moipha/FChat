@@ -26,7 +26,7 @@ import { storeToRefs } from 'pinia'
 // 获取store数据
 const { user, token } = storeToRefs(useUserStore())
 
-const curUser = ref({}) // 用户信息
+const curUser = ref({ email: 'young@test.cn', password: '123123' }) // 用户信息
 const newUser = ref({}) // 新注册用户信息
 // 用户登录
 async function userLogin() {
@@ -65,7 +65,11 @@ function hideLogin() {
 
 // 验证邮箱
 function verify() {
-  window.api.openDialog({ route: '/register', width: 240, height: 320 })
+  window.api.openDialog({
+    route: '/register',
+    width: 240,
+    height: 320
+  })
 }
 </script>
 

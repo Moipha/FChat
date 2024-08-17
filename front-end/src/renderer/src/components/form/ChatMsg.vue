@@ -5,12 +5,23 @@
     :style="{ flexDirection: position === 'left' ? 'row' : 'row-reverse' }"
   >
     <Avatar :src="user.avatar" class="avatar" shape="circle" :size="40" />
-    <div class="msg-box">{{ msg }}</div>
+    <div class="msg-box">
+      <span v-for="(part, index) in parseMsg(msg)" :key="index">
+        <template v-if="part.type === 'text'">
+          {{ part.content }}
+        </template>
+        <template v-else-if="part.type === 'emoji'">
+          <img :src="part.content" alt="emoji" width="30" height="30" />
+        </template>
+      </span>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import Avatar from '@r/components/form/Avatar.vue'
+import emoji from '@r/assets/emoji'
+
 defineProps({
   position: {
     type: String,
@@ -29,6 +40,34 @@ defineProps({
     default: () => {}
   }
 })
+
+function parseMsg(msg) {
+  const regex = /#\[([^\]]*)\]/g
+  const result = []
+  let lastIndex = 0
+  let match
+
+  while ((match = regex.exec(msg)) !== null) {
+    // 添加之前的普通文本部分
+    if (match.index > lastIndex) {
+      result.push({ type: 'text', content: msg.slice(lastIndex, match.index) })
+    }
+    // 查找表情并添加
+    const emojiUrl = emoji.map[match[1]]
+    if (emojiUrl) {
+      result.push({ type: 'emoji', content: emoji.path + emojiUrl })
+    } else {
+      // 如果表情不存在，则保持原文本
+      result.push({ type: 'text', content: match[0] })
+    }
+    lastIndex = regex.lastIndex
+  }
+  // 添加剩余的文本
+  if (lastIndex < msg.length) {
+    result.push({ type: 'text', content: msg.slice(lastIndex) })
+  }
+  return result
+}
 </script>
 
 <style lang="scss" scoped>
@@ -38,17 +77,17 @@ defineProps({
   display: flex;
 
   .msg-box {
-    max-width: 50%;
+    max-width: 60%;
     word-wrap: break-word;
-    padding: 5px 10px;
+    padding: 7px 10px;
+    box-sizing: border-box;
     position: relative;
     font-weight: 600;
-    display: flex;
-    align-items: center;
     transition: all 0.2s;
     user-select: text;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
+    line-height: 25px;
 
     &::before {
       content: '';
@@ -77,7 +116,8 @@ defineProps({
         border-right: 6px var(--border) solid;
       }
 
-      &::selection {
+      span::selection,
+      img::selection {
         background-color: var(--primary);
         color: var(--btn-text);
       }
@@ -97,11 +137,21 @@ defineProps({
         border-right: 6px transparent solid;
       }
 
-      &::selection {
+      span::selection,
+      img::selection {
         background-color: var(--bg);
         color: var(--text);
       }
     }
+  }
+}
+</style>
+<style>
+.msg-box {
+  img {
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
   }
 }
 </style>

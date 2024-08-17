@@ -13,7 +13,8 @@ const router = createRouter({
     },
     { path: '/login', component: () => import('@r/views/parents/Login.vue') },
     { path: '/register', component: () => import('@r/views/parents/Register.vue') },
-    { path: '/set-pass', component: () => import('@r/views/parents/SetPass.vue') }
+    { path: '/set-pass', component: () => import('@r/views/parents/SetPass.vue') },
+    { path: '/emoji', component: () => import('@r/views/parents/Emoji.vue') }
   ]
 })
 

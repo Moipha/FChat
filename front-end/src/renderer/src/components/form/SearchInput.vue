@@ -4,7 +4,7 @@
       <input
         id="search"
         :value="modelValue"
-        required=""
+        required
         autocomplete="off"
         placeholder="search"
         type="text"

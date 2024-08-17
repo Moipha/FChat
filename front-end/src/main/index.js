@@ -71,20 +71,12 @@ function createWindow({
   }
   win.loadURL($url)
 
-  // 修改默认标题栏样式
-  ipcMain.on('change-title-bar', (event, [text]) => {
-    const browserWindow = BrowserWindow.fromWebContents(event.sender)
-    if (browserWindow) {
-      browserWindow.setTitleBarOverlay({
-        symbolColor: text
-      })
-    }
-  })
-
   // 关闭当前页面，打开新的页面
   ipcMain.on('open-new', (event, settings) => {
     const browserWindow = BrowserWindow.fromWebContents(event.sender)
     if (browserWindow) {
+      // 先移除所有的监听事件
+      ipcMain.removeAllListeners()
       browserWindow.close()
     }
     createWindow(settings)
@@ -130,16 +122,20 @@ function createWindow({
 }
 
 // 创建model窗口
-function createModalWin({ route, width = 200, height = 400 }, parent) {
+function createModalWin(
+  { route, width = 200, height = 400, shadow = false, close = true, modal = true },
+  parent
+) {
   const win = new BrowserWindow({
     width,
     height,
     parent,
+    hasShadow: shadow,
     resizable: false,
     maximizable: false,
     minimizable: false,
     show: false,
-    modal: true,
+    modal,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -147,11 +143,13 @@ function createModalWin({ route, width = 200, height = 400 }, parent) {
       sandbox: false
     },
     titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      color: '#00000000',
-      symbolColor: '#000',
-      height: 40
-    }
+    titleBarOverlay: close
+      ? {
+          color: '#00000000',
+          symbolColor: '#000',
+          height: 40
+        }
+      : null
   })
 
   // 页面加载完成
@@ -187,9 +185,22 @@ function createModalWin({ route, width = 200, height = 400 }, parent) {
   ipcMain.on('close-dialog', (event) => {
     const browserWindow = BrowserWindow.fromWebContents(event.sender)
     if (browserWindow) {
+      ipcMain.removeListener('send-emoji', sendEmojiFunc)
       browserWindow.close()
     }
   })
+  function sendEmojiFunc(event, id) {
+    parent.webContents.send('receive-emoji', id)
+  }
+  ipcMain.on('send-emoji', sendEmojiFunc)
+
+  if (!close) {
+    // 失去焦点时关闭窗口
+    win.on('blur', () => {
+      ipcMain.removeListener('send-emoji', sendEmojiFunc)
+      win.close()
+    })
+  }
 }
 
 // This method will be called when Electron has finished

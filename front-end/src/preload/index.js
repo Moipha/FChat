@@ -3,9 +3,6 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
 const api = {
-  // changeTitleBar: (titleBar) => {
-  //   ipcRenderer.send('change-title-bar', titleBar)
-  // },
   openNewWindow: (settings) => {
     ipcRenderer.send('open-new', settings)
   },
@@ -28,6 +25,10 @@ const api = {
   closeWindow: () => {
     ipcRenderer.send('close-window')
   },
+  sendEmoji: (id) => {
+    ipcRenderer.send('send-emoji', id)
+  },
+
   // main -> renderer
   changeMaximize: (callback) => {
     ipcRenderer.on('maximized', () => {
@@ -35,6 +36,15 @@ const api = {
     })
     ipcRenderer.on('unmaximized', () => {
       callback(false)
+    })
+  },
+  receiveEmoji: (callback) => {
+    // 先移除之前的监听器，确保只有一个回调函数
+    ipcRenderer.removeAllListeners('receive-emoji')
+
+    // 然后添加新的监听器
+    ipcRenderer.on('receive-emoji', (event, id) => {
+      callback(id)
     })
   }
 }

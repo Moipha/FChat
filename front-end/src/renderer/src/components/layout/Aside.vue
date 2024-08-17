@@ -17,6 +17,13 @@ import Icon from '@r/components/form/Icon.vue'
 import Nav from '@r/components/layout/Nav.vue'
 import ChatList from '@r/components/layout/ChatList.vue'
 import bus from '@r/utils/bus'
+import { useSettingStore } from '@r/stores/setting'
+import { storeToRefs } from 'pinia'
+
+/**
+ * 获取配置项
+ */
+const { theme } = storeToRefs(useSettingStore())
 
 /**
  * 拖拽动态修改aside的宽度
@@ -54,20 +61,18 @@ function endDrag() {
  * 打开菜单
  */
 function openMenu() {
-  // router.push('/')
-  // activeItem.value = null
   // 弹出Nav
   bus.emit('nav-toggle', true)
 }
 
 /**
- * temp 修改主题
+ * 修改主题
  */
 function changeTheme() {
-  document.body.classList.toggle('dark-theme')
-  // // 修改标题栏的样式
-  // const body = getComputedStyle(document.body)
-  // window.api.changeTitleBar([body.getPropertyValue('--text')])
+  const cur = theme.value === 'light-theme' ? 'dark-theme' : 'light-theme'
+  document.body.classList.remove('light-theme', 'dark-theme')
+  document.body.classList.add(cur)
+  theme.value = cur
 }
 </script>
 
