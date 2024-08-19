@@ -19,6 +19,7 @@ db(() => {
   app.use('/user', require('./routers/UserRouter'))
   app.use('/msg', require('./routers/MessageRouter'))
   app.use('/friendship', require('./routers/FriendshipRouter'))
+  app.use('/read', require('./routers/ReadRouter'))
 
   // 全局错误处理
   app.use(require('./middlewares/errorMiddleware'))

@@ -6,7 +6,7 @@
     }"
   >
     <div class="status-dot"></div>
-    <span>{{ value }}</span>
+    <span class="consolas">{{ value }}</span>
   </div>
 </template>
 

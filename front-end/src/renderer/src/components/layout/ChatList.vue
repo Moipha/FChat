@@ -10,7 +10,7 @@
       <Avatar :src="item.avatar" shape="circle" />
       <div class="msg-box">
         <div class="name">{{ item.name }}</div>
-        <div class="msg">{{ item.msg }}</div>
+        <div class="msg dyh">{{ item.msg }}</div>
       </div>
       <div class="time-box">{{ timeFormat(item.createdTime) }}</div>
     </div>
@@ -48,9 +48,10 @@ socket.on('receive-msg', (msg) => {
       nextId: msg._id
     }
   }
-  // 如果是正在聊天的，滚动到底部
+  // 如果是正在聊天的，滚动到底部，同时更新已读时间
   if (msg.senderId === activeItem.value) {
     bus.emit('bottom')
+    socket.emit('save-read', [msg.receiverId, msg.senderId])
   }
 })
 
@@ -136,6 +137,7 @@ function updateAside([content, id, time]) {
 
 onBeforeUnmount(() => {
   bus.off('update-aside')
+  socket.off('receive-msg')
 })
 </script>
 

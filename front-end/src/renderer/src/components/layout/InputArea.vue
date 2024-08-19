@@ -9,32 +9,30 @@
       contenteditable="true"
       class="scroll-bar input"
       @input="handleInput"
-      @keydown.enter="handleKeyup"
+      @keydown.enter="handleKeyup(friend._id, $event)"
       @paste="handlePaste"
       @drop="handleDrop"
     />
     <Wave v-else class="wave" />
-    <Icon class="icon send" name="send" @click="sendMessage"></Icon>
+    <Icon class="icon send" name="send" @click="sendMessage(friend._id)"></Icon>
   </div>
 </template>
 
 <script lang="ts" setup>
 import emoji from '@r/assets/emoji'
-import { ref, onActivated } from 'vue'
+import { ref, inject } from 'vue'
 import Icon from '@r/components/form/Icon.vue'
 import Wave from '@r/components/form/Wave.vue'
 
+// 接收socket
+const socket = inject('socket')
 // 接受用户信息
-const { user, socket, friend } = defineProps({
+const { user } = defineProps({
   friend: {
     type: Object,
     default: () => ({})
   },
   user: {
-    type: Object,
-    default: () => ({})
-  },
-  socket: {
     type: Object,
     default: () => ({})
   }
@@ -47,13 +45,13 @@ const { user, socket, friend } = defineProps({
 // 当前要发送的消息
 const newMsg = ref('')
 // 通过websocket发送消息
-function sendMessage() {
+function sendMessage(friendId) {
   // 检查
   if (!checkMsg(newMsg.value)) return
   socket.emit('chat', {
     content: newMsg.value,
     senderId: user._id,
-    receiverId: friend._id
+    receiverId: friendId
   })
   newMsg.value = ''
   textarea.value.innerHTML = ''
@@ -68,11 +66,11 @@ function restoreHtmlEntities(html) {
 }
 
 // 输入框中按下回车
-function handleKeyup(e) {
+function handleKeyup(id, e) {
   // 如果没有同时按下shift键，则发送消息
   if (!e.shiftKey) {
     e.preventDefault()
-    sendMessage()
+    sendMessage(id)
   }
 }
 
@@ -164,36 +162,53 @@ function showEmoji() {
     shadow: false,
     close: false,
     modal: false,
-    height: 400,
-    width: 500,
+    height: 420,
+    width: 520,
     emoji: true
   })
+  // 聚焦textarea
+  textarea.value.focus()
 }
 // 接收表情
 function bindReceiveEmoji() {
-  if (window.api.receiveEmoji) {
+  if (window.api && window.api.receiveEmoji) {
     window.api.receiveEmoji((id) => {
       newMsg.value += `#[${id}]`
-      const imgTag = `<img src="${emoji.path}${emoji.map[id]}" alt="${id}" />`
-      textarea.value.innerHTML += imgTag
+      const imgTag = document.createElement('img')
+      imgTag.src = `${emoji.path}${emoji.map[id]}`
+      imgTag.alt = id
+
+      // 获取当前的光标位置
+      const selection = window.getSelection()
+      if (!selection || !selection.rangeCount) return
+
+      const range = selection.getRangeAt(0)
+      // 删除当前选中的内容
+      range.deleteContents()
+
+      // 插入图片节点
+      range.insertNode(imgTag)
+
+      // 更新 Range 对象，移动光标到图片之后
+      range.setStartAfter(imgTag)
+      range.setEndAfter(imgTag)
+
+      // 清空当前selection，并重新设置新的 range
+      selection.removeAllRanges()
+      selection.addRange(range)
+
+      // 聚焦textarea
       setTimeout(() => {
-        // 聚焦
         textarea.value.focus()
-        // 创建一个 Range 对象
-        const range = document.createRange()
-        // 选择 contenteditable 元素的文本内容
-        const selection = window.getSelection()
-        // 将 Range 对象的起始位置和结束位置设置到文本内容的末尾
-        range.selectNodeContents(textarea.value)
-        range.collapse(false)
-        // 将 Range 对象应用到当前的 Selection
-        selection.removeAllRanges()
-        selection.addRange(range)
       }, 0)
     })
   }
 }
 bindReceiveEmoji()
+// 聚焦textarea
+setTimeout(() => {
+  textarea.value.focus()
+}, 0)
 
 /**
  * 工具函数

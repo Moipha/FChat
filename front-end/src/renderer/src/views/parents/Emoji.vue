@@ -72,7 +72,7 @@ function getUrl(value) {
     margin-top: auto;
     display: flex;
     height: 80px;
-    background-color: var(--border);
+    background-color: var(--bg);
     box-shadow: inset 0 0px 2px var(--light-text);
 
     .option {

@@ -15,6 +15,9 @@
         </template>
       </span>
     </div>
+    <div class="read" :class="read ? 'already' : 'yet'">
+      {{ position === 'right' ? (read ? '已读' : '未读') : '' }}
+    </div>
   </div>
 </template>
 
@@ -38,6 +41,9 @@ defineProps({
   user: {
     type: Object,
     default: () => {}
+  },
+  read: {
+    type: Boolean
   }
 })
 
@@ -75,6 +81,21 @@ function parseMsg(msg) {
   padding: 10px 0;
   overflow: hidden;
   display: flex;
+
+  .read {
+    font-weight: bolder;
+    margin-right: 5px;
+    align-self: flex-end;
+    font-size: 14px;
+
+    &.already {
+      color: var(--primary);
+    }
+
+    &.yet {
+      color: var(--error);
+    }
+  }
 
   .msg-box {
     max-width: 60%;

@@ -18,10 +18,11 @@
           :position="msg.senderId === user._id ? 'right' : 'left'"
           :msg="msg.content"
           :user="msg.senderId === user._id ? user : friend"
+          :read="new Date(lastReadAt) > new Date(msg.createdTime)"
         />
       </div>
     </div>
-    <InputArea v-if="friend._id" :friend="friend" :user="user" :socket="socket" />
+    <InputArea :friend="friend" :user="user" />
   </section>
 </template>
 
@@ -190,16 +191,46 @@ async function load() {
   })
 }
 
+/**
+ * 已读未读
+ */
+
+// 初始化时更新已读回执
+function updateRead() {
+  socket.emit('save-read', [user.value._id, friend.value._id])
+
+  // 并绑定接收好友更新已读回执的通知
+  socket.on('read', (time) => {
+    lastReadAt.value = time
+  })
+}
+
+// 好友最后已读时间
+const lastReadAt = ref()
+
+// 获取最后已读时间
+async function getLastRead() {
+  const res = await request.get('/read', {
+    params: { friendId: friend.value._id }
+  })
+  if (res && res.code === 200) {
+    lastReadAt.value = res.data
+  }
+}
+
 // 从缓存队列中恢复时/载入时
 onActivated(async () => {
   await getFriend()
   load()
+  getLastRead()
   receiveMsg()
+  updateRead()
 })
 onDeactivated(() => {
   // 解绑事件
   socket.off('callback-msg')
   socket.off(friend.value._id)
+  socket.off('read')
 })
 </script>
 

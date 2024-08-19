@@ -5,7 +5,7 @@
       <Avatar class="avatar" :src="friend.avatar" shape="circle" :size="75" />
       <div class="detail">
         <span class="title">{{ friend.username }}</span>
-        <span class="subtitle">
+        <span class="subtitle dyh">
           <Icon class="email" name="email" />
           {{ friend.email }}
         </span>
@@ -157,6 +157,7 @@ const config = ref({})
         transition: color 0.2s;
         display: flex;
         align-items: center;
+        letter-spacing: 0.5px;
 
         .email {
           margin-right: 5px;

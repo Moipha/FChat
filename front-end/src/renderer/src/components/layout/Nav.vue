@@ -12,20 +12,18 @@
       <Status :value="user.status" />
     </div>
     <div class="options">
+      <div class="option"><Icon class="icon" name="nav-chats" /><span class="text">聊天</span></div>
       <div class="option">
-        <Icon class="icon" name="nav-chats" /><span class="text">Chats</span>
+        <Icon class="icon" name="nav-groups" /><span class="text">群组</span>
       </div>
       <div class="option">
-        <Icon class="icon" name="nav-groups" /><span class="text">Groups</span>
+        <Icon class="icon" name="nav-friends" /><span class="text">好友</span>
       </div>
       <div class="option">
-        <Icon class="icon" name="nav-friends" /><span class="text">Friends</span>
+        <Icon class="icon" name="nav-profile" /><span class="text">个人</span>
       </div>
       <div class="option">
-        <Icon class="icon" name="nav-profile" /><span class="text">Profile</span>
-      </div>
-      <div class="option">
-        <Icon class="icon" name="nav-settings" /><span class="text">Settings</span>
+        <Icon class="icon" name="nav-settings" /><span class="text">设置</span>
       </div>
     </div>
     <div class="version">FChat v1.0.0 ©Moipha</div>
@@ -116,10 +114,11 @@ onBeforeUnmount(() => {
       font-size: 20px;
       cursor: pointer;
       color: var(--text);
-
+      font-family: dyh;
+      font-weight: normal;
       .text {
-        width: 80px;
-        margin-left: 10px;
+        width: 40px;
+        margin-left: 12px;
       }
 
       &:hover {

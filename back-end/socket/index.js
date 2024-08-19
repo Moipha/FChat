@@ -5,6 +5,7 @@
 const socketIo = require('socket.io')
 const messageService = require('../services/MessageService')
 const userService = require('../services/UserService')
+const readService = require('../services/ReadService')
 
 // 创建一个Map来存储每个用户的socket实例
 const clientSockets = new Map()
@@ -46,9 +47,22 @@ module.exports = (server) => {
       }
     })
 
+    // 更新已读回执
+    socket.on('save-read', async ([userId, friendId]) => {
+      // 确定已读时间
+      const time = new Date()
+      // 更新回执
+      await readService.updateRead(userId, friendId, time)
+      // 如果朋友在线，通知其我已读
+      if (clientSockets.has(friendId)) {
+        clientSockets.get(friendId).emit('read', time)
+      }
+    })
+
+    // 断开连接
     socket.on('disconnect', async () => {
       console.log('用户断开连接...')
-      // 更改数据库中你的状态
+      // 更改数据库中你的状态   
       userService.updateStatus(uid, 'offline')
       // 告诉在线的好友你下线了
       const ids = await userService.getFriendIds(uid)
