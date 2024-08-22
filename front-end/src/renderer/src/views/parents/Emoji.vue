@@ -42,20 +42,20 @@ function getUrl(value) {
   flex-direction: column;
 
   .options {
-    padding: 10px 10px 0;
+    padding: 15px 15px 0;
     display: flex;
     flex-wrap: wrap;
     justify-content: start;
 
     .option {
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      width: 59px;
-      height: 59px;
+      width: 60px;
+      height: 60px;
       background-color: var(--bg);
       cursor: pointer;
+      border-radius: 5px;
 
       img {
         width: 32px;

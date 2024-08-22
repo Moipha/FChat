@@ -5,6 +5,6 @@ module.exports = {
   DB_HOST: '127.0.0.1',
   DB_PORT: '27017',
   DB_NAME: 'FChat',
-  SECRET_KEY: 'YangchunlvYanamiannaetd',
+  SECRET_KEY: '',
   CLIENT: 'http://localhost:5173'
 }
