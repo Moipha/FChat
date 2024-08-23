@@ -62,7 +62,10 @@ module.exports = (server) => {
     // 断开连接
     socket.on('disconnect', async () => {
       console.log('用户断开连接...')
-      // 更改数据库中你的状态   
+      // 更改数据库中你的状态
+      if (uid == '') {
+        return
+      }
       userService.updateStatus(uid, 'offline')
       // 告诉在线的好友你下线了
       const ids = await userService.getFriendIds(uid)

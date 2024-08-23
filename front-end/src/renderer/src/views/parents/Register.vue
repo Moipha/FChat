@@ -1,26 +1,153 @@
 <template>
-  <form class="otp-Form">
+  <div class="otp-Form">
     <span class="mainHeading">请输入验证码</span>
     <p class="otpSubheading">我们已向您的邮箱中发送了四位验证码，请注意查收</p>
     <div class="inputContainer">
-      <input id="otp-input1" required="required" maxlength="1" type="text" class="otp-input" />
-      <input id="otp-input2" required="required" maxlength="1" type="text" class="otp-input" />
-      <input id="otp-input3" required="required" maxlength="1" type="text" class="otp-input" />
-      <input id="otp-input4" required="required" maxlength="1" type="text" class="otp-input" />
+      <input
+        id="otp-input1"
+        ref="input1"
+        v-model="verifyCode[0]"
+        required="required"
+        maxlength="1"
+        type="text"
+        class="otp-input"
+        @input="handleInput1"
+      />
+      <input
+        id="otp-input2"
+        ref="input2"
+        v-model="verifyCode[1]"
+        required="required"
+        maxlength="1"
+        type="text"
+        class="otp-input"
+        @input="handleInput2"
+      />
+      <input
+        id="otp-input3"
+        ref="input3"
+        v-model="verifyCode[2]"
+        required="required"
+        maxlength="1"
+        type="text"
+        class="otp-input"
+        @input="handleInput3"
+      />
+      <input
+        id="otp-input4"
+        ref="input4"
+        v-model="verifyCode[3]"
+        required="required"
+        maxlength="1"
+        type="text"
+        class="otp-input"
+        @input="handleInput4"
+      />
     </div>
-    <FBtn class="verifyButton" label="验证" @click="verifyCode" />
-    <p class="resendNote">未收到验证码？<button class="resendBtn">重新发送</button></p>
-  </form>
+    <FBtn class="verifyButton" label="验证" @click="verify" />
+    <p class="resendNote">
+      未收到验证码？<button
+        :disabled="waitTime != 0"
+        :class="waitTime != 0 ? 'disabled' : ''"
+        class="resendBtn"
+        @click="resend"
+      >
+        重新发送
+        <span v-if="waitTime != 0"> {{ waitTime }}s</span>
+      </button>
+    </p>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import FBtn from '@r/components/form/FBtn.vue'
 import { useRouter } from 'vue-router'
+import { useSignStore } from '@r/stores/sign'
+import { storeToRefs } from 'pinia'
+import request from '@r/utils/request'
+import { ref } from 'vue'
+
+// 获取store中保存的新用户
+const { newUser, lastSendTime } = storeToRefs(useSignStore())
 const router = useRouter()
 
+// 验证码
+const verifyCode = ref([])
+
+// 剩余等待时间
+const waitTime = ref(0)
+
+// 每秒递减
+function calculateTime() {
+  if (lastSendTime.value) {
+    waitTime.value = 60 - parseInt((Date.now() - lastSendTime.value) / 1000)
+    setInterval(() => {
+      if (waitTime.value <= 0) return (waitTime.value = 0)
+      waitTime.value -= 1
+    }, 1000)
+  }
+}
+calculateTime()
+// 输入框
+const input1 = ref(null)
+const input2 = ref(null)
+const input3 = ref(null)
+const input4 = ref(null)
+
+// 输入框聚焦
+function handleInput1(e) {
+  if (e.inputType !== 'deleteContentBackward') {
+    input2.value.focus()
+  }
+}
+function handleInput2(e) {
+  if (e.inputType !== 'deleteContentBackward') {
+    input3.value.focus()
+  } else {
+    input1.value.focus()
+  }
+}
+function handleInput3(e) {
+  if (e.inputType !== 'deleteContentBackward') {
+    input4.value.focus()
+  } else {
+    input2.value.focus()
+  }
+}
+function handleInput4(e) {
+  if (e.inputType === 'deleteContentBackward') {
+    input3.value.focus()
+  }
+}
+
 // 检查验证码
-function verifyCode() {
-  router.push('/set-pass')
+async function verify() {
+  const email = newUser.value.email
+  const code = verifyCode.value.join('')
+  try {
+    const res = await request.post('/user/verify', { email, code })
+    if (res.code === 200) {
+      router.push('/set-pass')
+    } else {
+      alert('验证码错误')
+    }
+  } catch (err) {
+    alert('请求校验失败')
+    console.error(err)
+  }
+}
+
+// 重发验证码
+async function resend() {
+  try {
+    // 发送验证邮件
+    await request.post('/user/send-verify', { email: newUser.value.email })
+    // 更新发送时间
+    lastSendTime.value = Date.now()
+    calculateTime()
+  } catch (err) {
+    alert('发送验证码失败')
+  }
 }
 </script>
 
@@ -108,6 +235,11 @@ function verifyCode() {
     cursor: pointer;
     font-size: 1.1em;
     font-weight: 700;
+  }
+
+  .disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
   }
 }
 </style>

@@ -12,12 +12,31 @@
 import FBtn from '@r/components/form/FBtn.vue'
 import FInput from '@r/components/form/FInput.vue'
 import { ref } from 'vue'
+import { useSignStore } from '@r/stores/sign'
+import { storeToRefs } from 'pinia'
+import request from '@r/utils/request'
+import md5 from 'md5'
+
+const { newUser } = storeToRefs(useSignStore())
 // 用户
 const user = ref({})
 
 // 注册用户
 function signUp() {
-  window.api.closeDialog()
+  // 校验
+  if (user.value.password !== user.value.confirm) return alert('两次输入的口令不一致')
+  if (user.value.password.length < 6) return alert('口令长度需大于等于6位')
+  const { email } = newUser.value
+  // 注册
+  try {
+    const res = request.post('/user', { email, password: md5(user.value.password) })
+    if (res.code !== 200) {
+      alert('注册成功')
+      window.api.closeDialog()
+    }
+  } catch (err) {
+    console.error(err)
+  }
 }
 </script>
 
@@ -52,6 +71,7 @@ function signUp() {
     text-align: center;
     margin: 10px;
   }
+
   .passInput {
     width: 90%;
     margin: 3px;

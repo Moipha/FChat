@@ -99,6 +99,9 @@ async function updateStatus(userId, status) {
   if (['online', 'offline', 'away', 'busy'].indexOf(status) === -1) {
     throw new Error('状态错误')
   }
+  if (userId === '') {
+    throw new Error('ID为空')
+  }
   const user = await User.findById(userId)
   if (!user) {
     throw new Error('用户不存在')
@@ -110,7 +113,18 @@ async function updateStatus(userId, status) {
 // 获取指定用户的信息
 async function getUserById(id) {
   const user = await User.findById(id)
-  return imgPathFix(user)
+  if (user) {
+    return imgPathFix(user)
+  } else {
+    return null
+  }
+}
+
+// 根据邮箱查询用户
+async function getUserByEmail(email) {
+  const user = await User.findOne({ email })
+  if (user) return imgPathFix(user)
+  return null
 }
 
 module.exports = {
@@ -120,5 +134,6 @@ module.exports = {
   getFriendIds,
   getAsideMessages,
   updateStatus,
-  getUserById
+  getUserById,
+  getUserByEmail
 }

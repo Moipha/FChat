@@ -22,12 +22,13 @@ import request from '@r/utils/request'
 import md5 from 'md5'
 import { useUserStore } from '@r/stores/user'
 import { storeToRefs } from 'pinia'
+import { useSignStore } from '@r/stores/sign'
 
 // 获取store数据
 const { user, token } = storeToRefs(useUserStore())
+const { newUser, lastSendTime } = storeToRefs(useSignStore())
 
 const curUser = ref({ email: 'young@test.cn', password: '123123' }) // 用户信息
-const newUser = ref({}) // 新注册用户信息
 // 用户登录
 async function userLogin() {
   const { email, password } = curUser.value
@@ -64,12 +65,40 @@ function hideLogin() {
 }
 
 // 验证邮箱
-function verify() {
-  window.api.openDialog({
-    route: '/register',
-    width: 240,
-    height: 320
-  })
+async function verify() {
+  // 校验邮箱格式
+  const reg =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  const ok = reg.test(String(newUser.value.email).toLowerCase())
+  if (!ok) {
+    alert('邮箱格式有误')
+    return
+  }
+  // 检查邮箱是否已注册
+  const email = newUser.value.email
+  try {
+    const res = await request.get('/user/email', { params: { email } })
+    if (res.data) {
+      alert('该邮箱已被注册')
+    } else {
+      // 判断上次发送时间
+      if (Date.now() - lastSendTime.value < 60 * 1000) {
+        alert(`请等待 ${60 - parseInt((Date.now() - lastSendTime.value) / 1000)} 秒后再次发送`)
+        return
+      }
+      // 发送验证邮件
+      await request.post('/user/send-verify', { email })
+      lastSendTime.value = Date.now()
+      window.api.openDialog({
+        route: '/register',
+        width: 240,
+        height: 320
+      })
+    }
+  } catch (e) {
+    alert('验证码发送失败')
+    console.error(e)
+  }
 }
 </script>
 
