@@ -9,6 +9,6 @@ module.exports = {
   CLIENT: 'http://localhost:5173',
   MAIL_HOST: 'smtp.qq.com',
   MAIL_PORT: 465,
-  MAIL_USER: '3527137035@qq.com',
-  MAIL_PASS: 'vyqjjranrvlpchij'
+  MAIL_USER: '',
+  MAIL_PASS: ''
 }
