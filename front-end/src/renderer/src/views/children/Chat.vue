@@ -9,9 +9,9 @@
         <!-- 判断是否是同一天，不是则添加分隔条 -->
         <div
           v-if="index === 0 || needTime(messages[index - 1].createdTime, msg.createdTime)"
-          class="date-separator"
+          class="date-separator consolas"
         >
-          {{ timeFormat(msg.createdTime, true) }}
+          <span class="content">{{ timeFormat(msg.createdTime, true) }}</span>
         </div>
 
         <ChatMsg
@@ -239,6 +239,7 @@ section {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 60px);
+  filter: brightness(0.98);
 
   .msg-container {
     flex: 1;
@@ -249,9 +250,17 @@ section {
     .date-separator {
       text-align: center;
       margin: 10px 0;
-      font-family: Consolas;
-      color: var(--light-text);
-      font-size: 14px;
+
+      .content {
+        display: inline-block;
+        background-color: var(--border);
+        padding: 5px 15px;
+        border-radius: 20px;
+        color: var(--text);
+        font-size: 14px;
+        transition: all 0.2s ease;
+        filter: brightness(1.1);
+      }
     }
 
     .more {

@@ -1,5 +1,5 @@
 <template>
-  <div class="home">LOGO</div>
+  <div class="home dyh">LOGO</div>
 </template>
 
 <script lang="ts" setup></script>
@@ -12,5 +12,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 40px;
+  color: var(--text);
+  transition: all 0.2s;
 }
 </style>

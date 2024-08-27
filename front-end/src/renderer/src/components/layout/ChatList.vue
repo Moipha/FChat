@@ -23,7 +23,6 @@ import Avatar from '@r/components/form/Avatar.vue'
 import timeFormat from '@r/utils/timeFormat'
 import router from '@r/router'
 import request from '@r/utils/request'
-import { useRoute } from 'vue-router'
 import bus from '@r/utils/bus'
 import { useMsgStore } from '@r/stores/msg'
 import { storeToRefs } from 'pinia'
@@ -88,8 +87,10 @@ function selectChat(e) {
 // 记录生效的item
 const activeItem = ref(null)
 // 初始加载时从路由获取当前item
-const route = useRoute()
-activeItem.value = route.params.id
+setTimeout(() => {
+  activeItem.value = router.currentRoute.value.params.id
+}, 0)
+
 /**
  * 滚动条事件
  */

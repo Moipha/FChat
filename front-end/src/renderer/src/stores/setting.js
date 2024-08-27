@@ -4,10 +4,15 @@ import { ref } from 'vue'
 export const useSettingStore = defineStore(
   'setting',
   () => {
-    // 保存与每个好友的聊天记录
+    // 主题
     const theme = ref('light-theme')
 
-    return { theme }
+    // 导航栏 chat/friend/group
+    const nav = ref('chat')
+    // 二级路由
+    const routeMap = ref({})
+
+    return { theme, nav, routeMap }
   },
   {
     persist: {

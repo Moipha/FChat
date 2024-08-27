@@ -7,8 +7,10 @@ export const useUserStore = defineStore(
     // 保存用户信息和token
     const user = ref(null)
     const token = ref(null)
+    // 用户好友列表
+    const friends = ref([])
 
-    return { user, token }
+    return { user, token, friends }
   },
   {
     persist: {

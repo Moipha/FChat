@@ -39,7 +39,8 @@ async function loginUser(loginInfo) {
  */
 async function getFriends(userId) {
   const ids = await getFriendIds(userId)
-  return await User.find({ _id: { $in: ids } })
+  const friends = await User.find({ _id: { $in: ids } })
+  return imgPathFix(friends)
 }
 
 /**
@@ -67,7 +68,7 @@ async function getFriendIds(userId) {
 async function getAsideMessages(userId) {
   const friends = await getFriends(userId)
   const ans = []
-  for (const friend of imgPathFix(friends)) {
+  for (const friend of friends) {
     // 获取最后一条消息
     const msg = await Message.findOne({
       $or: [

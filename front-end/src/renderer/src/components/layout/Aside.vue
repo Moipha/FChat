@@ -6,7 +6,8 @@
       <SearchInput @keydown.enter="changeTheme" />
     </header>
     <Nav />
-    <ChatList />
+    <ChatList v-if="nav === 'chat'" />
+    <FriendList v-else-if="nav === 'friend'" />
   </aside>
 </template>
 
@@ -16,6 +17,7 @@ import SearchInput from '@r/components/form/SearchInput.vue'
 import Icon from '@r/components/form/Icon.vue'
 import Nav from '@r/components/layout/Nav.vue'
 import ChatList from '@r/components/layout/ChatList.vue'
+import FriendList from '@r/components/layout/FriendList.vue'
 import bus from '@r/utils/bus'
 import { useSettingStore } from '@r/stores/setting'
 import { storeToRefs } from 'pinia'
@@ -23,7 +25,7 @@ import { storeToRefs } from 'pinia'
 /**
  * 获取配置项
  */
-const { theme } = storeToRefs(useSettingStore())
+const { theme, nav } = storeToRefs(useSettingStore())
 
 /**
  * 拖拽动态修改aside的宽度
