@@ -3,11 +3,14 @@ const path = require('path')
 const { PORT } = require('./config')
 const db = require('./db')
 const socket = require('./socket')
+const cors = require('cors')
 
 // 启动数据库连接
 db(() => {
   // 创建服务器
   const app = express()
+  // 配置跨域
+  app.use(cors())
   // 配置静态资源路径
   app.use(express.static(path.join(__dirname, 'public')))
   // body处理中间件

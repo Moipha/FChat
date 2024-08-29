@@ -13,7 +13,8 @@ const router = createRouter({
           path: '/friend/:id',
           component: () => import('@r/views/children/Friend.vue'),
           props: true
-        }
+        },
+        { path: '/add-list', component: () => import('@r/views/children/AddList.vue') }
       ]
     },
     { path: '/login', component: () => import('@r/views/parents/Login.vue') },

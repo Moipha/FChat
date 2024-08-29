@@ -18,8 +18,11 @@ import Titlebar from '@r/components/layout/Titlebar.vue'
 import config from '@/config'
 import { io } from 'socket.io-client'
 import { useUserStore } from '@r/stores/user'
+import { useMsgStore } from '@r/stores/msg'
 import { storeToRefs } from 'pinia'
-import { provide } from 'vue'
+import { provide, onBeforeUnmount } from 'vue'
+import bus from '@r/utils/bus'
+import audio from '@r/assets/audio/ballon.wav'
 
 // 获取配置
 const { PROTOCOL, PORT, IP } = config
@@ -31,12 +34,43 @@ const socket = io(`${PROTOCOL}://${IP}:${PORT}`, {
     Authorization: token.value
   }
 })
+// 连接成功
 socket.on('connect', () => {
   console.log('连接到服务器')
   socket.emit('login', user.value._id)
 })
+
+// 接收消息
+socket.on('receive-msg', (msg) => {
+  // 获取消息Map
+  const { msgMap } = storeToRefs(useMsgStore())
+  // 更新对应的消息列表
+  if (msgMap.value[msg.senderId]) {
+    msgMap.value[msg.senderId].messages.push(msg)
+  } else {
+    msgMap.value[msg.senderId] = {
+      messages: [msg],
+      isLastPage: true,
+      nextId: msg._id
+    }
+  }
+  // 通知ChatList更新
+  bus.emit('receive-msg', msg)
+  // 播放提示音
+  const au = new Audio(audio)
+  au.play().catch((error) => {
+    console.error('提示音播放失败:', error)
+  })
+})
+
 // 注入socket
 provide('socket', socket)
+
+// 结束监听
+onBeforeUnmount(() => {
+  socket.off('connect')
+  socket.off('receive-msg')
+})
 </script>
 
 <style lang="scss" scoped>

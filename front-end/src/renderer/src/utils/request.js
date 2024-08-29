@@ -4,9 +4,12 @@
 import axios from 'axios'
 import { useUserStore } from '@r/stores/user'
 const { token } = useUserStore()
+import config from '@/config'
+const { PORT, IP } = config
 
 const request = axios.create({
-  baseURL: '/api',
+  // baseURL: '/api',
+  baseURL: `http://${IP}:${PORT}`,
   timeout: 1000 * 5,
   headers: {
     'Content-Type': 'application/json;charset=UTF-8'

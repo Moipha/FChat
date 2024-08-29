@@ -128,6 +128,26 @@ async function getUserByEmail(email) {
   return null
 }
 
+// 获取用户的好友申请信息
+async function getAddList(userId) {
+  const records = await Friendship.find({
+    $or: [{ userId }, { friendId: userId }]
+  })
+  // 将id替换成用户对象
+  const res = []
+  for (const record of records) {
+    // 判断当前用户是否是请求者
+    const isReq = record.userId == userId
+    // 浅拷贝
+    const temp = JSON.parse(JSON.stringify(record))
+    // 获取朋友的信息
+    const user = await User.findById(isReq ? record.friendId : record.userId)
+    temp[isReq ? 'friend' : 'user' ] = imgPathFix(user)
+    res.push(temp)
+  }
+  return res
+}
+
 module.exports = {
   registerUser,
   loginUser,
@@ -136,5 +156,6 @@ module.exports = {
   getAsideMessages,
   updateStatus,
   getUserById,
-  getUserByEmail
+  getUserByEmail,
+  getAddList
 }

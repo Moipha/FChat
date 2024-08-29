@@ -24,29 +24,16 @@ import timeFormat from '@r/utils/timeFormat'
 import router from '@r/router'
 import request from '@r/utils/request'
 import bus from '@r/utils/bus'
-import { useMsgStore } from '@r/stores/msg'
-import { storeToRefs } from 'pinia'
-
-// 获取消息Map
-const { msgMap } = storeToRefs(useMsgStore())
 
 /**
  * socket
  */
 const socket = inject('socket')
+
 // 接收到非当前好友的新消息，标记未读，更新最后消息
-socket.on('receive-msg', (msg) => {
+bus.on('receive-msg', (msg) => {
   updateAside([msg.content, msg.senderId, msg.createdTime])
-  // 更新对应的消息列表
-  if (msgMap.value[msg.senderId]) {
-    msgMap.value[msg.senderId].messages.push(msg)
-  } else {
-    msgMap.value[msg.senderId] = {
-      messages: [msg],
-      isLastPage: true,
-      nextId: msg._id
-    }
-  }
+
   // 如果是正在聊天的，滚动到底部，同时更新已读时间
   if (msg.senderId === activeItem.value) {
     bus.emit('bottom')
@@ -138,7 +125,7 @@ function updateAside([content, id, time]) {
 
 onBeforeUnmount(() => {
   bus.off('update-aside')
-  socket.off('receive-msg')
+  bus.off('receive-msg')
 })
 </script>
 

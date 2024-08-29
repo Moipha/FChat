@@ -2,7 +2,7 @@
   <div class="container">
     <div class="options scroll-bar">
       <div v-for="[key, value] in map" :key="key" class="option" @click="chooseEmoji(key)">
-        <img :src="getUrl(value)" :alt="key" />
+        <img :src="emoji.path + value" :alt="key" />
       </div>
     </div>
     <div class="nav">
@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import emoji from '@r/assets/emoji'
+import emoji from '@r/../public/emoji'
 import Icon from '@r/components/form/Icon.vue'
 
 const map = Object.entries(emoji.map)
@@ -25,9 +25,6 @@ const map = Object.entries(emoji.map)
 function chooseEmoji(key) {
   window.api.sendEmoji(key)
   window.api.closeDialog()
-}
-function getUrl(value) {
-  return emoji.path + value
 }
 </script>
 

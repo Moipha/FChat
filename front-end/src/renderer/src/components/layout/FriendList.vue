@@ -3,7 +3,12 @@
     <div class="about-add">
       <span class="text dyh">共 {{ friends.length }} 位好友</span>
       <Icon class="icon" name="add-friend" />
-      <Icon class="icon" name="log" />
+      <Icon
+        class="icon"
+        name="log"
+        :class="activeItem === 'list' ? 'active' : ''"
+        @click="toAddList"
+      />
     </div>
     <div class="list scroll-bar" @click="selectFriend">
       <div
@@ -36,7 +41,11 @@ const { friends } = storeToRefs(useUserStore())
 const activeItem = ref(null)
 // 初始加载时从路由获取当前item
 setTimeout(() => {
-  activeItem.value = router.currentRoute.value.params.id
+  if (router.currentRoute.value.path !== '/add-list') {
+    activeItem.value = router.currentRoute.value.params.id
+  } else {
+    activeItem.value = 'list'
+  }
 }, 0)
 
 // 打开对应的好友界面
@@ -56,6 +65,12 @@ function selectFriend(e) {
     // 跳转到对应路由
     router.push('/friend/' + key.value)
   }
+}
+
+// 跳转到申请列表
+function toAddList() {
+  activeItem.value = 'list'
+  router.push('/add-list')
 }
 
 // 获取好友列表
@@ -79,14 +94,18 @@ nav {
 
   .about-add {
     padding: 0 15px 10px;
+    border-bottom: 1px solid var(--border);
+    transition: border 0.2s;
+    -webkit-app-region: drag;
 
     .icon {
       float: right;
       margin-left: 10px;
-      font-size: 30px;
-      color: var(--light-text);
+      font-size: 25px;
+      color: var(--text);
       transition: all 0.2s ease;
       cursor: pointer;
+      -webkit-app-region: no-drag;
 
       &:hover {
         transform: scale(1.1);
@@ -95,9 +114,14 @@ nav {
     }
 
     .text {
-      line-height: 30px;
+      line-height: 25px;
       font-size: 18px;
       color: var(--text);
+    }
+
+    .active {
+      transform: scale(1.1);
+      color: var(--primary);
     }
   }
 

@@ -23,7 +23,7 @@
 
 <script lang="ts" setup>
 import Avatar from '@r/components/form/Avatar.vue'
-import emoji from '@r/assets/emoji'
+import emoji from '@r/../public/emoji'
 
 defineProps({
   position: {

@@ -3,7 +3,7 @@
  */
 
 export default {
-  path: '/src/assets/emoji/img/',
+  path: 'emoji/img/',
   map: {
     呵呵: '1f642.webp',
     哈哈: '1f603.webp',

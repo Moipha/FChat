@@ -167,4 +167,16 @@ router.post(
   }
 )
 
+// 获取该用户的所有好友申请信息
+router.get('/add-list', async(req, res)=>{
+  // 获取用户id
+  const userId = req.userId
+  const list = await userService.getAddList(userId)
+  res.json({
+    code: 200,
+    msg: '获取好友申请列表成功',
+    data: list
+  })
+})
+
 module.exports = router

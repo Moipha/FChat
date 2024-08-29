@@ -13,15 +13,15 @@ body #app {
 @font-face {
   font-family: 'dyh'; /* 自定义字体名称 */
   src:
-    url('@/public/fonts/SmileySans-Oblique.otf.woff2') format('woff2'),
-    url('@/public/fonts/SmileySans-Oblique.ttf.woff2') format('woff2');
+    url('@r/assets/fonts/SmileySans-Oblique.ttf.woff2') format('woff2'),
+    url('@r/assets/fonts/SmileySans-Oblique.otf.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
 }
-.dyh{
+.dyh {
   font-family: dyh;
 }
-.consolas{
+.consolas {
   font-family: 'Consolas' !important;
 }
 

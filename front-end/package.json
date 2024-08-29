@@ -12,15 +12,16 @@
     "dev": "electron-vite dev --watch",
     "build": "electron-vite build",
     "postinstall": "electron-builder install-app-deps",
-    "build:unpack": "npm run build && electron-builder --dir",
-    "build:win": "npm run build && electron-builder --win",
-    "build:mac": "npm run build && electron-builder --mac",
-    "build:linux": "npm run build && electron-builder --linux"
+    "build:unpack": "npm run build && electron-builder --config=electron-builder.config.js --dir",
+    "build:win": "npm run build && electron-builder --config=electron-builder.config.js --win",
+    "build:mac": "npm run build && electron-builder --config=electron-builder.config.js --mac",
+    "build:linux": "npm run build && electron-builder --config=electron-builder.config.js --linux"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
     "@mui/icons-material": "^5.16.4",
+    "asar": "^3.2.0",
     "axios": "^1.7.2",
     "electron-updater": "^6.1.7",
     "md5": "^2.3.0",

@@ -20,7 +20,7 @@ function createWindow({
   process.env.ROOT = join(__dirname, '../../')
   const winURL = is.dev
     ? process.env.ELECTRON_RENDERER_URL
-    : join(process.env.ROOT, 'dist/index.html')
+    : `file://${join(__dirname, '../renderer/index.html')}`
 
   // Create the browser window.
   const win = new BrowserWindow({
@@ -60,17 +60,18 @@ function createWindow({
 
   // 加载页面
   let $url
-  if (!route) {
-    if (is.dev && process.env.ELECTRON_RENDERER_URL) {
-      $url = process.env.ELECTRON_RENDERER_URL
-    } else {
-      $url = winURL
-    }
+  if (is.dev && process.env.ELECTRON_RENDERER_URL) {
+    $url = route
+      ? `${process.env.ELECTRON_RENDERER_URL}#${route}`
+      : process.env.ELECTRON_RENDERER_URL
   } else {
-    $url = `${winURL}#${route}`
+    $url = route ? `${winURL}#${route}` : winURL
   }
   win.loadURL($url)
-
+  // 打包环境中打开开发者工具
+  if (!is.dev) {
+    win.webContents.openDevTools()
+  }
   // 关闭当前页面，打开新的页面
   ipcMain.on('open-new', (event, settings) => {
     const browserWindow = BrowserWindow.fromWebContents(event.sender)
@@ -142,6 +143,7 @@ function createModalWin(
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     },
+
     titleBarStyle: 'hidden',
     titleBarOverlay: close
       ? {
@@ -166,18 +168,16 @@ function createModalWin(
   process.env.ROOT = join(__dirname, '../../')
   const winURL = is.dev
     ? process.env.ELECTRON_RENDERER_URL
-    : join(process.env.ROOT, 'dist/index.html')
+    : `file://${join(__dirname, '../renderer/index.html')}`
 
   // 加载页面
   let $url
-  if (!route) {
-    if (is.dev && process.env.ELECTRON_RENDERER_URL) {
-      $url = process.env.ELECTRON_RENDERER_URL
-    } else {
-      $url = winURL
-    }
+  if (is.dev && process.env.ELECTRON_RENDERER_URL) {
+    $url = route
+      ? `${process.env.ELECTRON_RENDERER_URL}#${route}`
+      : process.env.ELECTRON_RENDERER_URL
   } else {
-    $url = `${winURL}#${route}`
+    $url = route ? `${winURL}#${route}` : winURL
   }
   win.loadURL($url)
 

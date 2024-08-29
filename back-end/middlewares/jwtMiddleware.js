@@ -4,6 +4,7 @@
 module.exports = (req, res, next) => {
   // 如果是放行的路径和方法，则直接放行
   if (req.method === 'POST' && (req.path === '/user/login' || req.path === '/user') || req.path === '/images') {
+    console.log('!')
     return next()
   }
 
