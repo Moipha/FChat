@@ -1,8 +1,9 @@
-// FriendshipRouter.js
 const express = require('express')
 const { body } = require('express-validator')
 const argsCheck = require('../utils/argsCheck')
 const friendshipService = require('../services/FriendshipService')
+const Result = require('../class/Result')
+
 const router = express.Router()
 
 // 新建好友关系申请
@@ -12,9 +13,9 @@ router.post('/', [body('friendId').isMongoId().withMessage('目标ID不能为空
   const { friendId } = req.body
   try {
     const result = await friendshipService.createFriendship(userId, friendId)
-    res.json(result)
+    res.json(Result.success(result))
   } catch (error) {
-    res.status(403).json({ code: 403, msg: error.message, data: null })
+    res.status(403).json(Result.error(403, error.message))
   }
 })
 
@@ -32,9 +33,9 @@ router.put(
     const { status, _id } = req.body
     try {
       const result = await friendshipService.updateFriendshipStatus(_id, status)
-      res.json(result)
+      res.json(Result.success(result))
     } catch (error) {
-      res.status(404).json({ code: 404, msg: error.message, data: null })
+      res.status(404).json(Result.error(404, error.message))
     }
   }
 )

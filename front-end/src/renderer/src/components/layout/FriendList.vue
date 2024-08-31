@@ -117,6 +117,7 @@ nav {
       line-height: 25px;
       font-size: 18px;
       color: var(--text);
+      transition: all 0.2s ease;
     }
 
     .active {

@@ -2,6 +2,7 @@ const express = require('express')
 const { body, query } = require('express-validator')
 const argsCheck = require('../utils/argsCheck')
 const readService = require('../services/ReadService')
+const Result = require('../class/Result')
 
 const router = express.Router()
 
@@ -19,11 +20,7 @@ router.post(
     const userId = req.userId
     // 更新或新建已读回执
     await readService.updateRead(userId, friendId, time)
-    res.status(200).json({
-      code: 200,
-      msg: '操作成功',
-      data: null
-    })
+    res.status(200).json(Result.success(null, '操作成功'))
   }
 )
 
@@ -35,17 +32,9 @@ router.get('/', [query('friendId').isMongoId().withMessage('传入ID不合法')]
     const { friendId } = req.query
     const userId = req.userId
     const time = await readService.getLastReadAt(friendId, userId)
-    res.json({
-      code: 200,
-      msg: '时间获取成功',
-      data: time
-    })
+    res.json(Result.success(time, '时间获取成功'))
   } catch (e) {
-    res.json({
-      code: 400,
-      msg: '传入参数有误',
-      data: e.message
-    })
+    res.json(Result.error(400, '传入参数有误', e.message))
   }
 })
 

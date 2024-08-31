@@ -2,6 +2,7 @@ const express = require('express')
 const { body, query } = require('express-validator')
 const argsCheck = require('../utils/argsCheck')
 const messageService = require('../services/MessageService')
+const Result = require('../class/Result')
 
 const router = express.Router()
 
@@ -11,11 +12,7 @@ router.post('/', [body('content').notEmpty().withMessage('消息内容不能为�
   const { content, receiverId } = req.body
   const senderId = req.userId
   const message = await messageService.createMessage(content, senderId, receiverId)
-  res.json({
-    code: 200,
-    msg: '消息保存成功',
-    data: message._id
-  })
+  res.json(Result.success(message._id, '消息保存成功'))
 })
 
 // 获取当前用户与目标用户之间的分页消息
@@ -23,7 +20,7 @@ router.get(
   '/both',
   [
     query('friendId').isMongoId().withMessage('用户ID不合法'),
-    query('limit').isInt.apply(null, { min: 1 }).withMessage('pageSize不合法')
+    query('limit').isInt({ min: 1 }).withMessage('pageSize不合法')
   ],
   async (req, res) => {
     if (!argsCheck(req, res)) return
@@ -34,11 +31,7 @@ router.get(
     const nextId = req.query.nextId
     // 获取指定页的数据
     const data = await messageService.getMsgPage(userId, friendId, limit, nextId)
-    res.json({
-      code: 200,
-      msg: '消息获取成功',
-      data
-    })
+    res.json(Result.success(data, '消息获取成功'))
   }
 )
 

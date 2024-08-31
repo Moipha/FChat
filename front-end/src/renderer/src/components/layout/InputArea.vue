@@ -164,7 +164,8 @@ function showEmoji() {
     modal: false,
     height: 420,
     width: 520,
-    emoji: true
+    closeOnBlur: true,
+    closeButton: false
   })
   // 聚焦textarea
   textarea.value.focus()

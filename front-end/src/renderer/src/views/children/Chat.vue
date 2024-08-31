@@ -148,7 +148,7 @@ async function getFriend() {
 // 监听好友状态
 function watchFriend() {
   socket.on(friend.value._id, (status) => {
-    console.log('朋友状态变了！', status)
+    console.log(friend.value.username, '朋友状态变了！', status)
     friend.value.status = status
   })
 }

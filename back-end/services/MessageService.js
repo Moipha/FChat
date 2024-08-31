@@ -23,12 +23,20 @@ async function getMsgPage(userId, friendId, limit, lastId) {
     { senderId: friendId, receiverId: userId }
   ]
   // 查询数据
-  const messages = (await Message.find(query).limit(limit).sort({ createdTime: -1 }).lean()).reverse()
+  const messages = (
+    await Message.find(query).limit(limit).sort({ createdTime: -1 }).lean()
+  ).reverse()
+  
   // 判断是否是最后一页
-  const isLastPage = messages.length < limit || lastId === null
-  // 返回结果和lastId
+  const isLastPage = messages.length < limit
   const nextId = messages.length ? messages[0]._id : null
-  return {messages, nextId, isLastPage}
+
+  // 如果没有 nextId，或者没有 lastId 并且查到的消息不足 limit，说明是最后一页
+  if (!nextId || (lastId === undefined && messages.length < limit)) {
+    isLastPage = true
+  }
+
+  return { messages, nextId, isLastPage }
 }
 
 // 获取分页总页数

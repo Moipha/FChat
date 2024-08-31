@@ -40,6 +40,9 @@ socket.on('connect', () => {
   socket.emit('login', user.value._id)
 })
 
+// 加载提示音
+const au = new Audio(audio)
+
 // 接收消息
 socket.on('receive-msg', (msg) => {
   // 获取消息Map
@@ -57,7 +60,6 @@ socket.on('receive-msg', (msg) => {
   // 通知ChatList更新
   bus.emit('receive-msg', msg)
   // 播放提示音
-  const au = new Audio(audio)
   au.play().catch((error) => {
     console.error('提示音播放失败:', error)
   })
