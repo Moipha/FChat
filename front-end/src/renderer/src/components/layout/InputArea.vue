@@ -159,8 +159,6 @@ function changeMsgMode() {
 function showEmoji() {
   window.api.openDialog({
     route: '/emoji',
-    shadow: false,
-    close: false,
     modal: false,
     height: 420,
     width: 520,

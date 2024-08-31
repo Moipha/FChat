@@ -117,7 +117,7 @@ router.post(
     try {
       // 校验
       const result = verifyUtil.verifyCode(email, code)
-      res.json(Result.success(null, result ? '验证成功' : '验证码错误'))
+      res.json(result ? Result.success(null, '验证成功') : Result.error(400, '验证码错误'))
     } catch (err) {
       console.error(err)
     }

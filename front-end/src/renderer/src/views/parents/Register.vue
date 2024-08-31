@@ -165,7 +165,6 @@ async function resend() {
   gap: 20px;
   position: relative;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
-  border-radius: 15px;
   -webkit-app-region: drag;
 
   .mainHeading {

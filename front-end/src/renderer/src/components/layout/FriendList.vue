@@ -2,7 +2,7 @@
   <nav>
     <div class="about-add">
       <span class="text dyh">共 {{ friends.length }} 位好友</span>
-      <Icon class="icon" name="add-friend" />
+      <Icon class="icon" name="add-friend" @click="openAdd" />
       <Icon
         class="icon"
         name="log"
@@ -71,6 +71,18 @@ function selectFriend(e) {
 function toAddList() {
   activeItem.value = 'list'
   router.push('/add-list')
+}
+
+// 打开添加好友界面
+function openAdd() {
+  window.api.openDialog({
+    route: '/add-friend',
+    width: 500,
+    height: 400,
+    modal: false,
+    frame: true,
+    closeButton: false
+  })
 }
 
 // 获取好友列表

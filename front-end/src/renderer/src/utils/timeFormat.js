@@ -23,15 +23,15 @@ export default function timeFormat(time, strict = false) {
 
   // 获取一周中的第几天
   function getDayOfWeek(dayNum) {
-    const days = ['', '周一', '周二', '周三', '周四', '周五', '周六', '周日']
+    const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
     return days[dayNum]
   }
 
-  // 格式化日期为 YY/MM/DD
-  function formatDateAsYYMMDD(date) {
-    const year = String(date.getFullYear()).slice(-2)
-    const month = String(date.getMonth() + 1)
-    const day = String(date.getDate())
+  // 格式化日期为 YYYY/MM/DD
+  function formatDateAsYYYYMMDD(date) {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
     return `${year}/${month}/${day}`
   }
 
@@ -43,15 +43,15 @@ export default function timeFormat(time, strict = false) {
     // 2. 昨天的时间
     return '昨天 ' + (strict ? formatTimeAs12Hour(inputDate) : '')
   } else {
-    // 将周日由0处理为7
-    const curDay = now.getDay() || 7
-    const inputDay = inputDate.getDay() || 7
-    if (inputDay < curDay) {
+    // 计算本周开始的日期
+    const startOfWeek = new Date(now)
+    startOfWeek.setDate(now.getDate() - now.getDay() + 1) // 本周的第一天（周一）
+    if (inputDate >= startOfWeek && getDaysDiff(now, inputDate) < 7) {
       // 3. 本周的时间
-      return getDayOfWeek(inputDay) + ' ' + (strict ? formatTimeAs12Hour(inputDate) : '')
+      return getDayOfWeek(inputDate.getDay()) + ' ' + (strict ? formatTimeAs12Hour(inputDate) : '')
     } else {
       // 4. 非本周的时间
-      return formatDateAsYYMMDD(inputDate) + ' ' + (strict ? formatTimeAs12Hour(inputDate) : '')
+      return formatDateAsYYYYMMDD(inputDate) + ' ' + (strict ? formatTimeAs12Hour(inputDate) : '')
     }
   }
 }

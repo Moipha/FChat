@@ -15,12 +15,11 @@ ipcMain.on('open-new', (event, settings) => {
   createBrowserWindow(settings)
 })
 
-// 打开模态窗口
+// 打开窗口
 ipcMain.on('open-dialog', (event, settings) => {
   createBrowserWindow({
     ...settings,
     parent: BrowserWindow.fromWebContents(event.sender),
-    modal: true,
     resizable: false,
     maximizable: false,
     minimizable: false
@@ -53,12 +52,13 @@ ipcMain.on('close-window', (event) => {
   }
 })
 
+// 创建新窗口
 function createBrowserWindow({
   route,
   width = 900,
   height = 600,
-  minWidth = 600,
-  minHeight = 500,
+  minWidth = 0,
+  minHeight = 0,
   resizable = true,
   maximizable = true,
   minimizable = true,
@@ -66,7 +66,6 @@ function createBrowserWindow({
   barColor = '#000',
   frame = false,
   parent = null,
-  shadow = false,
   modal = false,
   closeOnBlur = false,
   closeButton = true
@@ -91,7 +90,6 @@ function createBrowserWindow({
     autoHideMenuBar: true,
     parent,
     modal,
-    hasShadow: shadow,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -161,8 +159,6 @@ function createMainWindow() {
   createBrowserWindow({
     height: 500,
     width: 360,
-    minHeight: 0,
-    minWidth: 0,
     route: '/login',
     resizable: false,
     maximizable: false,

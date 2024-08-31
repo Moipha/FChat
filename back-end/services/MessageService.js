@@ -28,7 +28,7 @@ async function getMsgPage(userId, friendId, limit, lastId) {
   ).reverse()
   
   // 判断是否是最后一页
-  const isLastPage = messages.length < limit
+  let isLastPage = messages.length < limit
   const nextId = messages.length ? messages[0]._id : null
 
   // 如果没有 nextId，或者没有 lastId 并且查到的消息不足 limit，说明是最后一页

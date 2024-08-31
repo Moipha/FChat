@@ -43,7 +43,9 @@ async function userLogin() {
       // 打开主界面窗口
       window.api.openNewWindow({
         height: 600,
-        width: 900
+        width: 900,
+        minWidth: 600,
+        minHeight: 500
       })
     }
   } catch (err) {
@@ -92,7 +94,10 @@ async function verify() {
       window.api.openDialog({
         route: '/register',
         width: 240,
-        height: 320
+        height: 320,
+        modal: true,
+        frame: true,
+        barHeight: 40
       })
     }
   } catch (e) {
