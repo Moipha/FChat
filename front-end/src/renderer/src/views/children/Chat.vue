@@ -31,7 +31,7 @@ import Header from '@r/components/layout/Header.vue'
 import ChatMsg from '@r/components/form/ChatMsg.vue'
 import Friend from '@r/components/layout/Friend.vue'
 import InputArea from '@r/components/layout/InputArea.vue'
-import { ref, nextTick, inject, onDeactivated, onActivated, onUnmounted } from 'vue'
+import { ref, nextTick, inject, onDeactivated, onActivated } from 'vue'
 import request from '@r/utils/request'
 import { useUserStore } from '@r/stores/user'
 import { useMsgStore } from '@r/stores/msg'
@@ -77,15 +77,15 @@ function scrollToBottom(smooth) {
   }
 }
 
-// 滚动到底部事件
-bus.on('bottom', () => {
-  nextTick(() => {
-    scrollToBottom(true)
+// 绑定bus事件
+function bindBusEvent() {
+  // 滚动到底部事件
+  bus.on('bottom', () => {
+    nextTick(() => {
+      scrollToBottom(true)
+    })
   })
-})
-onUnmounted(() => {
-  bus.off('bottom')
-})
+}
 // 滚动到顶端，进行分页数据获取
 function handleScroll() {
   // 不是最后一页时才获取
@@ -225,12 +225,14 @@ onActivated(async () => {
   getLastRead()
   receiveMsg()
   updateRead()
+  bindBusEvent()
 })
 onDeactivated(() => {
   // 解绑事件
   socket.off('callback-msg')
   socket.off(friend.value._id)
   socket.off('read')
+  bus.off('bottom')
 })
 </script>
 
@@ -244,7 +246,7 @@ section {
   .msg-container {
     flex: 1;
     background-color: var(--bg);
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     position: relative;
 
     .date-separator {

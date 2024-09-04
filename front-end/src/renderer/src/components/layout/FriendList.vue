@@ -77,11 +77,10 @@ function toAddList() {
 function openAdd() {
   window.api.openDialog({
     route: '/add-friend',
-    width: 500,
-    height: 400,
-    modal: false,
-    frame: true,
-    closeButton: false
+    width: 600,
+    height: 500,
+    parent: null,
+    title: '添加好友'
   })
 }
 

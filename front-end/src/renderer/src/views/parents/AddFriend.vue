@@ -1,12 +1,31 @@
 <template>
   <div class="main">
-    <div class="title dyh">查找新朋友</div>
-    <div class="input-container">
-      <Search v-model="keyword" placeholder="请输入邮箱或用户名" />
+    <div class="block" :class="{ hide: !hide }">
+      <div class="title dyh">查找新朋友</div>
+      <Search
+        v-model="keyword"
+        v-model:hide="hide"
+        placeholder="请输入邮箱或用户名以进行搜索"
+        @input="searchDebounce"
+      />
     </div>
-    <nav class="list">
-      <div class="item"></div>
-    </nav>
+    <div class="list scroll-bar" :style="{ marginTop: hide ? '0' : '-40px' }">
+      <div v-for="user in list" :key="user._id">
+        <div class="item">
+          <Avatar :src="user.avatar" shape="circle" :size="50" />
+          <div class="info">
+            <span class="title">{{ user.username }}</span>
+            <span class="subtitle dyh">{{ user.email }}</span>
+          </div>
+          <span v-if="ids.includes(user._id)" class="text">已添加</span>
+          <span v-else-if="curUser._id == user._id" class="text">我</span>
+          <div v-else class="icon-container" @click="openAddInfo(user)">
+            <Icon class="icon" name="add-friend" />
+          </div>
+        </div>
+        <hr />
+      </div>
+    </div>
   </div>
   <nav>
     <Icon class="icon exit" name="close" @click="close" />
@@ -16,13 +35,54 @@
 <script lang="ts" setup>
 import Search from '@r/components/form/Search.vue'
 import Icon from '@r/components/form/Icon.vue'
+import Avatar from '@r/components/form/Avatar.vue'
 import { ref } from 'vue'
+import request from '@r/utils/request'
+import debounce from '@r/utils/debounce'
+import { useUserStore } from '@r/stores/user'
+import { storeToRefs } from 'pinia'
 
+// 获取当前用户好友列表
+const { user: curUser, friends } = storeToRefs(useUserStore())
+const ids = friends.value.map((item) => item._id)
+
+// 搜索关键词
 const keyword = ref('')
+// 隐藏搜索框
+const hide = ref(true)
+
+// 发请求进行搜索
+async function search() {
+  const kw = keyword.value
+  // 搜索词为空时不请求
+  if (kw !== '') {
+    const res = await request.get('/user/search', { params: { keyword: keyword.value } })
+    if (res && res.code === 200) {
+      list.value = res.data
+    }
+  } else {
+    list.value = []
+  }
+}
+// 应用防抖函数
+const searchDebounce = debounce(search, 500)
+
+// 用户列表
+const list = ref([])
 
 // 关闭窗口
 function close() {
   window.api.closeWindow()
+}
+
+// 打开添加好友窗口
+function openAddInfo(user) {
+  window.api.openDialog({
+    height: 300,
+    width: 400,
+    route: `/add-info/${user._id}/${user.username}`,
+    closeOnBlur: true
+  })
 }
 </script>
 
@@ -33,25 +93,92 @@ function close() {
   background-color: var(--bg);
   color: var(--text);
   -webkit-app-region: drag;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 20px;
 
-  .title {
-    font-size: 30px;
-    text-align: center;
-    margin-bottom: 10px;
-    margin-top: -40px;
-  }
+  .block {
+    height: 100%;
+    transition: 0.5s all ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+    z-index: 2;
 
-  .input-container {
+    .title {
+      font-size: 25px;
+      text-align: center;
+    }
   }
 
   .list {
+    position: relative;
+    z-index: 2;
+    height: 64%;
+    -webkit-app-region: no-drag;
+    padding-top: 40px;
+
     .item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .info {
+        margin: 0 20px;
+        display: flex;
+        flex-direction: column;
+        width: 60%;
+
+        .title {
+          font-size: 16px;
+          font-weight: bold;
+          color: var(--text);
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+
+        .subtitle {
+          font-size: 14px;
+          color: var(--light-text);
+        }
+      }
+
+      .icon-container {
+        width: 42px;
+        display: flex;
+        justify-content: center;
+
+        .icon {
+          font-size: 25px;
+          color: var(--light-text);
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover {
+            color: var(--primary);
+            transform: scale(1.1);
+          }
+        }
+      }
+
+      .text {
+        text-align: center;
+        font-size: 14px;
+        width: 42px;
+        font-weight: bold;
+        color: var(--light-text);
+      }
     }
+
+    hr {
+      margin: 10px 50px;
+      border: 1px solid var(--border);
+    }
+  }
+
+  .hide {
+    height: 36%;
   }
 }
 
@@ -79,7 +206,7 @@ nav {
 
   .exit:hover {
     background-color: var(--error);
-    color: white;
+    color: var(--btn-text);
   }
 }
 </style>

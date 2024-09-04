@@ -73,10 +73,14 @@ function selectChat(e) {
 }
 // 记录生效的item
 const activeItem = ref(null)
+
 // 初始加载时从路由获取当前item
-setTimeout(() => {
-  activeItem.value = router.currentRoute.value.params.id
-}, 0)
+onMounted(() => {
+  setTimeout(() => {
+    activeItem.value = router.currentRoute.value.params.id
+    console.log(activeItem.value)
+  }, 0)
+})
 
 /**
  * 滚动条事件

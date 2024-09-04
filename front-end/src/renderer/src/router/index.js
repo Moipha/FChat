@@ -21,7 +21,12 @@ const router = createRouter({
     { path: '/register', component: () => import('@r/views/parents/Register.vue') },
     { path: '/set-pass', component: () => import('@r/views/parents/SetPass.vue') },
     { path: '/emoji', component: () => import('@r/views/parents/Emoji.vue') },
-    { path: '/add-friend', component: () => import('@r/views/parents/AddFriend.vue') }
+    { path: '/add-friend', component: () => import('@r/views/parents/AddFriend.vue') },
+    {
+      path: '/add-info/:id/:username',
+      component: () => import('@r/views/parents/AddInfo.vue'),
+      props: true
+    }
   ]
 })
 

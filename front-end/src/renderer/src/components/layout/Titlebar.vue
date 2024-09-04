@@ -53,7 +53,7 @@ nav {
   }
   .exit:hover {
     background-color: var(--error);
-    color: white;
+    color: var(--btn-text);
   }
 }
 </style>

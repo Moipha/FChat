@@ -125,11 +125,23 @@ router.post(
 )
 
 // 获取该用户的所有好友申请信息
-router.get('/add-list', async(req, res)=>{
+router.get('/add-list', async (req, res) => {
   // 获取用户id
   const userId = req.userId
   const list = await userService.getAddList(userId)
   res.json(Result.success(list, '获取好友申请列表成功'))
 })
+
+// 根据关键词搜索对应邮箱或用户名的用户
+router.get(
+  '/search',
+  [query('keyword').notEmpty().withMessage('搜索关键词不可为空')],
+  async (req, res) => {
+    if (!argsCheck(req, res)) return
+    const keyword = req.query.keyword
+    const list = await userService.search(keyword)
+    res.json(Result.success(list, '查询用户列表成功'))
+  }
+)
 
 module.exports = router

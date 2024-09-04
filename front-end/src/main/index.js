@@ -18,11 +18,11 @@ ipcMain.on('open-new', (event, settings) => {
 // 打开窗口
 ipcMain.on('open-dialog', (event, settings) => {
   createBrowserWindow({
-    ...settings,
     parent: BrowserWindow.fromWebContents(event.sender),
     resizable: false,
     maximizable: false,
-    minimizable: false
+    minimizable: false,
+    ...settings
   })
 })
 
@@ -52,6 +52,18 @@ ipcMain.on('close-window', (event) => {
   }
 })
 
+ipcMain.on('close-dialog', (event) => {
+  const browserWindow = BrowserWindow.fromWebContents(event.sender)
+  if (browserWindow) {
+    browserWindow.close()
+  }
+})
+
+ipcMain.on('send-emoji', (event, id) => {
+  const browserWindow = BrowserWindow.fromWebContents(event.sender).getParentWindow()
+  browserWindow.webContents.send('receive-emoji', id)
+})
+
 // 创建新窗口
 function createBrowserWindow({
   route,
@@ -62,13 +74,13 @@ function createBrowserWindow({
   resizable = true,
   maximizable = true,
   minimizable = true,
-  barHeight = 20,
-  barColor = '#000',
   frame = false,
   parent = null,
   modal = false,
   closeOnBlur = false,
-  closeButton = true
+  title = 'FChat',
+  show = false,
+  skipTaskbar = false
 }) {
   // 配置路径
   process.env.ROOT = join(__dirname, '../../')
@@ -86,24 +98,18 @@ function createBrowserWindow({
     resizable,
     maximizable,
     minimizable,
-    show: false,
+    show,
     autoHideMenuBar: true,
     parent,
     modal,
+    title,
+    frame,
+    skipTaskbar,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
-    },
-    frame,
-    titleBarStyle: frame ? 'hidden' : 'default',
-    titleBarOverlay: closeButton
-      ? {
-          color: '#00000000',
-          symbolColor: barColor,
-          height: barHeight
-        }
-      : null
+    }
   })
 
   // 页面加载完成
@@ -128,29 +134,11 @@ function createBrowserWindow({
     win.webContents.send('unmaximized')
   })
 
-  // 表情窗口特殊处理
-  if (route && route === '/emoji') {
-    // 发送表情
-    const sendEmojiFunc = (event, id) => {
-      parent.webContents.send('receive-emoji', id)
-    }
-
-    ipcMain.on('close-dialog', (event) => {
-      const browserWindow = BrowserWindow.fromWebContents(event.sender)
-      if (browserWindow) {
-        ipcMain.removeListener('send-emoji', sendEmojiFunc)
-        browserWindow.close()
-      }
+  // 失焦时关闭窗口
+  if (closeOnBlur) {
+    win.on('blur', () => {
+      win.close()
     })
-
-    ipcMain.on('send-emoji', sendEmojiFunc)
-
-    if (closeOnBlur && !closeButton) {
-      win.on('blur', () => {
-        ipcMain.removeListener('send-emoji', sendEmojiFunc)
-        win.close()
-      })
-    }
   }
 }
 
@@ -163,8 +151,6 @@ function createMainWindow() {
     resizable: false,
     maximizable: false,
     minimizable: false,
-    barHeight: 40,
-    barColor: '#fff',
     frame: true
   })
 }

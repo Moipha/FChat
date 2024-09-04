@@ -142,10 +142,19 @@ async function getAddList(userId) {
     const temp = JSON.parse(JSON.stringify(record))
     // 获取朋友的信息
     const user = await User.findById(isReq ? record.friendId : record.userId)
-    temp[isReq ? 'friend' : 'user' ] = imgPathFix(user)
+    temp[isReq ? 'friend' : 'user'] = imgPathFix(user)
     res.push(temp)
   }
   return res
+}
+
+// 根据邮箱或用户名获取用户
+async function search(keyword) {
+  const regex = new RegExp(keyword, 'i')
+  const result = await User.find({
+    $or: [{ email: regex }, { username: regex }]
+  })
+  return imgPathFix(result)
 }
 
 module.exports = {
@@ -157,5 +166,6 @@ module.exports = {
   updateStatus,
   getUserById,
   getUserByEmail,
-  getAddList
+  getAddList,
+  search
 }

@@ -2,7 +2,7 @@
   <main>
     <div class="register">
       <div ref="signH1" class="secondary-title" @click="hideLogin">Sign up</div>
-      <FInput v-model="newUser.email" label="邮箱" reverse-color />
+      <FInput v-model="mail" label="邮箱" reverse-color />
       <FBtn class="btn" label="前往验证" @click="verify" />
     </div>
     <div ref="login" class="login">
@@ -66,20 +66,22 @@ function hideLogin() {
   loginH1.value.classList.toggle('scale-text')
 }
 
+// 输入框中的邮箱
+const mail = ref('')
+
 // 验证邮箱
 async function verify() {
   // 校验邮箱格式
   const reg =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  const ok = reg.test(String(newUser.value.email).toLowerCase())
+  const ok = reg.test(String(mail.value).toLowerCase())
   if (!ok) {
     alert('邮箱格式有误')
     return
   }
   // 检查邮箱是否已注册
-  const email = newUser.value.email
   try {
-    const res = await request.get('/user/email', { params: { email } })
+    const res = await request.get('/user/email', { params: { email: mail.value } })
     if (res.data) {
       alert('该邮箱已被注册')
     } else {
@@ -89,15 +91,18 @@ async function verify() {
         return
       }
       // 发送验证邮件
-      await request.post('/user/send-verify', { email })
+      await request.post('/user/send-verify', { email: mail.value })
       lastSendTime.value = Date.now()
+      // 验证通过，保存邮箱至本地
+      newUser.value.email = mail.value
+      mail.value = ''
+
       window.api.openDialog({
         route: '/register',
         width: 240,
         height: 320,
         modal: true,
-        frame: true,
-        barHeight: 40
+        frame: true
       })
     }
   } catch (e) {
