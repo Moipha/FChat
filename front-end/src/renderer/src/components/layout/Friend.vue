@@ -122,7 +122,7 @@ const config = ref({})
   box-shadow:
     5px 0px 20px var(--border),
     inset -5px 0px 10px var(--border);
-  filter: brightness(0.9);
+  filter: brightness(0.95);
   display: flex;
   flex-direction: column;
   -webkit-app-region: no-drag;

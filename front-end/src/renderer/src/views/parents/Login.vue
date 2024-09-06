@@ -12,11 +12,13 @@
       <FBtn class="btn" label="Go!" @click="userLogin" />
     </div>
   </main>
+  <Titlebar :minimize="false" :maximize="false" :color="'var(--btn-text)'" :height="15" />
 </template>
 
 <script lang="ts" setup>
 import FBtn from '@r/components/form/FBtn.vue'
 import FInput from '@r/components/form/FInput.vue'
+import Titlebar from '@r/components/layout/Titlebar.vue'
 import { ref } from 'vue'
 import request from '@r/utils/request'
 import md5 from 'md5'

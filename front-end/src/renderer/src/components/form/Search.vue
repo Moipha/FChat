@@ -7,6 +7,7 @@
         <Icon v-show="hide" name="search" />
       </div>
       <input
+        spellcheck="false"
         class="search_input consolas"
         :placeholder
         type="text"

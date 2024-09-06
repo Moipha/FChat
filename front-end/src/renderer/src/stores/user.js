@@ -9,8 +9,10 @@ export const useUserStore = defineStore(
     const token = ref(null)
     // 用户好友列表
     const friends = ref([])
+    // 用户申请列表
+    const applyList = ref([])
 
-    return { user, token, friends }
+    return { user, token, friends, applyList }
   },
   {
     persist: {

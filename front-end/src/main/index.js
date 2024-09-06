@@ -105,6 +105,7 @@ function createBrowserWindow({
     title,
     frame,
     skipTaskbar,
+    titleBarStyle: 'hidden',
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),

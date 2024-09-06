@@ -3,6 +3,7 @@
     <label for="search">
       <input
         id="search"
+        spellcheck="false"
         :value="modelValue"
         required
         autocomplete="off"

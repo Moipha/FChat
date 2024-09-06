@@ -3,8 +3,10 @@
  */
 import axios from 'axios'
 import { useUserStore } from '@r/stores/user'
-const { token } = useUserStore()
 import config from '@/config'
+import router from '@r/router'
+
+const { token } = useUserStore()
 const { PORT, IP } = config
 
 const request = axios.create({
@@ -21,6 +23,11 @@ request.interceptors.response.use(
     return res.data
   },
   (err) => {
+    if (err.response.status === 401) {
+      // 如果token过期，跳转到登录页面
+      router.push('/login')
+    }
+    alert(err.response.data.msg)
     console.log('错误的响应: ' + err)
     return Promise.reject(err)
   }

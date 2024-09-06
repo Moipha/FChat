@@ -23,7 +23,7 @@ const router = createRouter({
     { path: '/emoji', component: () => import('@r/views/parents/Emoji.vue') },
     { path: '/add-friend', component: () => import('@r/views/parents/AddFriend.vue') },
     {
-      path: '/add-info/:id/:username',
+      path: '/add-info',
       component: () => import('@r/views/parents/AddInfo.vue'),
       props: true
     }

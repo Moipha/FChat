@@ -9,6 +9,7 @@
         v-model="verifyCode[0]"
         required="required"
         maxlength="1"
+        spellcheck="false"
         type="text"
         class="otp-input"
         @input="handleInput1"
@@ -17,6 +18,7 @@
         id="otp-input2"
         ref="input2"
         v-model="verifyCode[1]"
+        spellcheck="false"
         required="required"
         maxlength="1"
         type="text"
@@ -27,6 +29,7 @@
         id="otp-input3"
         ref="input3"
         v-model="verifyCode[2]"
+        spellcheck="false"
         required="required"
         maxlength="1"
         type="text"
@@ -37,6 +40,7 @@
         id="otp-input4"
         ref="input4"
         v-model="verifyCode[3]"
+        spellcheck="false"
         required="required"
         maxlength="1"
         type="text"
@@ -57,10 +61,12 @@
       </button>
     </p>
   </div>
+  <Titlebar :minimize="false" :maximize="false" :height="15" />
 </template>
 
 <script lang="ts" setup>
 import FBtn from '@r/components/form/FBtn.vue'
+import Titlebar from '@r/components/layout/Titlebar.vue'
 import { useRouter } from 'vue-router'
 import { useSignStore } from '@r/stores/sign'
 import { storeToRefs } from 'pinia'

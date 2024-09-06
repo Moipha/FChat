@@ -7,7 +7,9 @@ export const useSignStore = defineStore(
     // 保存新用户信息
     const newUser = ref({})
     const lastSendTime = ref(null)
-    return { newUser, lastSendTime }
+    // 新添加用户
+    const addUser = ref({})
+    return { newUser, lastSendTime, addUser }
   },
   {
     persist: {

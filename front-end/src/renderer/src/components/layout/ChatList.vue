@@ -24,6 +24,9 @@ import timeFormat from '@r/utils/timeFormat'
 import router from '@r/router'
 import request from '@r/utils/request'
 import bus from '@r/utils/bus'
+import { useSettingStore } from '@r/stores/setting'
+
+const { routeMap } = useSettingStore()
 
 /**
  * socket
@@ -75,12 +78,7 @@ function selectChat(e) {
 const activeItem = ref(null)
 
 // 初始加载时从路由获取当前item
-onMounted(() => {
-  setTimeout(() => {
-    activeItem.value = router.currentRoute.value.params.id
-    console.log(activeItem.value)
-  }, 0)
-})
+activeItem.value = routeMap['chat'].slice(6)
 
 /**
  * 滚动条事件

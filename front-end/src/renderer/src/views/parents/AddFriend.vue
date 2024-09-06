@@ -19,6 +19,16 @@
           </div>
           <span v-if="ids.includes(user._id)" class="text">已添加</span>
           <span v-else-if="curUser._id == user._id" class="text">我</span>
+          <span
+            v-else-if="
+              applyList.findIndex(
+                (item) => item.friendId === user._id && item.status === 'requested'
+              ) !== -1
+            "
+            class="text"
+            @click="openAddInfo(user)"
+            >已申请</span
+          >
           <div v-else class="icon-container" @click="openAddInfo(user)">
             <Icon class="icon" name="add-friend" />
           </div>
@@ -27,24 +37,28 @@
       </div>
     </div>
   </div>
-  <nav>
-    <Icon class="icon exit" name="close" @click="close" />
-  </nav>
+  <Titlebar :minimize="false" :maximize="false" :height="15" />
 </template>
 
 <script lang="ts" setup>
 import Search from '@r/components/form/Search.vue'
 import Icon from '@r/components/form/Icon.vue'
 import Avatar from '@r/components/form/Avatar.vue'
+import Titlebar from '@r/components/layout/Titlebar.vue'
 import { ref } from 'vue'
 import request from '@r/utils/request'
 import debounce from '@r/utils/debounce'
 import { useUserStore } from '@r/stores/user'
+import { useSignStore } from '@r/stores/sign'
+
 import { storeToRefs } from 'pinia'
 
 // 获取当前用户好友列表
-const { user: curUser, friends } = storeToRefs(useUserStore())
+const { user: curUser, friends, applyList } = storeToRefs(useUserStore())
 const ids = friends.value.map((item) => item._id)
+
+// 获取新添加用户信息
+const { addUser } = storeToRefs(useSignStore())
 
 // 搜索关键词
 const keyword = ref('')
@@ -70,18 +84,14 @@ const searchDebounce = debounce(search, 500)
 // 用户列表
 const list = ref([])
 
-// 关闭窗口
-function close() {
-  window.api.closeWindow()
-}
-
 // 打开添加好友窗口
 function openAddInfo(user) {
+  addUser.value = user
   window.api.openDialog({
-    height: 300,
-    width: 400,
-    route: `/add-info/${user._id}/${user.username}`,
-    closeOnBlur: true
+    height: 400,
+    width: 450,
+    route: `/add-info`,
+    modal: true
   })
 }
 </script>
@@ -179,34 +189,6 @@ function openAddInfo(user) {
 
   .hide {
     height: 36%;
-  }
-}
-
-nav {
-  position: fixed;
-  top: 0;
-  right: 0;
-  display: flex;
-  z-index: 999;
-  -webkit-app-region: no-drag;
-
-  .icon {
-    font-size: 12px;
-    font-weight: bolder;
-    cursor: pointer;
-    background-color: transparent;
-    transition: 0.2s all;
-    padding: 6.5px 12px;
-    color: var(--text);
-
-    &:hover {
-      background-color: var(--border);
-    }
-  }
-
-  .exit:hover {
-    background-color: var(--error);
-    color: var(--btn-text);
   }
 }
 </style>

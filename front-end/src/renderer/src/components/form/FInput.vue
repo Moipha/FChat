@@ -2,6 +2,7 @@
   <div class="input-container" :class="reverseColor ? 'reverse-color' : 'normal-color'">
     <input
       id="input"
+      spellcheck="false"
       :value="modelValue"
       :type
       required

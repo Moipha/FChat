@@ -119,7 +119,7 @@ function handleClickOption(name) {
   box-shadow:
     5px 0px 20px var(--border),
     inset 5px 0px 10px var(--border);
-  filter: brightness(0.9);
+  filter: brightness(0.95);
   -webkit-app-region: drag;
   display: flex;
   flex-direction: column;
@@ -153,6 +153,11 @@ function handleClickOption(name) {
       font-weight: bolder;
       margin: 10px 0 5px;
       color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 90%;
+      text-align: center;
     }
   }
 

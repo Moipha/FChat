@@ -29,13 +29,14 @@
 import Icon from '@r/components/form/Icon.vue'
 import Avatar from '@r/components/form/Avatar.vue'
 import request from '@r/utils/request'
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import router from '@r/router'
 import { useUserStore } from '@r/stores/user'
 import { storeToRefs } from 'pinia'
+import bus from '@r/utils/bus'
 
 // 获取好友列表
-const { friends } = storeToRefs(useUserStore())
+const { friends, applyList } = storeToRefs(useUserStore())
 
 // 记录生效的item
 const activeItem = ref(null)
@@ -92,8 +93,27 @@ async function getFriends() {
   }
 }
 
+// 获取申请列表
+async function load() {
+  const res = await request.get('/user/add-list')
+  if (res.code === 200) {
+    applyList.value = res.data
+  }
+}
+
 // 发送请求
+load()
 getFriends()
+
+// bus事件
+bus.on('update-friends', () => {
+  load()
+  getFriends()
+})
+
+onBeforeUnmount(() => {
+  bus.off('update-friends')
+})
 </script>
 
 <style lang="scss" scoped>

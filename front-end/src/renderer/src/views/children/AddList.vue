@@ -2,16 +2,27 @@
   <nav>
     <header>申请列表</header>
     <div class="info dyh">新朋友</div>
-    <div v-for="item in list" :key="item._id" class="item">
+    <div
+      v-for="item in applyList.filter((item) => item.userId !== user._id)"
+      :key="item._id"
+      class="item"
+    >
       <Avatar shape="circle" :size="50" :src="item.user.avatar" />
       <div class="text">
         <div class="title">{{ item.user.username }}</div>
         <div class="subtitle dyh">{{ item.content }}</div>
       </div>
-      <div class="btn hover"><Icon class="icon" name="add-friend" />接受</div>
+      <div v-if="item.status === 'requested'" class="btn hover" @click="accept(item._id)">
+        <Icon class="icon" name="add-friend" />接受
+      </div>
+      <div v-else class="btn">已接受</div>
     </div>
     <div class="info dyh">我的申请</div>
-    <div v-for="item in myReq" :key="item._id" class="item">
+    <div
+      v-for="item in applyList.filter((item) => item.userId === user._id)"
+      :key="item._id"
+      class="item"
+    >
       <Avatar shape="circle" :size="50" :src="item.friend.avatar" />
       <div class="text">
         <div class="title">{{ item.friend.username }}</div>
@@ -25,31 +36,25 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-import request from '@r/utils/request'
 import { useUserStore } from '@r/stores/user'
 import { storeToRefs } from 'pinia'
 import Avatar from '@r/components/form/Avatar.vue'
 import Icon from '@r/components/form/Icon.vue'
+import request from '@r/utils/request'
+import bus from '@r/utils/bus'
 
 // 获取当前用户信息
-const { user } = storeToRefs(useUserStore())
+const { user, applyList } = storeToRefs(useUserStore())
 
-// 申请记录
-const list = ref([])
-const myReq = ref([])
-
-// 获取列表
-async function load() {
-  const res = await request.get('/user/add-list')
+// 同意好友申请
+async function accept(_id, event) {
+  console.log(event)
+  const res = await request.put('/friendship', { _id, status: 'accepted' })
   if (res.code === 200) {
-    myReq.value = res.data.filter((item) => item.userId === user.value._id)
-    list.value = res.data.filter((item) => item.userId !== user.value._id)
+    // 通知friendList重新获取列表
+    bus.emit('update-friends')
   }
 }
-
-// 发送请求
-load()
 </script>
 
 <style lang="scss" scoped>
@@ -89,6 +94,10 @@ nav {
         color: var(--text);
         font-weight: bold;
         transition: all 0.2s ease;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 300px;
       }
 
       .subtitle {

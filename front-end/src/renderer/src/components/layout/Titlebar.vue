@@ -1,14 +1,45 @@
 <template>
-  <nav>
-    <Icon class="icon" name="minimize" @click="mini" />
-    <Icon class="icon" :name="maxIcon" @click="maxi" />
-    <Icon class="icon exit" name="close" @click="close" />
+  <nav :style="`--color: ${color}`">
+    <Icon
+      v-if="minimize"
+      :style="`height: ${height}px`"
+      class="icon"
+      name="minimize"
+      @click="mini"
+    />
+    <Icon
+      v-if="maximize"
+      :style="`height: ${height}px`"
+      class="icon"
+      :name="maxIcon"
+      @click="maxi"
+    />
+    <Icon :style="`height: ${height}px`" class="icon exit" name="close" @click="close" />
   </nav>
 </template>
 
 <script lang="ts" setup>
 import Icon from '@r/components/form/Icon.vue'
 import { ref } from 'vue'
+
+defineProps({
+  minimize: {
+    type: Boolean,
+    default: true
+  },
+  maximize: {
+    type: Boolean,
+    default: true
+  },
+  color: {
+    type: String,
+    default: 'var(--text)'
+  },
+  height: {
+    type: Number,
+    default: 12
+  }
+})
 
 // 最大化和复原按钮切换
 const maxIcon = ref('maximize')
@@ -45,7 +76,8 @@ nav {
     background-color: transparent;
     transition: 0.2s all;
     padding: 6.5px 12px;
-    color: var(--text);
+    color: var(--color);
+    align-items: center;
 
     &:hover {
       background-color: var(--border);

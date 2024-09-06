@@ -10,9 +10,9 @@ const router = express.Router()
 router.post('/', [body('friendId').isMongoId().withMessage('目标ID不能为空')], async (req, res) => {
   if (!argsCheck(req, res)) return
   const userId = req.userId
-  const { friendId } = req.body
+  const { friendId, content } = req.body
   try {
-    const result = await friendshipService.createFriendship(userId, friendId)
+    const result = await friendshipService.createFriendship(userId, friendId, content)
     res.json(Result.success(result))
   } catch (error) {
     res.status(403).json(Result.error(403, error.message))

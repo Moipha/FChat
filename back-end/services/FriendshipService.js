@@ -1,12 +1,12 @@
 const Friendship = require('../models/Friendship')
 
 // 新建好友关系申请
-async function createFriendship(userId, friendId) {
+async function createFriendship(userId, friendId, content) {
   const friendship = await Friendship.findOne({ friendId, userId })
   if (friendship && friendship.status !== 'rejected') {
     throw new Error('重复的好友请求')
   }
-  await Friendship.create({ friendId, userId })
+  await Friendship.create({ friendId, userId, content })
   return {
     code: 200,
     msg: '请求保存成功',
