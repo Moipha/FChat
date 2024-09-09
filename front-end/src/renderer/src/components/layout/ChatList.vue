@@ -78,7 +78,7 @@ function selectChat(e) {
 const activeItem = ref(null)
 
 // 初始加载时从路由获取当前item
-activeItem.value = routeMap['chat'].slice(6)
+activeItem.value = routeMap['chat'] ? routeMap['chat'].slice(6) : null
 
 /**
  * 滚动条事件

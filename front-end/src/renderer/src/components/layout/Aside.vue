@@ -3,7 +3,7 @@
     <div ref="drag" class="resize-handle" @mousedown="startDrag"></div>
     <header>
       <Icon name="menu" class="icon" @click="openMenu"></Icon>
-      <SearchInput @keydown.enter="changeTheme" />
+      <SearchInput />
     </header>
     <Nav />
     <ChatList v-if="nav === 'chat'" />
@@ -25,7 +25,7 @@ import { storeToRefs } from 'pinia'
 /**
  * 获取配置项
  */
-const { theme, nav } = storeToRefs(useSettingStore())
+const { nav } = storeToRefs(useSettingStore())
 
 /**
  * 拖拽动态修改aside的宽度
@@ -65,16 +65,6 @@ function endDrag() {
 function openMenu() {
   // 弹出Nav
   bus.emit('nav-toggle', true)
-}
-
-/**
- * 修改主题
- */
-function changeTheme() {
-  const cur = theme.value === 'light-theme' ? 'dark-theme' : 'light-theme'
-  document.body.classList.remove('light-theme', 'dark-theme')
-  document.body.classList.add(cur)
-  theme.value = cur
 }
 </script>
 

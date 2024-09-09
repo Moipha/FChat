@@ -1,6 +1,8 @@
 <template>
   <label class="switch">
     <input
+      class="input"
+      :style="{ fontSize: size + 'px' }"
       type="checkbox"
       :checked="modelValue"
       @change="$emit('update:modelValue', $event.target.checked)"
@@ -9,7 +11,16 @@
 </template>
 
 <script lang="ts" setup>
-defineProps(['modelValue'])
+defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
+  },
+  size: {
+    type: Number,
+    default: 12
+  }
+})
 defineEmits(['update:modelValue'])
 </script>
 
@@ -19,10 +30,10 @@ defineEmits(['update:modelValue'])
   display: flex;
 }
 
-input[type='checkbox'] {
+.input {
   appearance: none;
-  height: 2rem;
-  width: 3.5rem;
+  height: 2.4em;
+  width: 4.2em;
   background-color: var(--border);
   position: relative;
   border-radius: 0.2em;

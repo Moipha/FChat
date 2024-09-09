@@ -1,29 +1,87 @@
 <template>
-  <div v-if="!recording" class="tip" @mousedown="startRecording">按住空格以录制音频</div>
-  <ul v-else class="wave-menu" @mouseup="stopRecording" @mouseleave="stopRecording">
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-  </ul>
+  <div class="audio-container">
+    <div
+      class="tip dyh"
+      @mousedown="startRecording"
+      @mouseup="stopRecording"
+      @mouseleave="stopRecording"
+    >
+      {{ recording ? '录制中...' : '按住空格以录制音频' }}
+    </div>
+    <div class="mask">123</div>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+
+// 录制状态
 const recording = ref(false)
 
-const startRecording = () => {
+// 音频相关
+let mediaRecorder
+let audioChunks = []
+let stream
+let startTime
+// 载入时获取用户麦克风权限
+async function getStream() {
+  // 获取权限
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+  } catch (e) {
+    alert('获取麦克风权限失败' + e.message)
+  }
+}
+getStream()
+// 开始录音
+async function startRecording() {
+  // 防止重复触发
+  if (recording.value) return
+  // 获取麦克风权限
+  if (!stream.active) {
+    await getStream()
+  }
+  // 记录开始时间
+  startTime = Date.now()
   recording.value = true
+  console.log('录音开始')
+
+  // 创建recorder
+  mediaRecorder = new MediaRecorder(stream)
+  // 收集音频数据
+  mediaRecorder.ondataavailable = (event) => {
+    audioChunks.push(event.data)
+  }
+  // 开始录制
+  mediaRecorder.start()
 }
 
+// 停止录音
 const stopRecording = () => {
+  // 归还权限
+  stream.getTracks().forEach((track) => track.stop())
+  // 停止录制
   recording.value = false
+  console.log('录音结束')
+  // 如果按下和松开时间间隔小于0.5秒，不做处理
+  const endTime = Date.now()
+  if (endTime - startTime < 500) {
+    console.log('录音时间过短，不做处理')
+    return
+  }
+  if (mediaRecorder) {
+    // 停止录制
+    mediaRecorder.stop()
+    mediaRecorder.onstop = () => {
+      // 获取二进制格式音频文件
+      const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
+      // 播放刚刚录制的音频
+      const audioUrl = URL.createObjectURL(audioBlob)
+      const audio = new Audio(audioUrl)
+      audio.play()
+      audioChunks = []
+    }
+  }
 }
 
 const handleKeyDown = (event) => {
@@ -50,105 +108,24 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.tip {
-  font-weight: bolder;
-  cursor: pointer;
-}
-.wave-menu {
-  width: 200px;
-  height: 30px;
+.audio-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-  cursor: pointer;
-  transition: ease 0.2s;
-  position: relative;
-  background: var(--bg);
-  li {
-    list-style: none;
-    height: 30px;
-    width: 4px;
-    border-radius: 10px;
-    background: var(--primary);
-    margin: 0 6px;
-    padding: 0;
-    animation-name: wave1;
-    animation-duration: 0.3s;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
-    transition: ease 0.2s;
+  width: 100%;
 
-    &:nth-child(2) {
-      animation-name: wave2;
-      animation-delay: 0.2s;
-    }
-    &:nth-child(3) {
-      animation-name: wave3;
-      animation-duration: 0.4s;
-    }
-    &:nth-child(4) {
-      animation-name: wave4;
-      animation-delay: 0.1s;
-      animation-duration: 0.3s;
-    }
-    &:nth-child(5) {
-      animation-delay: 0.5s;
-    }
-    &:nth-child(6) {
-      animation-name: wave2;
-      animation-duration: 0.5s;
-    }
-    &:nth-child(8) {
-      animation-name: wave4;
-      animation-delay: 0.4s;
-      animation-duration: 0.25s;
-    }
-    &:nth-child(9) {
-      animation-name: wave3;
-      animation-delay: 0.15s;
-    }
-  }
-}
-
-@keyframes wave1 {
-  from {
-    transform: scaleY(1);
+  .tip {
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text);
+    transition: all 0.2s ease;
+    padding-right: 10%;
+    margin: auto;
+    width: 200px;
+    text-align: center;
   }
 
-  to {
-    transform: scaleY(0.5);
-  }
-}
-
-@keyframes wave2 {
-  from {
-    transform: scaleY(0.3);
-  }
-
-  to {
-    transform: scaleY(0.6);
-  }
-}
-
-@keyframes wave3 {
-  from {
-    transform: scaleY(0.6);
-  }
-
-  to {
-    transform: scaleY(0.8);
-  }
-}
-
-@keyframes wave4 {
-  from {
-    transform: scaleY(0.2);
-  }
-
-  to {
-    transform: scaleY(0.5);
+  .mask {
+    position: fixed;
+    top: 0;
   }
 }
 </style>

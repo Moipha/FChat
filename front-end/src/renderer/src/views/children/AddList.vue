@@ -47,8 +47,7 @@ import bus from '@r/utils/bus'
 const { user, applyList } = storeToRefs(useUserStore())
 
 // 同意好友申请
-async function accept(_id, event) {
-  console.log(event)
+async function accept(_id) {
   const res = await request.put('/friendship', { _id, status: 'accepted' })
   if (res.code === 200) {
     // 通知friendList重新获取列表

@@ -258,7 +258,7 @@ section {
         background-color: var(--border);
         padding: 5px 15px;
         border-radius: 20px;
-        color: var(--text);
+        color: var(--light-text);
         font-size: 14px;
         transition: all 0.2s ease;
         filter: brightness(1.1);

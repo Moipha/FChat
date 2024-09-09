@@ -14,7 +14,12 @@
       @drop="handleDrop"
     />
     <Wave v-else class="wave" />
-    <Icon class="icon send" name="send" @click="sendMessage(friend._id)"></Icon>
+    <Icon
+      v-if="mode === 'audio'"
+      class="icon send"
+      name="send"
+      @click="sendMessage(friend._id)"
+    ></Icon>
   </div>
 </template>
 

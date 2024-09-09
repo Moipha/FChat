@@ -25,10 +25,12 @@ import md5 from 'md5'
 import { useUserStore } from '@r/stores/user'
 import { storeToRefs } from 'pinia'
 import { useSignStore } from '@r/stores/sign'
+import { useSettingStore } from '@r/stores/setting'
 
 // 获取store数据
 const { user, token } = storeToRefs(useUserStore())
 const { newUser, lastSendTime } = storeToRefs(useSignStore())
+const { nav, routeMap } = storeToRefs(useSettingStore())
 
 const curUser = ref({ email: 'young@test.cn', password: '123123' }) // 用户信息
 // 用户登录
@@ -42,12 +44,15 @@ async function userLogin() {
       token.value = res.data && res.data.token
       // 本地保存用户信息
       user.value = res.data && res.data.user
+      // 修改nav
+      nav.value = 'chat'
       // 打开主界面窗口
       window.api.openNewWindow({
         height: 600,
         width: 900,
         minWidth: 600,
-        minHeight: 500
+        minHeight: 500,
+        route: routeMap.value['chat']
       })
     }
   } catch (err) {

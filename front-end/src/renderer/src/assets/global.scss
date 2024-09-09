@@ -56,12 +56,13 @@ body #app {
 }
 
 .light-theme {
-  --bg: #f5f5f5;
+  --bg: #f8f8f8;
   --text: #000;
   --light-text: #636363;
-  --primary: #336699; // 573c89
+  --primary: #336699;
   --btn-text: #f5f5f5;
   --border: #d3d3d3;
+  --hover: #e3e3e3;
   --thumb: #a3a3a3;
   --error: salmon;
 }
@@ -72,7 +73,8 @@ body #app {
   --light-text: #9a9a9a;
   --primary: #996633;
   --btn-text: #f5f5f5;
-  --border: #434343;
+  --border: #4a4a4a;
+  --hover: #353535;
   --thumb: #636363;
   --error: salmon;
 }

@@ -57,7 +57,7 @@ function selectFriend(e) {
     if (cur.className === 'friend') {
       break
     }
-    cur = cur.offsetParent
+    cur = cur.parentElement
   }
   const key = cur.attributes.data
   if (key) {
@@ -173,6 +173,9 @@ nav {
         font-size: 16px;
         margin-left: 10px;
         font-weight: bold;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
       }
 
       &:hover {
