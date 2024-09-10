@@ -6,14 +6,19 @@
   >
     <Avatar :src="user.avatar" class="avatar" shape="circle" :size="40" />
     <div class="msg-box">
-      <span v-for="(part, index) in parseMsg(msg)" :key="index">
-        <template v-if="part.type === 'text'">
-          {{ part.content }}
-        </template>
-        <template v-else-if="part.type === 'emoji'">
-          <img :src="part.content" alt="emoji" width="30" height="30" />
-        </template>
-      </span>
+      <template v-if="type === 'text'">
+        <span v-for="(part, index) in parseMsg(msg)" :key="index">
+          <template v-if="part.type === 'text'">
+            {{ part.content }}
+          </template>
+          <template v-else-if="part.type === 'emoji'">
+            <img :src="part.content" alt="emoji" width="30" height="30" />
+          </template>
+        </span>
+      </template>
+      <template v-else-if="type === 'audio'">
+        <AudioMsg :src="msg" :position="position" />
+      </template>
     </div>
     <div class="read" :class="read ? 'already' : 'yet'">
       {{ position === 'right' ? (read ? '已读' : '未读') : '' }}
@@ -24,6 +29,7 @@
 <script lang="ts" setup>
 import Avatar from '@r/components/form/Avatar.vue'
 import emoji from '@r/../public/emoji'
+import AudioMsg from '@r/components/form/AudioMsg.vue'
 
 defineProps({
   position: {
@@ -44,6 +50,10 @@ defineProps({
   },
   read: {
     type: Boolean
+  },
+  type: {
+    type: String,
+    default: 'text'
   }
 })
 
@@ -104,7 +114,7 @@ function parseMsg(msg) {
     box-sizing: border-box;
     position: relative;
     font-weight: 600;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     user-select: text;
     white-space: pre-wrap;
     overflow-wrap: anywhere;

@@ -10,7 +10,7 @@
       <Avatar :src="item.avatar" shape="circle" />
       <div class="msg-box">
         <div class="name">{{ item.name }}</div>
-        <div class="msg dyh">{{ item.msg }}</div>
+        <div class="msg dyh">{{ getMsg(item.msg, item.type) }}</div>
       </div>
       <div class="time-box">{{ timeFormat(item.createdTime) }}</div>
     </div>
@@ -35,7 +35,7 @@ const socket = inject('socket')
 
 // 接收到非当前好友的新消息，标记未读，更新最后消息
 bus.on('receive-msg', (msg) => {
-  updateAside([msg.content, msg.senderId, msg.createdTime])
+  updateAside([msg.content, msg.senderId, msg.createdTime, msg.type])
 
   // 如果是正在聊天的，滚动到底部，同时更新已读时间
   if (msg.senderId === activeItem.value) {
@@ -109,14 +109,14 @@ onMounted(() => {
  * 更新最后一条消息
  */
 bus.on('update-aside', updateAside)
-function updateAside([content, id, time]) {
+function updateAside([content, id, time, type]) {
   const targetIndex = list.value.findIndex((item) => item.id === id)
   // 检查是否找到了对应的item
   if (targetIndex === -1) return
   // 获取对应的item
   const target = list.value[targetIndex]
   // 更新内容
-  target.msg = content
+  target.msg = getMsg(content, type)
   target.createdTime = time
   // 如果该item不是第一个，则将其提到最前面
   if (targetIndex !== 0) {
@@ -129,6 +129,25 @@ onBeforeUnmount(() => {
   bus.off('update-aside')
   bus.off('receive-msg')
 })
+
+/**
+ * 工具函数
+ */
+function getMsg(msg, type) {
+  let res
+  if (type === 'text') {
+    res = msg
+  } else if (type === 'audio') {
+    res = '[语音消息]'
+  } else if (type === 'img') {
+    res = '[图片消息]'
+  } else if (type === 'video') {
+    res = '[视频消息]'
+  } else {
+    res = '[消息]'
+  }
+  return res
+}
 </script>
 
 <style lang="scss" scoped>

@@ -24,14 +24,15 @@
       <input maxlength="20" spellcheck="false" rows="5" name="remark" type="text" />
     </div>
     <div class="btn-container">
-      <button class="btn primary" @click="addFriend">发送申请</button>
-      <button class="btn danger" @click="cancel">取消</button>
+      <Btn type="primary" label="发送申请" @click="addFriend" />
+      <Btn label="取消" @click="cancel" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import Avatar from '@r/components/form/Avatar.vue'
+import Btn from '@r/components/form/Btn.vue'
 import { useSignStore } from '@r/stores/sign'
 import { useUserStore } from '@r/stores/user'
 import request from '@r/utils/request'
@@ -128,39 +129,6 @@ function cancel() {
 
   .btn-container {
     margin-top: 30px;
-
-    .btn {
-      outline: none;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 4px;
-      margin-right: 10px;
-      font-size: 14px;
-      letter-spacing: 1px;
-      font-weight: bold;
-      transition: all 0.2s ease;
-      cursor: pointer;
-      -webkit-app-region: no-drag;
-    }
-
-    .primary {
-      background-color: var(--primary);
-      color: var(--btn-text);
-
-      &:hover {
-        filter: brightness(1.2);
-      }
-    }
-
-    .danger {
-      background-color: var(--bg);
-      color: var(--light-text);
-      filter: brightness(0.95);
-
-      &:hover {
-        background-color: var(--border);
-      }
-    }
   }
 }
 </style>

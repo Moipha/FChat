@@ -83,6 +83,7 @@ async function getAsideMessages(userId) {
       name: friend.username,
       avatar: friend.avatar,
       msg: msg && msg.content,
+      type: msg && msg.type,
       createdTime: msg && msg.createdTime
     })
   }

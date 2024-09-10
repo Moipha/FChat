@@ -1,7 +1,7 @@
 <template>
   <section class="container">
     <Aside />
-    <main>
+    <main id="right">
       <router-view :key="$route.params.id" v-slot="{ Component }">
         <KeepAlive>
           <component :is="Component" />

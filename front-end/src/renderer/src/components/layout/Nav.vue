@@ -2,7 +2,7 @@
   <nav
     class="nav-container"
     :style="{
-      left: navShow ? '0%' : '-100%'
+      left: navShow ? '0' : '-300px'
     }"
   >
     <div class="profile">
@@ -32,7 +32,7 @@
     <div class="option" @click="changeTheme()">
       <Icon name="theme-switch" />
       <span class="text">夜间模式</span>
-      <Switch v-model="lightTheme" class="switch" />
+      <Switch v-model="isDark" :size="10" class="switch" />
     </div>
     <div class="version">FChat v1.0.0 ©Moipha</div>
   </nav>
@@ -61,24 +61,24 @@ import router from '@r/router'
 const { nav, routeMap, theme } = storeToRefs(useSettingStore())
 
 // 布尔类型主题
-const lightTheme = ref(theme.value === 'light-theme')
+const isDark = ref(theme.value === 'dark-theme')
 
 // 监听lightTheme的变化，并同步更新theme
-watch(lightTheme, (newVal) => {
-  const newTheme = newVal ? 'light-theme' : 'dark-theme'
+watch(isDark, (newVal) => {
+  const newTheme = newVal ? 'dark-theme' : 'light-theme'
   changeTheme(newTheme)
 })
 
 // 监听theme的变化，并同步更新lightTheme
 watch(theme, (newVal) => {
-  lightTheme.value = newVal === 'light-theme'
+  isDark.value = newVal === 'dark-theme'
 })
 
 // 获取用户信息
 const { user } = useUserStore()
 
 // 显示状态
-const navShow = ref(true)
+const navShow = ref(false)
 
 // 列表项
 const navList = [
@@ -167,11 +167,11 @@ function changeTheme(tm) {
   height: 100vh;
   background-color: var(--bg);
   position: absolute;
-  z-index: 2;
+  z-index: 10;
   transition:
     left 0.3s ease,
     background-color 0.2s ease;
-  left: -100%;
+  left: -300px;
   // box-shadow:
   //   5px 0px 20px var(--border),
   //   inset 5px 0px 10px var(--border);
@@ -249,7 +249,7 @@ function changeTheme(tm) {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding: 15px 30px;
+    padding: 15px 15px 15px 30px;
     font-size: 20px;
     cursor: pointer;
     color: var(--text);
@@ -273,9 +273,8 @@ function changeTheme(tm) {
 
   .version {
     position: absolute;
-    bottom: 5px;
-    left: 10px;
-    font-weight: bolder;
+    bottom: 15px;
+    left: 30px;
     font-family: Consolas;
     color: var(--light-text);
   }
@@ -288,8 +287,8 @@ function changeTheme(tm) {
   top: 0;
   left: 0;
   background-color: black;
-  z-index: 1;
-  opacity: 0.4;
+  z-index: 5;
+  opacity: 0.5;
   -webkit-app-region: no-drag;
 }
 
@@ -301,10 +300,5 @@ function changeTheme(tm) {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-}
-
-.fade-enter-to,
-.fade-leave-from {
-  opacity: 0.4;
 }
 </style>

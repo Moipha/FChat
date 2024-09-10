@@ -38,7 +38,7 @@ module.exports = (server) => {
     // 接收到当前用户客户端发送的消息，将消息保存至数据库，然后发送给目标用户和当前用户的客户端
     socket.on('chat', async (msg) => {
       // 保存消息至数据库
-      const savedMsg = await messageService.createMessage(msg.content, msg.senderId, msg.receiverId)
+      const savedMsg = await messageService.createMessage(msg)
       // 发送给当前用户
       socket.emit('callback-msg', savedMsg)
       // 发送给目标用户

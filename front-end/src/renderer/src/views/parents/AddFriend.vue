@@ -26,7 +26,6 @@
               ) !== -1
             "
             class="text"
-            @click="openAddInfo(user)"
             >已申请</span
           >
           <div v-else class="icon-container" @click="openAddInfo(user)">

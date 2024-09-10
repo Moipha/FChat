@@ -91,10 +91,10 @@ aside {
     align-items: center;
     .icon {
       color: var(--light-text);
-      font-size: 40px;
+      font-size: 30px;
       cursor: pointer;
       -webkit-app-region: no-drag;
-      margin: 0 10px;
+      margin: 0 20px;
       flex-shrink: 0;
       transition: all 0.2s ease;
       &:hover {

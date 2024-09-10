@@ -2,12 +2,8 @@ const Message = require('../models/Message')
 const mongoose = require('mongoose')
 
 // 创建新消息
-async function createMessage(content, senderId, receiverId) {
-  const message = await Message.create({
-    content,
-    receiverId,
-    senderId
-  })
+async function createMessage(msg) {
+  const message = await Message.create({ ...msg })
   return message
 }
 
@@ -26,7 +22,7 @@ async function getMsgPage(userId, friendId, limit, lastId) {
   const messages = (
     await Message.find(query).limit(limit).sort({ createdTime: -1 }).lean()
   ).reverse()
-  
+
   // 判断是否是最后一页
   let isLastPage = messages.length < limit
   const nextId = messages.length ? messages[0]._id : null

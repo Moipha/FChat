@@ -6,6 +6,7 @@
     <div
       v-if="mode === 'audio'"
       ref="textarea"
+      spellcheck="false"
       contenteditable="true"
       class="scroll-bar input"
       @input="handleInput"
@@ -13,7 +14,8 @@
       @paste="handlePaste"
       @drop="handleDrop"
     />
-    <Wave v-else class="wave" />
+    <Wave v-else :user="user" :friend="friend" class="wave" />
+    <span v-if="mode === 'audio' && newMsg == ''" class="placeholder">请输入消息...</span>
     <Icon
       v-if="mode === 'audio'"
       class="icon send"
@@ -56,7 +58,8 @@ function sendMessage(friendId) {
   socket.emit('chat', {
     content: newMsg.value,
     senderId: user._id,
-    receiverId: friendId
+    receiverId: friendId,
+    type: 'text'
   })
   newMsg.value = ''
   textarea.value.innerHTML = ''
@@ -253,6 +256,8 @@ function checkMsg(msg) {
   }
 
   .input {
+    display: relative;
+    z-index: 2;
     margin-left: 5px;
     background-color: transparent;
     padding-top: 10px;
@@ -274,6 +279,16 @@ function checkMsg(msg) {
       background-color: var(--primary);
       color: var(--btn-text);
     }
+  }
+
+  .placeholder {
+    position: absolute;
+    left: 135px;
+    bottom: 15px;
+    z-index: 1;
+    color: var(--light-text);
+    opacity: 0.8;
+    user-select: none;
   }
 
   .wave {

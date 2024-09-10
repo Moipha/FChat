@@ -16,8 +16,9 @@
 
         <ChatMsg
           :position="msg.senderId === user._id ? 'right' : 'left'"
-          :msg="msg.content"
+          :msg="msg.type === 'audio' ? getUrl(msg.audio) : msg.content"
           :user="msg.senderId === user._id ? user : friend"
+          :type="msg.type"
           :read="new Date(lastReadAt) > new Date(msg.createdTime)"
         />
       </div>
@@ -45,7 +46,12 @@ const { user } = storeToRefs(useUserStore())
 // 获取与该朋友的聊天记录
 const { msgMap } = storeToRefs(useMsgStore())
 // 路由参数：用户id
-const props = defineProps(['id'])
+const props = defineProps({
+  id: {
+    type: String,
+    default: ''
+  }
+})
 // 接收socket
 const socket = inject('socket')
 
@@ -54,7 +60,12 @@ function receiveMsg() {
   socket.on('callback-msg', (savedMsg) => {
     messages.value.push(savedMsg)
     // 告诉aside更新最后一条消息
-    bus.emit('update-aside', [savedMsg.content, friend.value._id, savedMsg.createdTime])
+    bus.emit('update-aside', [
+      savedMsg.content,
+      friend.value._id,
+      savedMsg.createdTime,
+      savedMsg.type
+    ])
     // 滚动到底部
     nextTick(() => {
       scrollToBottom(true)
@@ -119,6 +130,43 @@ function needTime(time1, time2) {
       date1.getFullYear() === date2.getFullYear()
     )
   )
+}
+
+// 生成本地音频url
+function getUrl(audio) {
+  // 检查是否为 Node.js 的 Buffer 类型
+  if (audio && audio.type === 'Buffer') {
+    // 将 Buffer 转换为 Uint8Array
+    const uint8Array = new Uint8Array(audio.data)
+
+    // 创建 Blob 对象，假设音频是 WAV 格式
+    const blob = new Blob([uint8Array], { type: 'audio/wav' })
+
+    // 生成可播放的 URL
+    return URL.createObjectURL(blob)
+  } else if (audio instanceof ArrayBuffer || audio instanceof Uint8Array) {
+    // 如果已经是 ArrayBuffer 或 Uint8Array，直接转换
+    const blob = new Blob([audio], { type: 'audio/wav' })
+    return URL.createObjectURL(blob)
+  } else {
+    // base64格式
+    // 若有前缀则去除
+    const base64Prefix = 'data:audio/wav;base64,'
+    if (audio.startsWith(base64Prefix)) {
+      audio = audio.slice(base64Prefix.length)
+    }
+    // 将把ase64字符串解码为Uint8Array
+    const binaryString = atob(audio)
+    const len = binaryString.length
+    const bytes = new Uint8Array(len)
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i)
+    }
+    // 创建blob对象
+    const blob = new Blob([bytes], { type: 'audio/wav' })
+    // 生成可播放的 URL
+    return URL.createObjectURL(blob)
+  }
 }
 
 /**
