@@ -1,5 +1,5 @@
 <template>
-  <label class="switch">
+  <label class="switch" :style="{ '--active': color }">
     <input
       class="input"
       :style="{ fontSize: size + 'px' }"
@@ -19,6 +19,10 @@ defineProps({
   size: {
     type: Number,
     default: 12
+  },
+  color: {
+    type: String,
+    default: 'var(--primary)'
   }
 })
 defineEmits(['update:modelValue'])
@@ -57,7 +61,7 @@ defineEmits(['update:modelValue'])
   }
 
   &:checked {
-    background-color: var(--primary);
+    background-color: var(--active);
 
     &::before {
       background-color: var(--btn-text);

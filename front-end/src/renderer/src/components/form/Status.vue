@@ -24,7 +24,6 @@ defineProps(['value'])
     width: 8px;
     aspect-ratio: 1;
     border-radius: 50%;
-    transition: all 0.2s ease;
   }
 
   span {
@@ -32,7 +31,6 @@ defineProps(['value'])
     font-size: 14px;
     color: var(--dot);
     margin-left: 3px;
-    transition: all 0.2s ease;
   }
 }
 </style>

@@ -15,11 +15,11 @@
         v-for="friend in friends"
         :key="friend._id"
         :data="friend._id"
-        class="friend"
+        class="friend no-transition"
         :class="activeItem === friend._id ? 'active' : ''"
       >
         <Avatar :size="45" class="avatar" :src="friend.avatar" shape="circle" />
-        <span class="text">{{ friend.username }}</span>
+        <span class="text text-no-transition">{{ friend.username }}</span>
       </div>
     </div>
   </nav>
@@ -54,7 +54,7 @@ function selectFriend(e) {
   let cur = e.target
   // 通过代理事件减少绑定事件的数量
   while (cur && cur.offsetParent) {
-    if (cur.className === 'friend') {
+    if (cur.className.slice(0, 6) === 'friend') {
       break
     }
     cur = cur.parentElement
@@ -165,7 +165,6 @@ nav {
       padding: 10px;
       display: flex;
       color: var(--text);
-      transition: all 0.2s ease;
       cursor: pointer;
 
       .text {
@@ -179,7 +178,7 @@ nav {
       }
 
       &:hover {
-        background-color: var(--border);
+        background-color: var(--hover);
       }
     }
     .active {

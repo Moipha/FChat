@@ -1,5 +1,5 @@
 <template>
-  <Header :friend="friend" />
+  <Header :friend="friend" :last-seen="lastReadAt" />
   <Friend :friend="friend" />
   <section>
     <div ref="msgContainer" class="msg-container scroll-bar" @wheel="throttledScroll">
@@ -11,7 +11,7 @@
           v-if="index === 0 || needTime(messages[index - 1].createdTime, msg.createdTime)"
           class="date-separator consolas"
         >
-          <span class="content">{{ timeFormat(msg.createdTime, true) }}</span>
+          <span class="content">{{ getNormal(msg.createdTime, true) }}</span>
         </div>
 
         <ChatMsg
@@ -37,7 +37,7 @@ import request from '@r/utils/request'
 import { useUserStore } from '@r/stores/user'
 import { useMsgStore } from '@r/stores/msg'
 import { storeToRefs } from 'pinia'
-import timeFormat from '@r/utils/timeFormat'
+import { getNormal } from '@r/utils/timeFormat'
 import bus from '@r/utils/bus'
 import throttle from '@r/utils/throttle'
 
@@ -196,7 +196,6 @@ async function getFriend() {
 // 监听好友状态
 function watchFriend() {
   socket.on(friend.value._id, (status) => {
-    console.log(friend.value.username, '朋友状态变了！', status)
     friend.value.status = status
   })
 }
@@ -246,9 +245,8 @@ async function load() {
 // 初始化时更新已读回执
 function updateRead() {
   socket.emit('save-read', [user.value._id, friend.value._id])
-
   // 并绑定接收好友更新已读回执的通知
-  socket.on('read', (time) => {
+  socket.on('read' + friend.value._id, (time) => {
     lastReadAt.value = time
   })
 }

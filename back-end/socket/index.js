@@ -55,7 +55,7 @@ module.exports = (server) => {
       await readService.updateRead(userId, friendId, time)
       // 如果朋友在线，通知其我已读
       if (clientSockets.has(friendId)) {
-        clientSockets.get(friendId).emit('read', time)
+        clientSockets.get(friendId).emit('read' + userId, time)
       }
     })
 

@@ -5,14 +5,14 @@
       :key="item.id"
       :class="{ active: item.id === activeItem }"
       :data="item.id"
-      class="chat-list"
+      class="chat-list no-transition"
     >
       <Avatar :src="item.avatar" shape="circle" />
       <div class="msg-box">
         <div class="name">{{ item.name }}</div>
         <div class="msg dyh">{{ getMsg(item.msg, item.type) }}</div>
       </div>
-      <div class="time-box">{{ timeFormat(item.createdTime) }}</div>
+      <div class="time-box">{{ getNormal(item.createdTime) }}</div>
     </div>
   </nav>
 </template>
@@ -20,7 +20,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, onBeforeUnmount, inject } from 'vue'
 import Avatar from '@r/components/form/Avatar.vue'
-import timeFormat from '@r/utils/timeFormat'
+import { getNormal } from '@r/utils/timeFormat'
 import router from '@r/router'
 import request from '@r/utils/request'
 import bus from '@r/utils/bus'
@@ -61,7 +61,7 @@ function selectChat(e) {
   let cur = e.target
   // 通过代理事件减少绑定事件的数量
   while (cur && cur.offsetParent) {
-    if (cur.className === 'chat-list') {
+    if (cur.className.slice(0, 9) === 'chat-list') {
       break
     }
     cur = cur.offsetParent
@@ -72,6 +72,8 @@ function selectChat(e) {
     activeItem.value = key.value
     // 跳转到对应路由
     router.push('/chat/' + key.value)
+    // 记录当前路径
+    routeMap['chat'] = '/chat/' + key.value
   }
 }
 // 记录生效的item
@@ -163,9 +165,6 @@ function getMsg(msg, type) {
     background-color: var(--bg);
     display: flex;
     position: relative;
-    transition:
-      0.2s all,
-      0s width;
     cursor: pointer;
 
     img {
@@ -173,7 +172,7 @@ function getMsg(msg, type) {
     }
 
     &:hover {
-      background-color: var(--border);
+      background-color: var(--hover);
     }
 
     .msg-box {
@@ -185,13 +184,12 @@ function getMsg(msg, type) {
       white-space: nowrap;
 
       .name {
-        font-size: 15px;
+        font-size: 14px;
         color: var(--text);
         font-weight: bold;
         text-overflow: ellipsis;
         overflow: hidden;
-        width: calc(100% - 64px);
-        transition: color 0.2s;
+        width: calc(100% - 72px);
       }
 
       .msg {
@@ -199,8 +197,8 @@ function getMsg(msg, type) {
         color: var(--light-text);
         text-overflow: ellipsis;
         overflow: hidden;
-        width: calc(100% - 30px);
-        transition: color 0.2s;
+        width: 100%;
+        margin-bottom: 2px;
       }
     }
 
@@ -211,7 +209,6 @@ function getMsg(msg, type) {
       font-size: 14px;
       color: var(--light-text);
       font-family: 'consolas';
-      transition: color 0.2s;
     }
   }
 

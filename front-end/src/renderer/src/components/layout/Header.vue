@@ -1,7 +1,13 @@
 <template>
   <header>
     <div class="title">{{ friend.username }}</div>
-    <Status class="status" :value="friend.status" />
+    <div class="status-container">
+      <Status :value="friend.status" />
+      <div class="last-check">
+        <span>上次查看于</span>
+        <span class="time">{{ getRecent(lastSeen) }}</span>
+      </div>
+    </div>
     <div class="else-btn" @click.stop="showFriendDetail">
       <Icon class="icon" name="else" />
     </div>
@@ -12,18 +18,29 @@
 import Icon from '@r/components/form/Icon.vue'
 import Status from '@r/components/form/Status.vue'
 import bus from '@r/utils/bus'
+import { getRecent } from '@r/utils/timeFormat'
+import { toRef } from 'vue'
+
 // 接收用户对象
-defineProps({
+const props = defineProps({
   friend: {
     type: Object,
     required: true,
     default: () => {}
+  },
+  lastSeen: {
+    type: String,
+    default: ''
   }
 })
 
+// 转为ref
+const lastSeen = toRef(props, 'lastSeen')
+// TODO 解决停滞在该页面中，上次查看时间不变动的问题
+
 // 弹出右边栏
 function showFriendDetail() {
-  bus.emit('show-friend-detail')
+  bus.emit('friend-detail-toggle', true)
 }
 </script>
 
@@ -36,9 +53,22 @@ header {
   transition: 0.2s all;
   border-bottom: 1px solid var(--border);
 
-  .status {
-    margin-left: 20px;
+  .status-container {
+    display: flex;
+    gap: 20px;
     margin-top: 3px;
+    margin-left: 20px;
+
+    .last-check {
+      font-size: 12px;
+      color: var(--light-text);
+      font-family: consolas;
+
+      .time {
+        font-weight: bold;
+        margin-left: 2px;
+      }
+    }
   }
 
   .title {

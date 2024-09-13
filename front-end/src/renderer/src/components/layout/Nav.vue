@@ -29,18 +29,14 @@
         <span class="text">{{ item.text }}</span>
       </div>
     </div>
-    <div class="option" @click="changeTheme()">
+    <div class="option theme" @click="changeTheme()">
       <Icon name="theme-switch" />
       <span class="text">夜间模式</span>
       <Switch v-model="isDark" :size="10" class="switch" />
     </div>
     <div class="version">FChat v1.0.0 ©Moipha</div>
   </nav>
-  <Teleport to="body">
-    <Transition name="fade">
-      <div v-if="navShow" class="nav-mask" @click="navShow = false"></div>
-    </Transition>
-  </Teleport>
+  <Mask v-model="navShow" to="body" />
 </template>
 
 <script lang="ts" setup>
@@ -48,6 +44,7 @@ import Icon from '@r/components/form/Icon.vue'
 import Avatar from '@r/components/form/Avatar.vue'
 import Status from '@r/components/form/Status.vue'
 import Switch from '@r/components/form/Switch.vue'
+import Mask from '@r/components/layout/Mask.vue'
 import bus from '@r/utils/bus'
 import { ref, onBeforeUnmount, watch } from 'vue'
 import { useUserStore } from '@r/stores/user'
@@ -154,10 +151,17 @@ onBeforeUnmount(() => {
  * 修改主题
  */
 function changeTheme(tm) {
+  // 添加过渡
+  document.body.classList.add('transition')
+  // 切换主题
   const cur = tm || (theme.value === 'light-theme' ? 'dark-theme' : 'light-theme')
   document.body.classList.remove('light-theme', 'dark-theme')
   document.body.classList.add(cur)
   theme.value = cur
+  // 删除过渡
+  setTimeout(() => {
+    document.body.classList.remove('transition')
+  }, 200)
 }
 </script>
 
@@ -172,9 +176,6 @@ function changeTheme(tm) {
     left 0.3s ease,
     background-color 0.2s ease;
   left: -300px;
-  // box-shadow:
-  //   5px 0px 20px var(--border),
-  //   inset 5px 0px 10px var(--border);
   display: flex;
   flex-direction: column;
 
@@ -242,6 +243,9 @@ function changeTheme(tm) {
     .active {
       background-color: var(--primary) !important;
       color: var(--btn-text) !important;
+      transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
     }
   }
 
@@ -254,8 +258,7 @@ function changeTheme(tm) {
     cursor: pointer;
     color: var(--text);
     font-family: dyh;
-    font-weight: normal;
-    transition: all 0.2s ease;
+    transition: color 0.2s ease;
 
     .text {
       margin-left: 25px;
@@ -271,6 +274,10 @@ function changeTheme(tm) {
     }
   }
 
+  .theme {
+    transition: all 0.2s ease;
+  }
+
   .version {
     position: absolute;
     bottom: 15px;
@@ -278,27 +285,5 @@ function changeTheme(tm) {
     font-family: Consolas;
     color: var(--light-text);
   }
-}
-
-.nav-mask {
-  height: 100vh;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-color: black;
-  z-index: 5;
-  opacity: 0.5;
-  -webkit-app-region: no-drag;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
 }
 </style>

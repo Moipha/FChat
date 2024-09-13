@@ -6,6 +6,7 @@
   >
     <Avatar :src="user.avatar" class="avatar" shape="circle" :size="40" />
     <div class="msg-box">
+      <!-- 文本消息 -->
       <template v-if="type === 'text'">
         <span v-for="(part, index) in parseMsg(msg)" :key="index">
           <template v-if="part.type === 'text'">
@@ -16,6 +17,7 @@
           </template>
         </span>
       </template>
+      <!-- 音频消息 -->
       <template v-else-if="type === 'audio'">
         <AudioMsg :src="msg" :position="position" />
       </template>
@@ -96,7 +98,7 @@ function parseMsg(msg) {
     font-weight: bolder;
     margin-right: 5px;
     align-self: flex-end;
-    font-size: 14px;
+    font-size: 12px;
 
     &.already {
       color: var(--primary);
@@ -114,6 +116,7 @@ function parseMsg(msg) {
     box-sizing: border-box;
     position: relative;
     font-weight: 600;
+    font-size: 15px;
     transition: all 0.2s ease;
     user-select: text;
     white-space: pre-wrap;

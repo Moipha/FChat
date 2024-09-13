@@ -18,7 +18,7 @@
       :src="src"
       preload="auto"
       @timeupdate="updateProgress"
-      @loadedmetadata="setDuration"
+      @loadedmetadata.once="setDuration"
       @ended="resetPlayer"
     />
   </div>
@@ -65,7 +65,7 @@ function updateProgress() {
   if (!audio.value) return
   const current = audio.value.currentTime
   currentTime.value = current
-  progress.value = (current / audio.value.duration) * 100
+  progress.value = (current / duration.value) * 100
 
   // 每0.1秒更新一次
   if (playing.value) {
@@ -75,7 +75,6 @@ function updateProgress() {
 
 // 设置总时长
 async function setDuration() {
-  console.log('!!')
   if (!audio.value) return
   while (audio.value.duration === Infinity) {
     await new Promise((r) => setTimeout(r, 200))
@@ -191,7 +190,6 @@ function resetPlayer() {
     font-size: 40px;
     color: var(--active);
     cursor: pointer;
-    transition: all 0.2s ease;
   }
 
   .controls {
@@ -212,7 +210,6 @@ function resetPlayer() {
       background-color: var(--slider);
       cursor: pointer;
       position: relative;
-      transition: background-color 0.2s ease;
 
       .progress {
         width: 0;
@@ -221,7 +218,6 @@ function resetPlayer() {
         border-radius: inherit;
         position: absolute;
         pointer-events: none;
-        transition: background-color 0.2s ease;
 
         .pin {
           right: -6px;
@@ -244,7 +240,6 @@ function resetPlayer() {
       font-family: consolas;
       font-weight: normal;
       font-size: 14px;
-      transition: all 0.2s ease;
     }
   }
 }

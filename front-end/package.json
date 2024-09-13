@@ -23,6 +23,7 @@
     "@mui/icons-material": "^5.16.4",
     "asar": "^3.2.0",
     "axios": "^1.7.2",
+    "dayjs": "^1.11.13",
     "electron-updater": "^6.1.7",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",

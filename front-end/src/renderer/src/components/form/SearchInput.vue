@@ -74,7 +74,7 @@ const emit = defineEmits(['update:modelValue'])
   flex: 1;
   margin-right: 20px;
   padding-inline-end: 1em;
-  background: var(--border);
+  background: var(--hover);
   position: relative;
   border-radius: 4px;
   -webkit-app-region: no-drag;

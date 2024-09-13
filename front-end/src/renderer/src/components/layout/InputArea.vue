@@ -269,9 +269,8 @@ function checkMsg(msg) {
     border: none;
     outline: none;
     color: var(--text);
-    font-size: 16px;
-    font-weight: 600;
-    font-family: 'STXihei';
+    font-size: 15px;
+    font-weight: bold;
     letter-spacing: 1px;
     transition: all 0.2s;
 

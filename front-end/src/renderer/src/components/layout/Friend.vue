@@ -1,5 +1,5 @@
 <template>
-  <div ref="container" class="container">
+  <div ref="container" class="container" :style="{ right: isShow ? '0' : '-400px' }">
     <!-- 头像和基本信息 -->
     <div class="profile">
       <Avatar class="avatar" :src="friend.avatar" shape="circle" :size="75" />
@@ -9,50 +9,61 @@
           <Icon class="email" name="email" />
           {{ friend.email }}
         </span>
-        <span class="subtitle">于{{ new Date(friend.createdTime).toLocaleDateString() }}注册</span>
       </div>
     </div>
     <hr />
     <div class="rest scroll-bar">
       <!-- 当前状态 -->
-      <div class="option">
-        <span class="key">登录状态</span>
+      <div class="option" :class="friend.status === 'online' ? 'primary' : 'warning'">
+        <Icon class="svg" :name="friend.status === 'online' ? 'online' : 'offline'" />
         <span class="value">{{ friend.status }}</span>
       </div>
       <!-- 备注 -->
       <div class="option">
-        <span class="key">备注</span>
+        <Icon class="svg" name="mention" />
         <span class="value">remark</span>
         <Icon class="icon" name="edit" />
       </div>
-      <!-- 签名 -->
-      <div class="option">
-        <span class="key">个性签名</span>
-        <span class="value">sign</span>
+      <hr />
+      <!-- 开关 -->
+      <div class="option action">
+        <Icon class="svg" name="notify"></Icon>
+        <span class="value">消息免打扰</span>
+        <Switch v-model="config.silence" :size="10" class="switch" />
+      </div>
+      <div class="option action">
+        <Icon class="svg" name="pinned" />
+        <span class="value">置顶该聊天</span>
+        <Switch v-model="config.top" :size="10" class="switch" />
       </div>
       <hr />
       <!-- 聊天记录 -->
-      <div class="history option">
+      <div class="action option">
+        <Icon name="nav-chats" class="svg" />
         <span class="value">聊天记录</span>
-        <Icon class="icon" name="right" />
+        <Icon name="right" class="icon" />
+      </div>
+      <div class="option action warning">
+        <Icon name="delete" class="svg" />
+        <span class="value">清空聊天记录</span>
       </div>
       <hr />
-      <!-- 开关 -->
-      <div class="toggle option">
-        <span class="value">消息免打扰</span>
-        <Switch v-model="config.silence" class="switch" />
+      <div class="action option">
+        <Icon name="share" class="svg" />
+        <span class="value">推荐该联系人</span>
       </div>
-      <div class="toggle option">
-        <span class="value">置顶该聊天</span>
-        <Switch v-model="config.top" class="switch" />
+      <div class="option action warning">
+        <Icon name="block" class="svg" />
+        <span class="value">屏蔽该联系人</span>
+        <Switch v-model="config.block" :size="10" class="switch" color="var(--error)" />
       </div>
-      <hr />
-      <!-- 操作 -->
-      <div class="action option">清空聊天记录</div>
-      <div class="action option">解除好友关系</div>
-      <div class="block"></div>
+      <div class="option action warning">
+        <Icon name="remove" class="svg" />
+        <span class="value">删除该联系人</span>
+      </div>
     </div>
   </div>
+  <Mask v-model="isShow" to="body" />
 </template>
 
 <script lang="ts" setup>
@@ -60,11 +71,14 @@ import { onActivated, onUnmounted, ref } from 'vue'
 import Avatar from '@r/components/form/Avatar.vue'
 import Icon from '@r/components/form/Icon.vue'
 import Switch from '@r/components/form/Switch.vue'
-
+import Mask from '@r/components/layout/Mask.vue'
 import bus from '@r/utils/bus'
 
-// 整体的ref
-const container = ref(null)
+// 好友配置
+const config = ref({})
+
+// 边栏显示
+const isShow = ref(true)
 
 // props
 defineProps({
@@ -76,62 +90,38 @@ defineProps({
 
 function show() {
   // 显示界面
-  bus.on('show-friend-detail', () => {
-    container.value.style.right = '0'
-    // 添加全局点击事件：点击其它地方隐藏右边栏
-    window.addEventListener('click', hide)
+  bus.on('friend-detail-toggle', (b) => {
+    isShow.value = b
   })
 }
 onUnmounted(() => {
-  bus.off('show-friend-detail')
-  window.removeEventListener('click', hide)
+  bus.off('friend-detail-toggle')
 })
 onActivated(() => {
   show()
 })
-
-// 隐藏界面
-function hide(event) {
-  // 如果点击的是container或其子元素，则不执行任何操作
-  if (!container.value || container.value.contains(event.target)) {
-    return
-  }
-  // 否则隐藏界面
-  container.value.style.right = '-110%'
-  // 并卸载事件
-  window.removeEventListener('click', hide)
-}
-
-// 好友配置
-const config = ref({})
 </script>
 
 <style lang="scss" scoped>
 .container {
+  width: 400px;
   height: 100%;
-  width: 100%;
-  box-sizing: border-box;
   position: absolute;
   top: 0;
-  right: -110%;
-  z-index: 1;
+  z-index: 10;
   transition:
     all 0.2s,
-    right 0.6s ease;
+    right 0.3s ease;
   background-color: var(--bg);
-  box-shadow:
-    5px 0px 20px var(--border),
-    inset -5px 0px 10px var(--border);
-  filter: brightness(0.95);
   display: flex;
   flex-direction: column;
-  -webkit-app-region: no-drag;
+  border-radius: 10px 0 0 10px;
 
   .profile {
-    padding: 30px 20px 10px;
+    padding: 20px 10px 10px;
     display: flex;
-    -webkit-app-region: drag;
     height: 120px;
+    align-items: center;
     box-sizing: border-box;
 
     .avatar {
@@ -142,13 +132,17 @@ const config = ref({})
       margin-left: 10px;
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 8px;
 
       .title {
         font-weight: bolder;
-        font-size: 18px;
+        font-size: 16px;
         color: var(--text);
         transition: color 0.2s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 200px;
       }
 
       .subtitle {
@@ -158,10 +152,18 @@ const config = ref({})
         display: flex;
         align-items: center;
         letter-spacing: 0.5px;
+        cursor: text;
+        user-select: text;
 
         .email {
-          margin-right: 5px;
+          margin-right: 8px;
           font-size: 16px;
+          cursor: default;
+        }
+
+        &::selection {
+          background-color: var(--primary);
+          color: var(--btn-text);
         }
       }
     }
@@ -170,19 +172,16 @@ const config = ref({})
   .rest {
     height: calc(100vh - 128px);
 
-    .key {
-      color: var(--light-text);
-      width: 30%;
-      transition: color 0.2s;
-    }
-
     .value {
-      color: var(--text);
+      font-weight: normal;
+      font-family: 'Microsoft YaHei';
       transition: color 0.2s;
+      font-size: 15px;
     }
 
     .icon {
       margin-left: auto;
+      margin-right: 20px;
       font-size: 25px;
       color: var(--light-text);
       cursor: pointer;
@@ -194,50 +193,55 @@ const config = ref({})
       }
     }
 
+    .svg {
+      font-size: 23px;
+      margin-left: 30px;
+      margin-right: 40px;
+      margin-top: 2px;
+    }
+
     .option {
       height: 60px;
-      padding: 0 40px;
       font-size: 16px;
       font-weight: bolder;
       display: flex;
       align-items: center;
       flex-shrink: 0;
+      color: var(--text);
 
       .switch {
         margin-left: auto;
+        margin-right: 20px;
       }
-    }
-
-    .history {
-      cursor: pointer;
     }
 
     .action {
-      height: 40px;
-      margin: 20px 40px 0;
-      border-radius: 5px;
       cursor: pointer;
-      background-color: var(--error);
-      color: var(--btn-text);
-      font-weight: bolder;
-      justify-content: center;
-      transition: all 0.2s;
 
       &:hover {
-        filter: brightness(1.3) saturate(0.8);
+        background-color: var(--hover);
       }
     }
-    .block {
-      height: 20px;
+
+    .hr {
+      margin-left: 100px;
+    }
+
+    .warning {
+      color: var(--error);
+    }
+
+    .primary {
+      color: var(--primary);
     }
   }
 
   hr {
-    margin: 0 30px;
+    margin: 0;
     border: none;
     height: 5px;
     background-color: var(--border);
-    border-radius: 1px;
+    // 高度写成五倍，然后缩放为0.2倍，解决1px问题
     transform: scale(1, 0.2);
     transition: background-color 0.2s;
   }
