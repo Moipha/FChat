@@ -46,6 +46,10 @@ const api = {
     ipcRenderer.on('receive-emoji', (event, id) => {
       callback(id)
     })
+  },
+  // 打开外部链接
+  openExternal: (url) => {
+    ipcRenderer.send('open-external', url)
   }
 }
 

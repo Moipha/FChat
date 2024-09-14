@@ -34,7 +34,11 @@
       <span class="text">夜间模式</span>
       <Switch v-model="isDark" :size="10" class="switch" />
     </div>
-    <div class="version">FChat v1.0.0 ©Moipha</div>
+    <div class="version">
+      <span @click="openExternal('https://github.com/Moipha/FChat')">FChat</span>
+      <span @click="openExternal('https://github.com/Moipha/FChat')">v1.0.0</span>
+      <span @click="openExternal('https://github.com/Moipha')">©Moipha</span>
+    </div>
   </nav>
   <Mask v-model="navShow" to="body" />
 </template>
@@ -163,6 +167,11 @@ function changeTheme(tm) {
     document.body.classList.remove('transition')
   }, 200)
 }
+
+// 打开外部链接
+function openExternal(url) {
+  window.api.openExternal(url)
+}
 </script>
 
 <style lang="scss" scoped>
@@ -265,6 +274,7 @@ function changeTheme(tm) {
       font-size: 18px;
       letter-spacing: 2px;
     }
+
     .switch {
       margin-left: auto;
     }
@@ -283,7 +293,17 @@ function changeTheme(tm) {
     bottom: 15px;
     left: 30px;
     font-family: Consolas;
-    color: var(--light-text);
+
+    span {
+      margin-right: 10px;
+      color: var(--light-text);
+      cursor: pointer;
+
+      &:hover {
+        color: var(--text);
+        text-decoration: underline;
+      }
+    }
   }
 }
 </style>

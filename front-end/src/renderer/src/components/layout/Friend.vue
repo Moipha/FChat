@@ -16,7 +16,7 @@
       <!-- 当前状态 -->
       <div class="option" :class="friend.status === 'online' ? 'primary' : 'warning'">
         <Icon class="svg" :name="friend.status === 'online' ? 'online' : 'offline'" />
-        <span class="value">{{ friend.status }}</span>
+        <span class="value">{{ statusMap[friend.status] }}</span>
       </div>
       <!-- 备注 -->
       <div class="option">
@@ -26,12 +26,12 @@
       </div>
       <hr />
       <!-- 开关 -->
-      <div class="option action">
+      <div class="option action" @click="config.silence = !config.silence">
         <Icon class="svg" name="notify"></Icon>
         <span class="value">消息免打扰</span>
         <Switch v-model="config.silence" :size="10" class="switch" />
       </div>
-      <div class="option action">
+      <div class="option action" @click="config.top = !config.top">
         <Icon class="svg" name="pinned" />
         <span class="value">置顶该聊天</span>
         <Switch v-model="config.top" :size="10" class="switch" />
@@ -52,7 +52,7 @@
         <Icon name="share" class="svg" />
         <span class="value">推荐该联系人</span>
       </div>
-      <div class="option action warning">
+      <div class="option action warning" @click="config.block = !config.block">
         <Icon name="block" class="svg" />
         <span class="value">屏蔽该联系人</span>
         <Switch v-model="config.block" :size="10" class="switch" color="var(--error)" />
@@ -78,7 +78,15 @@ import bus from '@r/utils/bus'
 const config = ref({})
 
 // 边栏显示
-const isShow = ref(true)
+const isShow = ref(false)
+
+// 映射
+const statusMap = {
+  online: '在线',
+  offline: '离线',
+  busy: '忙碌',
+  away: '离开'
+}
 
 // props
 defineProps({

@@ -64,6 +64,11 @@ ipcMain.on('send-emoji', (event, id) => {
   browserWindow.webContents.send('receive-emoji', id)
 })
 
+// 打开外部链接
+ipcMain.on('open-external', (event, url) => {
+  shell.openExternal(url)
+})
+
 // 创建新窗口
 function createBrowserWindow({
   route,

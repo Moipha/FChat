@@ -71,6 +71,7 @@ function chooseEmoji(key) {
     height: 80px;
     background-color: var(--bg);
     box-shadow: inset 0 0px 2px var(--light-text);
+    -webkit-app-region: drag;
 
     .option {
       color: var(--primary);

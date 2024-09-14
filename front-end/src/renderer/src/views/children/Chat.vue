@@ -287,7 +287,7 @@ section {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 60px);
-  filter: brightness(0.98);
+  filter: brightness(0.95);
 
   .msg-container {
     flex: 1;
