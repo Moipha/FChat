@@ -15,7 +15,6 @@
 <script setup>
 import Aside from '@r/components/layout/Aside.vue'
 import Titlebar from '@r/components/layout/Titlebar.vue'
-import config from '@/config'
 import { io } from 'socket.io-client'
 import { useUserStore } from '@r/stores/user'
 import { useMsgStore } from '@r/stores/msg'
@@ -25,11 +24,11 @@ import bus from '@r/utils/bus'
 import audio from '@r/assets/audio/ballon.wav'
 
 // 获取配置
-const { PROTOCOL, PORT, IP } = config
+const { VITE_PROTOCOL, VITE_PORT, VITE_IP } = import.meta.env
 // 获取当前用户信息
 const { user, token } = storeToRefs(useUserStore())
 // 建立socket连接
-const socket = io(`${PROTOCOL}://${IP}:${PORT}`, {
+const socket = io(`${VITE_PROTOCOL}://${VITE_IP}:${VITE_PORT}`, {
   extraHeaders: {
     Authorization: token.value
   }

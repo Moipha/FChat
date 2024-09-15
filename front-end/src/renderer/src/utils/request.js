@@ -3,15 +3,15 @@
  */
 import axios from 'axios'
 import { useUserStore } from '@r/stores/user'
-import config from '@/config'
 import router from '@r/router'
 
 const { token } = useUserStore()
-const { PORT, IP } = config
+const { VITE_PORT, VITE_IP } = import.meta.env
 
+console.log(import.meta.env)
 const request = axios.create({
   // baseURL: '/api',
-  baseURL: `http://${IP}:${PORT}`,
+  baseURL: `http://${VITE_IP}:${VITE_PORT}`,
   timeout: 1000 * 5,
   headers: {
     'Content-Type': 'application/json;charset=UTF-8'
@@ -23,12 +23,12 @@ request.interceptors.response.use(
     return res.data
   },
   (err) => {
-    if (err.response.status === 401) {
+    if (err.response && err.response.status === 401) {
       // 如果token过期，跳转到登录页面
       router.push('/login')
     }
-    alert(err.response.data.msg)
-    console.log('错误的响应: ' + err)
+    alert(err.response ? err.response.data.msg : '服务器异常')
+    console.error('错误的响应: ' + err)
     return Promise.reject(err)
   }
 )

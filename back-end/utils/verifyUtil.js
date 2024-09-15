@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer')
-const { MAIL_HOST, MAIL_PASS, MAIL_USER, MAIL_PORT } = require('../config')
+const { MAIL_HOST, MAIL_PASS, MAIL_USER, MAIL_PORT } = process.env
 
 // 配置项
 const transporter = nodemailer.createTransport({

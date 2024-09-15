@@ -1,6 +1,6 @@
 module.exports = (success, error) => {
   const mongoose = require('mongoose')
-  const { DB_HOST, DB_PORT, DB_NAME } = require('../config')
+  const { DB_HOST, DB_PORT, DB_NAME } = process.env
 
   if (typeof error !== 'function') {
     error = () => {
@@ -17,6 +17,7 @@ module.exports = (success, error) => {
     success()
   })
   mongoose.connection.on('error', () => {
+    console.log('数据库连接失败...')
     error()
   })
   mongoose.connection.on('close', () => {

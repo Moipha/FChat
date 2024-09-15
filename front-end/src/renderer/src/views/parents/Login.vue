@@ -56,7 +56,6 @@ async function userLogin() {
       })
     }
   } catch (err) {
-    alert('账号或密码有误')
     console.log(err)
   }
 }

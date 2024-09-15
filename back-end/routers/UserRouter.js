@@ -44,6 +44,7 @@ router.post(
       const { user, token } = await userService.loginUser(req.body)
       res.status(200).json(Result.success({ user, token }, '登录成功'))
     } catch (err) {
+      console.error(err)
       res.status(401).json(Result.error(401, '邮箱或密码错误'))
     }
   }

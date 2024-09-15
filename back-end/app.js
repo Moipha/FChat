@@ -1,9 +1,13 @@
+// 加载环境变量
+require('dotenv').config({ path: `.env.${process.env.NODE_ENV || 'development'}`})
+// require('dotenv').config({ path: './.env.development'})
+
 const express = require('express')
 const path = require('path')
-const { PORT } = require('./config')
 const db = require('./db')
 const socket = require('./socket')
 const cors = require('cors')
+const {PORT} = process.env
 
 // 启动数据库连接
 db(() => {
@@ -29,7 +33,7 @@ db(() => {
 
   // 启动服务器
   const server = app.listen(PORT, () => {
-    console.log('Server is running...')
+    console.log(`Node 服务已在 ${PORT} 端口上运行`)
   })
   // 启动socket
   socket(server)

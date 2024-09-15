@@ -2,7 +2,7 @@ const User = require('../models/User')
 const Friendship = require('../models/Friendship')
 const Message = require('../models/Message')
 const jwt = require('jsonwebtoken')
-const { SECRET_KEY } = require('../config')
+const { SECRET_KEY } = process.env
 const imgPathFix = require('../utils/imgPathFix')
 
 /**
@@ -26,8 +26,6 @@ async function loginUser(loginInfo) {
     throw new Error('用户不存在')
   }
   const token = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: '24h' })
-  // 更改数据库中的状态
-  // await updateStatus(user._id, 'online')
   user.status = 'online'
   return { user: imgPathFix(user), token }
 }

@@ -4,7 +4,7 @@
  * @returns 处理后的模型或模型列表
  */
 module.exports = (user) => {
-  const { PROTOCOL, IP, PORT } = require('../config')
+  const { PROTOCOL, IP, PORT } = process.env
   // 如果为数组，则遍历处理
   if (user instanceof Array) {
     const res = []

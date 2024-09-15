@@ -8,7 +8,7 @@ module.exports = (req, res, next) => {
   }
 
   const jwt = require('jsonwebtoken')
-  const { SECRET_KEY } = require('../config')
+  const { SECRET_KEY } = process.env
 
   // 从请求头中获取JWT
   const token = req.headers['authorization']
