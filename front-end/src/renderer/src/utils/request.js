@@ -8,7 +8,6 @@ import router from '@r/router'
 const { token } = useUserStore()
 const { VITE_PORT, VITE_IP } = import.meta.env
 
-console.log(import.meta.env)
 const request = axios.create({
   // baseURL: '/api',
   baseURL: `http://${VITE_IP}:${VITE_PORT}`,

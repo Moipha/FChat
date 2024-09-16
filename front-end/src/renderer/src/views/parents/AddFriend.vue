@@ -41,7 +41,6 @@
 
 <script lang="ts" setup>
 import Search from '@r/components/form/Search.vue'
-import Icon from '@r/components/form/Icon.vue'
 import Avatar from '@r/components/form/Avatar.vue'
 import Titlebar from '@r/components/layout/Titlebar.vue'
 import { ref } from 'vue'

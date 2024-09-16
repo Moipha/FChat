@@ -39,7 +39,6 @@
 import { useUserStore } from '@r/stores/user'
 import { storeToRefs } from 'pinia'
 import Avatar from '@r/components/form/Avatar.vue'
-import Icon from '@r/components/form/Icon.vue'
 import request from '@r/utils/request'
 import bus from '@r/utils/bus'
 

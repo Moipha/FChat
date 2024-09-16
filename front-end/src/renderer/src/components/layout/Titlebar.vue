@@ -19,7 +19,6 @@
 </template>
 
 <script lang="ts" setup>
-import Icon from '@r/components/form/Icon.vue'
 import { ref } from 'vue'
 
 defineProps({

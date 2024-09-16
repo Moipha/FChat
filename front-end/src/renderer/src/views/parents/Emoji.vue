@@ -18,7 +18,6 @@
 
 <script lang="ts" setup>
 import emoji from '@r/../public/emoji'
-import Icon from '@r/components/form/Icon.vue'
 
 const map = Object.entries(emoji.map)
 // 选中表情

@@ -28,7 +28,7 @@
 <script lang="ts" setup>
 import emoji from '@r/../public/emoji'
 import { ref, inject } from 'vue'
-import Icon from '@r/components/form/Icon.vue'
+ '@r/components/form/Icon.vue'
 import Wave from '@r/components/form/Wave.vue'
 
 // 接收socket

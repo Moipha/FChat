@@ -69,7 +69,6 @@
 <script lang="ts" setup>
 import { onActivated, onUnmounted, ref } from 'vue'
 import Avatar from '@r/components/form/Avatar.vue'
-import Icon from '@r/components/form/Icon.vue'
 import Switch from '@r/components/form/Switch.vue'
 import Mask from '@r/components/layout/Mask.vue'
 import bus from '@r/utils/bus'

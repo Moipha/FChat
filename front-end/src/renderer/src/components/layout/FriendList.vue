@@ -26,7 +26,6 @@
 </template>
 
 <script lang="ts" setup>
-import Icon from '@r/components/form/Icon.vue'
 import Avatar from '@r/components/form/Avatar.vue'
 import request from '@r/utils/request'
 import { onBeforeUnmount, ref } from 'vue'

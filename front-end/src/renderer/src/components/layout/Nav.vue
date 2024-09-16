@@ -44,7 +44,6 @@
 </template>
 
 <script lang="ts" setup>
-import Icon from '@r/components/form/Icon.vue'
 import Avatar from '@r/components/form/Avatar.vue'
 import Status from '@r/components/form/Status.vue'
 import Switch from '@r/components/form/Switch.vue'

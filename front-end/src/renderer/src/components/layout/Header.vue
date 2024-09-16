@@ -15,7 +15,6 @@
 </template>
 
 <script lang="ts" setup>
-import Icon from '@r/components/form/Icon.vue'
 import Status from '@r/components/form/Status.vue'
 import bus from '@r/utils/bus'
 import { getRecent } from '@r/utils/timeFormat'

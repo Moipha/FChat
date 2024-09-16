@@ -14,7 +14,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import SearchInput from '@r/components/form/SearchInput.vue'
-import Icon from '@r/components/form/Icon.vue'
 import Nav from '@r/components/layout/Nav.vue'
 import ChatList from '@r/components/layout/ChatList.vue'
 import FriendList from '@r/components/layout/FriendList.vue'

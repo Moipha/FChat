@@ -61,7 +61,6 @@
 
 <script lang="ts" setup>
 import Avatar from '@r/components/form/Avatar.vue'
-import Icon from '@r/components/form/Icon.vue'
 import { ref } from 'vue'
 import { useUserStore } from '@r/stores/user'
 import { storeToRefs } from 'pinia'
