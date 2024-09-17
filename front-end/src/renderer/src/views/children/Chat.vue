@@ -301,13 +301,12 @@ section {
 
       .content {
         display: inline-block;
-        background-color: var(--border);
+        background-color: var(--hover);
         padding: 5px 15px;
         border-radius: 20px;
         color: var(--light-text);
         font-size: 14px;
         transition: all 0.2s ease;
-        filter: brightness(1.1);
       }
     }
 

@@ -163,7 +163,7 @@ onActivated(() => {
         user-select: text;
 
         .email {
-          margin-right: 8px;
+          margin-right: 3px;
           font-size: 16px;
           cursor: default;
         }
@@ -180,17 +180,13 @@ onActivated(() => {
     height: calc(100vh - 128px);
 
     .value {
-      font-weight: normal;
-      font-family: 'Microsoft YaHei';
-      transition: color 0.2s;
-      font-size: 15px;
+      font-size: 16px;
     }
 
     .icon {
       margin-left: auto;
       margin-right: 20px;
       font-size: 25px;
-      color: var(--light-text);
       cursor: pointer;
       transition: all 0.2s ease;
 

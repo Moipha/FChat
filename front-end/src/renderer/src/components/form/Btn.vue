@@ -1,5 +1,7 @@
 <template>
-  <button class="btn" :class="type" @click="emit('click')">{{ label }}</button>
+  <button class="btn" :class="type" @click="emit('click')">
+    <slot>{{ label }}</slot>
+  </button>
 </template>
 
 <script lang="ts" setup>

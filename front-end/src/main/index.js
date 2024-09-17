@@ -151,8 +151,8 @@ function createBrowserWindow({
 // 创建主窗口
 function createMainWindow() {
   createBrowserWindow({
-    height: 500,
-    width: 360,
+    height: 540,
+    width: 900,
     route: '/login',
     resizable: false,
     maximizable: false,

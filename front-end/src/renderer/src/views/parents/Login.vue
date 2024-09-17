@@ -1,29 +1,57 @@
 <template>
   <main>
-    <div class="register">
-      <div ref="signH1" class="secondary-title" @click="hideLogin">Sign up</div>
-      <FInput v-model="mail" label="邮箱" reverse-color />
-      <FBtn class="btn" label="前往验证" @click="verify" />
-    </div>
-    <div ref="login" class="login">
-      <div ref="loginH1" class="primary-title scale-text" @click="hideLogin">Login</div>
-      <FInput v-model="curUser.email" label="邮箱" />
-      <FInput v-model="curUser.password" type="password" label="密码" />
-      <FBtn class="btn" label="Go!" @click="userLogin" />
-    </div>
+    <LoginCard />
+    <form class="login">
+      <div class="drag" />
+      <Input
+        v-model="curUser.email"
+        class="input-container"
+        placeholder="name@mail.com"
+        label="邮箱"
+      />
+      <Input
+        v-model="curUser.password"
+        class="input-container"
+        placeholder="你的密码"
+        label="密码"
+        type="password"
+      />
+      <div class="option">
+        <div class="checkbox-container">
+          <input id="checkbox" type="checkbox" />
+          <label for="checkbox">记住账号</label>
+        </div>
+        <span class="word-btn">忘记密码?</span>
+      </div>
+      <Btn class="btn" type="primary" @click="userLogin">登录</Btn>
+      <div class="or">
+        <hr />
+        <span>或</span>
+        <hr />
+      </div>
+      <div class="third-party">
+        <Btn> <Icon class="icon" name="wechat" />使用微信登录 </Btn>
+        <Btn> <Icon class="icon" name="github" /> 使用Github登录 </Btn>
+      </div>
+      <div class="tip">
+        <span>没有账号？</span>
+        <span class="word-btn">点击注册</span>
+      </div>
+    </form>
   </main>
-  <Titlebar :minimize="false" :maximize="false" :color="'var(--btn-text)'" :height="15" />
+  <Titlebar :minimize="false" :maximize="false" :height="15" />
 </template>
 
 <script lang="ts" setup>
-import FBtn from '@r/components/form/FBtn.vue'
-import FInput from '@r/components/form/FInput.vue'
+import Btn from '@r/components/form/Btn.vue'
+import LoginCard from '@r/components/layout/LoginCard.vue'
+import Input from '@r/components/form/Input.vue'
 import Titlebar from '@r/components/layout/Titlebar.vue'
 import { ref } from 'vue'
 import request from '@r/utils/request'
 import md5 from 'md5'
-import { useUserStore } from '@r/stores/user'
 import { storeToRefs } from 'pinia'
+import { useUserStore } from '@r/stores/user'
 import { useSignStore } from '@r/stores/sign'
 import { useSettingStore } from '@r/stores/setting'
 
@@ -58,18 +86,6 @@ async function userLogin() {
   } catch (err) {
     console.log(err)
   }
-}
-
-// ref元素
-const login = ref()
-const signH1 = ref()
-const loginH1 = ref()
-
-// 切换至注册界面
-function hideLogin() {
-  login.value.classList.toggle('hide-login')
-  signH1.value.classList.toggle('scale-text')
-  loginH1.value.classList.toggle('scale-text')
 }
 
 // 输入框中的邮箱
@@ -120,77 +136,137 @@ async function verify() {
 
 <style lang="scss" scoped>
 main {
-  background: linear-gradient(-60deg, var(--text), var(--primary));
-  color: var(--btn-text);
+  background-color: var(--bg);
   width: 100vw;
   height: 100vh;
   -webkit-app-region: drag;
   overflow: hidden;
-
-  .register {
-    display: flex;
-    flex-direction: column;
-    margin-top: 60px;
-    align-items: center;
-
-    .secondary-title {
-      font-size: 20px;
-      font-weight: 600;
-      text-align: center;
-      -webkit-app-region: no-drag;
-      cursor: pointer;
-      width: 150px;
-      margin: 0 auto 50px;
-      transition: 0.5s all ease-in-out;
-    }
-
-    .btn {
-      width: 200px;
-      margin-top: 50px;
-      font-size: 14px;
-    }
-  }
+  display: flex;
+  color: var(--text);
 
   .login {
-    background-color: var(--bg);
-    border-radius: 60% / 10%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 600px;
-    width: 100%;
-    margin-top: 10px;
-    transition: all 0.8s ease-in-out;
-    position: absolute;
-    top: 90px;
-    z-index: 2;
+    justify-content: center;
+    height: 100%;
+    width: 50%;
+    padding: 20px 10px;
+    box-sizing: border-box;
+    -webkit-app-region: no-drag;
 
-    .primary-title {
+    .drag {
+      height: 30px;
+      width: 100%;
+      position: absolute;
+      -webkit-app-region: drag;
+      top: 0;
+    }
+
+    .input-container {
+      padding: 10px 20px;
+      width: 80%;
+    }
+
+    .option {
+      margin: 10px;
+      display: flex;
+      width: 80%;
+      justify-content: space-between;
+      align-items: center;
+
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+
+        label {
+          font-size: 16px;
+          cursor: pointer;
+          font-family: dyh;
+        }
+
+        input {
+          outline: none;
+          width: 16px;
+          height: 16px;
+          cursor: pointer;
+        }
+      }
+    }
+
+    .word-btn {
+      font-size: 16px;
+      font-family: dyh;
       color: var(--primary);
-      font-size: 20px;
-      font-weight: 600;
-      text-align: center;
-      margin: 20px auto 50px;
-      width: 150px;
-      -webkit-app-region: no-drag;
+      font-weight: bold;
       cursor: pointer;
-      transition: 0.5s all ease-in-out;
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
 
     .btn {
-      width: 200px;
-      margin-top: 50px;
+      width: 80%;
+      font-size: 16px;
+      margin: 25px auto 0;
+    }
+
+    .or {
+      margin: 25px 0 0;
+      width: 80%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+
+      hr {
+        display: block;
+        width: 100%;
+        height: 1.5px;
+        border: 0;
+        background-color: var(--border);
+      }
+
+      span {
+        font-size: 18px;
+        color: var(--text);
+        font-family: dyh;
+      }
+    }
+
+    .third-party {
+      display: flex;
+      justify-content: space-between;
+      width: 80%;
+      gap: 7px;
+
+      .btn {
+        filter: none;
+        border: 1.5px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        font-size: 12px;
+
+        .icon {
+          font-size: 20px;
+        }
+
+        &:hover {
+          background-color: var(--hover);
+        }
+      }
+    }
+
+    .tip {
+      display: flex;
+      font-size: 16px;
+      font-weight: bold;
+      align-items: center;
+      margin-top: 25px;
     }
   }
-}
-
-.hide-login {
-  transform: translateY(300px) !important;
-}
-
-.scale-text {
-  font-size: 36px !important;
-  margin-top: 0 !important;
-  -webkit-app-region: no-drag;
 }
 </style>
