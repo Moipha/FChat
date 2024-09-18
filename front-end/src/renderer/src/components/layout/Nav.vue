@@ -34,6 +34,10 @@
       <span class="text">夜间模式</span>
       <Switch v-model="isDark" :size="10" class="switch" />
     </div>
+    <div class="option theme danger" @click="exit">
+      <Icon name="nav-logout" />
+      <span class="text">退出登录</span>
+    </div>
     <div class="version">
       <span @click="openExternal('https://github.com/Moipha/FChat')">FChat</span>
       <span @click="openExternal('https://github.com/Moipha/FChat')">v1.0.0</span>
@@ -97,11 +101,11 @@ const navList = [
     icon: 'nav-friends',
     text: '通讯录'
   },
-  {
-    name: 'profile',
-    icon: 'nav-profile',
-    text: '个人中心'
-  },
+  // {
+  //   name: 'profile',
+  //   icon: 'nav-profile',
+  //   text: '个人中心'
+  // },
   {
     name: 'setting',
     icon: 'nav-settings',
@@ -132,6 +136,14 @@ function jump(name, route) {
   navShow.value = false
   // 跳转路由
   router.push(route)
+}
+
+// 退出登录
+function exit() {
+  // 清除登录信息
+  localStorage.removeItem('user')
+  useSettingStore().logout()
+  window.api.logout()
 }
 
 // 修改状态
@@ -285,6 +297,10 @@ function openExternal(url) {
 
   .theme {
     transition: all 0.2s ease;
+  }
+
+  .danger {
+    color: var(--error);
   }
 
   .version {

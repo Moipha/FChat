@@ -1,20 +1,8 @@
 <template>
-  <nav :style="`--color: ${color}`">
-    <Icon
-      v-if="minimize"
-      :style="`height: ${height}px`"
-      class="icon"
-      name="minimize"
-      @click="mini"
-    />
-    <Icon
-      v-if="maximize"
-      :style="`height: ${height}px`"
-      class="icon"
-      :name="maxIcon"
-      @click="maxi"
-    />
-    <Icon :style="`height: ${height}px`" class="icon exit" name="close" @click="close" />
+  <nav :style="`--color: ${color}; --height: ${height}px`">
+    <Icon v-if="minimize" class="icon" name="minimize" @click="mini" />
+    <Icon v-if="maximize" class="icon" :name="maxIcon" @click="maxi" />
+    <Icon class="icon exit" name="close" @click="close" />
   </nav>
 </template>
 
@@ -68,7 +56,9 @@ nav {
   display: flex;
   z-index: 999;
   -webkit-app-region: no-drag;
+
   .icon {
+    height: var(--height);
     font-size: 12px;
     font-weight: bolder;
     cursor: pointer;
@@ -82,6 +72,7 @@ nav {
       background-color: var(--border);
     }
   }
+
   .exit:hover {
     background-color: var(--error);
     color: var(--btn-text);

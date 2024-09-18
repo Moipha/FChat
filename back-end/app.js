@@ -1,5 +1,5 @@
 // 加载环境变量
-require('dotenv').config({ path: `.env.${process.env.NODE_ENV || 'development'}`})
+require('dotenv').config({ path: `.env.${process.env.NODE_ENV || 'production'}`})
 // require('dotenv').config({ path: './.env.development'})
 
 const express = require('express')

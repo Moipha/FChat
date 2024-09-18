@@ -50,6 +50,10 @@ const api = {
   // 打开外部链接
   openExternal: (url) => {
     ipcRenderer.send('open-external', url)
+  },
+  // 登出
+  logout: () => {
+    ipcRenderer.send('logout')
   }
 }
 

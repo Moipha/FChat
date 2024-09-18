@@ -69,6 +69,17 @@ ipcMain.on('open-external', (event, url) => {
   shell.openExternal(url)
 })
 
+// 登出
+ipcMain.on('logout', (event) => {
+  // 关闭当前窗口
+  const browserWindow = BrowserWindow.fromWebContents(event.sender)
+  if (browserWindow) {
+    browserWindow.close()
+  }
+  // 打开登录窗口
+  createMainWindow()
+})
+
 // 创建新窗口
 function createBrowserWindow({
   route,

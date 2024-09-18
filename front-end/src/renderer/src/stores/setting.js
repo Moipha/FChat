@@ -12,7 +12,13 @@ export const useSettingStore = defineStore(
     // 二级路由
     const routeMap = ref({})
 
-    return { theme, nav, routeMap }
+    // 退出登录
+    function logout() {
+      routeMap.value = {}
+      nav.value = 'chat'
+    }
+
+    return { theme, nav, routeMap, logout }
   },
   {
     persist: {

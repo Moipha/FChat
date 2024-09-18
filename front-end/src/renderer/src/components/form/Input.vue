@@ -1,13 +1,7 @@
 <template>
   <div class="form-input">
-    <label>邮箱</label>
-    <input
-      spellcheck="false"
-      :type
-      :placeholder
-      :value="modelValue"
-      @input="emit('update:modelValue')"
-    />
+    <label>{{ label }}</label>
+    <input spellcheck="false" :placeholder :value="modelValue" @input="emit('update:modelValue')" />
   </div>
 </template>
 

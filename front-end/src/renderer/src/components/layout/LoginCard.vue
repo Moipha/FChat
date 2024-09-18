@@ -1,6 +1,5 @@
 <template>
   <div class="e-card playing">
-    <div class="image"></div>
     <div class="wave"></div>
     <div class="wave"></div>
     <div class="wave"></div>
@@ -42,9 +41,9 @@ function openExternal(url) {
 
   .info {
     text-align: center;
-    font-size: 25px;
+    font-size: 40px;
     position: absolute;
-    top: 5.6em;
+    top: 25vh;
     left: 0;
     right: 0;
     color: var(--btn-text);
@@ -60,7 +59,7 @@ function openExternal(url) {
       align-items: center;
 
       span {
-        margin-top: 15px;
+        margin-top: 20px;
         margin-left: 10px;
       }
     }
@@ -109,10 +108,11 @@ function openExternal(url) {
     right: 0;
     text-align: center;
     margin-left: 40px;
+    opacity: 0.8;
 
     span {
       font-size: 16px;
-      color: var(--border);
+      color: var(--btn-text);
       font-family: consolas;
     }
 

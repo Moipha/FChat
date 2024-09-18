@@ -1,7 +1,7 @@
 <template>
   <main>
     <LoginCard />
-    <form class="login">
+    <div class="login">
       <div class="drag" />
       <Input
         v-model="curUser.email"
@@ -31,13 +31,13 @@
       </div>
       <div class="third-party">
         <Btn> <Icon class="icon" name="wechat" />使用微信登录 </Btn>
-        <Btn> <Icon class="icon" name="github" /> 使用Github登录 </Btn>
+        <Btn> <Icon class="icon" name="github" />使用Github登录 </Btn>
       </div>
       <div class="tip">
         <span>没有账号？</span>
         <span class="word-btn">点击注册</span>
       </div>
-    </form>
+    </div>
   </main>
   <Titlebar :minimize="false" :maximize="false" :height="15" />
 </template>
