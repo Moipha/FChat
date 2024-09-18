@@ -2,17 +2,17 @@
 
 > 这是一个基于Electron + Vue3 + Node.js + MongoDB + Mongoose + Vite的桌面端在线聊天软件，支持实时消息推送和用户认证。更多功能正在开发中..
 
-![demo01](.\file\img\demo.gif)
+![demo01](./file/img/demo.gif)
 
-![demo01](.\file\img\demo01.png)
+![demo01](./file/img/demo01.png)
 
-![demo01](.\file\img\demo02.png)
+![demo01](./file/img/demo02.png)
 
-![demo01](.\file\img\demo03.png)
+![demo01](./file/img/demo03.png)
 
-![demo05](.\file\img\demo05.png)
+![demo05](./file/img/demo05.png)
 
-![demo01](.\file\img\demo04.png)
+![demo01](./file/img/demo04.png)
 
 ## 功能列表
 
