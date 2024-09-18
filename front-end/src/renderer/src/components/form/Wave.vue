@@ -85,11 +85,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted, watch, inject, getCurrentInstance } from 'vue'
+import { ref, onMounted, onUnmounted, watch, inject } from 'vue'
 import Btn from '@r/components/form/Btn.vue'
-
-// 获取当前实例
-const { proxy } = getCurrentInstance()
 
 // 接收socket
 const socket = inject('socket')
@@ -162,7 +159,7 @@ const stopRecording = () => {
   // 如果按下和松开时间间隔小于0.5秒，不做处理
   const endTime = Date.now()
   if (endTime - startTime < 500) {
-    proxy.$notify('录制时间过短！请至少录制一秒钟的时间')
+    window.$notify('录制时间过短！请至少录制一秒钟的时间')
     console.log('录音时间过短，不做处理')
     return
   }

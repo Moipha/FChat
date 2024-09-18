@@ -84,7 +84,7 @@ async function userLogin() {
       })
     }
   } catch (err) {
-    console.log(err)
+    curUser.value.password = ''
   }
 }
 

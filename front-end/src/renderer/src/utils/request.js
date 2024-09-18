@@ -26,7 +26,7 @@ request.interceptors.response.use(
       // 如果token过期，跳转到登录页面
       router.push('/login')
     }
-    alert(err.response ? err.response.data.msg : '服务器异常')
+    window.$notify(err.response ? err.response.data.msg : '网络异常')
     console.error('错误的响应: ' + err)
     return Promise.reject(err)
   }

@@ -10,5 +10,6 @@ export default {
 
     // 全局注册显示通知的方法
     app.config.globalProperties.$notify = vm.showMsg
+    window.$notify = vm.showMsg
   }
 }

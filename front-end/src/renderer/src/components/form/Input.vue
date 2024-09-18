@@ -1,7 +1,14 @@
 <template>
   <div class="form-input">
     <label>{{ label }}</label>
-    <input spellcheck="false" :placeholder :value="modelValue" @input="emit('update:modelValue')" />
+    <input
+      spellcheck="false"
+      :type
+      required
+      :placeholder
+      :value="modelValue"
+      @input="emit('update:modelValue', $event.target.value)"
+    />
   </div>
 </template>
 
