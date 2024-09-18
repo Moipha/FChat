@@ -54,6 +54,15 @@ const api = {
   // 登出
   logout: () => {
     ipcRenderer.send('logout')
+  },
+  // 注册回调
+  registerCallback: (callback) => {
+    ipcRenderer.on('register-callback', (event, data) => {
+      callback(data)
+    })
+  },
+  returnRegister: (data) => {
+    ipcRenderer.send('return-register', data)
   }
 }
 

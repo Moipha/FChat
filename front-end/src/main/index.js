@@ -80,6 +80,13 @@ ipcMain.on('logout', (event) => {
   createMainWindow()
 })
 
+// 返回注册结果
+ipcMain.on('return-register', (event, data) => {
+  // 获取父窗口
+  const browserWindow = BrowserWindow.fromWebContents(event.sender).getParentWindow()
+  browserWindow.webContents.send('register-callback', data)
+})
+
 // 创建新窗口
 function createBrowserWindow({
   route,

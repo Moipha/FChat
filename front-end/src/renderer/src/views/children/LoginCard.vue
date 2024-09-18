@@ -1,5 +1,11 @@
 <template>
-  <div class="e-card playing">
+  <div
+    class="e-card playing"
+    :style="{
+      '--num': msg.length,
+      '--wid': msg.length + 'ch'
+    }"
+  >
     <div class="wave"></div>
     <div class="wave"></div>
     <div class="wave"></div>
@@ -8,7 +14,7 @@
         <Avatar :size="60" class="icon" :src="icon" />
         <span>FChat</span>
       </div>
-      <span class="subtitle">Welcome, Let's Chat! :)</span>
+      <span ref="subtitle" class="subtitle">{{ msg }}</span>
     </div>
     <div class="version">
       <span class="link" @click="openExternal('https://github.com/Moipha/FChat')">v1.0.0</span>
@@ -23,6 +29,30 @@
 <script lang="ts" setup>
 import icon from '@/public/icons/icon.png'
 import Avatar from '@r/components/form/Avatar.vue'
+import { watch } from 'vue'
+import { ref } from 'vue'
+
+const props = defineProps({
+  msg: {
+    type: String,
+    default: 'Welcome to FChat!'
+  }
+})
+
+const subtitle = ref()
+
+watch(
+  () => props.msg,
+  () => {
+    // 重新播放文字的动画
+    if (subtitle.value) {
+      subtitle.value.classList.remove('typing-animation')
+      // 强制重绘，确保动画重新开始
+      void subtitle.value.offsetWidth
+      subtitle.value.classList.add('typing-animation')
+    }
+  }
+)
 
 // 打开外部链接
 function openExternal(url) {
@@ -32,12 +62,13 @@ function openExternal(url) {
 
 <style lang="scss" scoped>
 .e-card {
-  background: transparent;
+  background: var(--bg);
   box-shadow: 0px 8px 28px -9px rgba(0, 0, 0, 0.45);
   position: relative;
   width: 50%;
   height: 100vh;
   overflow: hidden;
+  z-index: 9;
 
   .info {
     text-align: center;
@@ -68,15 +99,18 @@ function openExternal(url) {
       margin-top: 40px;
       margin-left: 100px;
       align-self: flex-start;
-      width: 23ch;
+      width: var(--wid);
       white-space: nowrap;
       border-right: 2px solid transparent;
-      animation:
-        typing 3.5s steps(23, end),
-        blink-caret 0.75s step-end infinite;
       overflow: hidden;
       font-size: 24px;
       font-family: consolas;
+
+      &.typing-animation {
+        animation:
+          typing 3.2s steps(var(--num), end),
+          blink-caret 0.75s step-end infinite;
+      }
 
       @keyframes typing {
         from {
@@ -84,7 +118,7 @@ function openExternal(url) {
         }
 
         to {
-          width: 23ch;
+          width: var(--wid);
         }
       }
 

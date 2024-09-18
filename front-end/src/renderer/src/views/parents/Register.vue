@@ -1,73 +1,76 @@
 <template>
-  <div class="otp-Form">
-    <span class="mainHeading">请输入验证码</span>
-    <p class="otpSubheading">我们已向您的邮箱中发送了四位验证码，请注意查收</p>
-    <div class="inputContainer">
-      <input
-        id="otp-input1"
-        ref="input1"
-        v-model="verifyCode[0]"
-        required="required"
-        maxlength="1"
-        spellcheck="false"
-        type="text"
-        class="otp-input"
-        @input="handleInput1"
-      />
-      <input
-        id="otp-input2"
-        ref="input2"
-        v-model="verifyCode[1]"
-        spellcheck="false"
-        required="required"
-        maxlength="1"
-        type="text"
-        class="otp-input"
-        @input="handleInput2"
-      />
-      <input
-        id="otp-input3"
-        ref="input3"
-        v-model="verifyCode[2]"
-        spellcheck="false"
-        required="required"
-        maxlength="1"
-        type="text"
-        class="otp-input"
-        @input="handleInput3"
-      />
-      <input
-        id="otp-input4"
-        ref="input4"
-        v-model="verifyCode[3]"
-        spellcheck="false"
-        required="required"
-        maxlength="1"
-        type="text"
-        class="otp-input"
-        @input="handleInput4"
-      />
+  <div class="register-container">
+    <div class="otp-form" :style="{ left: showPass ? '-100%' : '0' }">
+      <span class="title">请输入验证码</span>
+      <p class="subtitle">我们已向您的邮箱中发送了四位验证码，请注意查收</p>
+      <div class="input-container">
+        <input
+          id="otp-input1"
+          ref="input1"
+          v-model="verifyCode[0]"
+          required="required"
+          maxlength="1"
+          spellcheck="false"
+          type="text"
+          class="otp-input"
+          @input="handleInput1"
+        />
+        <input
+          id="otp-input2"
+          ref="input2"
+          v-model="verifyCode[1]"
+          spellcheck="false"
+          required="required"
+          maxlength="1"
+          type="text"
+          class="otp-input"
+          @input="handleInput2"
+        />
+        <input
+          id="otp-input3"
+          ref="input3"
+          v-model="verifyCode[2]"
+          spellcheck="false"
+          required="required"
+          maxlength="1"
+          type="text"
+          class="otp-input"
+          @input="handleInput3"
+        />
+        <input
+          id="otp-input4"
+          ref="input4"
+          v-model="verifyCode[3]"
+          spellcheck="false"
+          required="required"
+          maxlength="1"
+          type="text"
+          class="otp-input"
+          @input="handleInput4"
+        />
+      </div>
+      <Btn type="primary" class="verify-btn" label="验证" @click="verify" />
+      <p class="resend-note">
+        未收到验证码?<button
+          :disabled="waitTime != 0"
+          :class="waitTime != 0 ? 'disabled' : ''"
+          class="resend-btn"
+          @click="resend"
+        >
+          重新发送
+          <span v-if="waitTime != 0"> {{ waitTime }}s</span>
+        </button>
+      </p>
     </div>
-    <FBtn class="verifyButton" label="验证" @click="verify" />
-    <p class="resendNote">
-      未收到验证码？<button
-        :disabled="waitTime != 0"
-        :class="waitTime != 0 ? 'disabled' : ''"
-        class="resendBtn"
-        @click="resend"
-      >
-        重新发送
-        <span v-if="waitTime != 0"> {{ waitTime }}s</span>
-      </button>
-    </p>
+    <SetPass :show-pass />
   </div>
   <Titlebar :minimize="false" :maximize="false" :height="15" />
 </template>
 
 <script lang="ts" setup>
-import FBtn from '@r/components/form/FBtn.vue'
+import Btn from '@r/components/form/Btn.vue'
 import Titlebar from '@r/components/layout/Titlebar.vue'
-import { useRouter } from 'vue-router'
+import SetPass from '@r/views/children/SetPass.vue'
 import { useSignStore } from '@r/stores/sign'
 import { storeToRefs } from 'pinia'
 import request from '@r/utils/request'
@@ -75,13 +78,15 @@ import { ref } from 'vue'
 
 // 获取store中保存的新用户
 const { newUser, lastSendTime } = storeToRefs(useSignStore())
-const router = useRouter()
 
 // 验证码
 const verifyCode = ref([])
 
 // 剩余等待时间
 const waitTime = ref(0)
+
+// 左滑
+const showPass = ref(false)
 
 // 每秒递减
 function calculateTime() {
@@ -133,12 +138,12 @@ async function verify() {
   try {
     const res = await request.post('/user/verify', { email, code })
     if (res.code === 200) {
-      router.push('/set-pass')
+      showPass.value = true
     } else {
-      alert('验证码错误')
+      window.$notify('验证码错误')
     }
   } catch (err) {
-    alert('请求校验失败')
+    window.$notify('请求校验失败')
     console.error(err)
   }
 }
@@ -152,99 +157,112 @@ async function resend() {
     lastSendTime.value = Date.now()
     calculateTime()
   } catch (err) {
-    alert('发送验证码失败')
+    window.$notify('发送验证码失败')
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.otp-Form {
-  width: 230px;
-  height: 300px;
-  background-color: var(--bg);
-  color: var(--text);
+.register-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px 30px;
-  gap: 20px;
-  position: relative;
-  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
-  -webkit-app-region: drag;
+  width: 100vw;
+  height: 100vh;
 
-  .mainHeading {
-    font-size: 1.1em;
-    color: rgb(15, 15, 15);
-    font-weight: 700;
-  }
-
-  .otpSubheading {
-    font-size: 0.7em;
-    color: black;
-    line-height: 17px;
-    text-align: center;
-  }
-
-  .inputContainer {
+  .otp-form {
     width: 100%;
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-    -webkit-app-region: no-drag;
-
-    .otp-input {
-      background-color: var(--text);
-      opacity: 0.1;
-      width: 30px;
-      height: 30px;
-      text-align: center;
-      border: none;
-      border-radius: 7px;
-      outline: none;
-      font-weight: 600;
-
-      &:focus,
-      &:valid {
-        background-color: var(--primary);
-        color: var(--btn-text);
-        opacity: 1;
-        transition-duration: 0.3s;
-      }
-    }
-  }
-
-  .verifyButton {
-    width: 100%;
-    font-size: 14px;
-  }
-
-  .resendNote {
-    font-size: 0.7em;
+    height: 100%;
+    background-color: var(--bg);
     color: var(--text);
-    width: 100%;
+    font-size: 20px;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-    gap: 5px;
-    -webkit-app-region: no-drag;
-  }
+    align-items: center;
+    gap: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: all 0.4s;
+    -webkit-app-region: drag;
 
-  .resendBtn {
-    background-color: transparent;
-    border: none;
-    color: var(--primary);
-    cursor: pointer;
-    font-size: 1.1em;
-    font-weight: 700;
-  }
+    .title {
+      font-size: 1.3em;
+      color: rgb(15, 15, 15);
+      font-family: dyh;
+    }
 
-  .disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
+    .subtitle {
+      font-size: 0.66em;
+      width: 75%;
+      color: black;
+      line-height: 25px;
+      text-align: center;
+      font-family: Microsoft-YaHei;
+    }
+
+    .input-container {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      -webkit-app-region: no-drag;
+
+      .otp-input {
+        background-color: var(--text);
+        opacity: 0.1;
+        width: 35px;
+        aspect-ratio: 1;
+        text-align: center;
+        border: none;
+        border-radius: 10px;
+        outline: none;
+        font-family: consolas;
+        font-size: 18px;
+
+        &:focus,
+        &:valid {
+          background-color: var(--primary);
+          color: var(--btn-text);
+          opacity: 1;
+          transition-duration: 0.3s;
+        }
+      }
+    }
+
+    .verify-btn {
+      margin: 20px auto -10px;
+      width: 55%;
+      font-size: 14px;
+    }
+
+    .resend-note {
+      font-size: 0.7em;
+      color: var(--text);
+      font-family: Microsoft-YaHei;
+      display: flex;
+      justify-content: center;
+      -webkit-app-region: no-drag;
+
+      .resend-btn {
+        background-color: transparent;
+        border: none;
+        color: var(--primary);
+        cursor: pointer;
+        font-size: 1.1em;
+        font-family: dyh;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
   }
 }
 </style>

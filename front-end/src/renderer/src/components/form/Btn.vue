@@ -23,10 +23,10 @@ const emit = defineEmits(['click'])
 .btn {
   outline: none;
   border: none;
-  padding: 10px 15px;
+  padding: 0.625em 0.94em;
   border-radius: 4px;
-  margin-right: 10px;
-  font-size: 14px;
+  margin-right: 0.625em;
+  font-size: 1em;
   letter-spacing: 1px;
   font-weight: bold;
   transition: all 0.2s ease;

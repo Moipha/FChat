@@ -1,7 +1,13 @@
 <template>
   <main>
-    <LoginCard />
-    <div class="login">
+    <LoginCard :msg="msg" />
+    <div
+      class="login"
+      :style="{
+        left: showRegister ? 0 : '50%',
+        webkitAppRegion: showRegister ? 'drag' : 'no-drag'
+      }"
+    >
       <div class="drag" />
       <Input
         v-model="curUser.email"
@@ -21,7 +27,7 @@
           <input id="checkbox" type="checkbox" />
           <label for="checkbox">记住账号</label>
         </div>
-        <span class="word-btn">忘记密码?</span>
+        <span class="word-btn" @click="$notify('该功能暂未实现，抱歉~~')">忘记密码?</span>
       </div>
       <Btn class="btn" type="primary" @click="userLogin">登录</Btn>
       <div class="or">
@@ -30,37 +36,52 @@
         <hr />
       </div>
       <div class="third-party">
-        <Btn> <Icon class="icon" name="wechat" />使用微信登录 </Btn>
-        <Btn> <Icon class="icon" name="github" />使用Github登录 </Btn>
+        <Btn @click="$notify('该功能暂未实现，抱歉~~')">
+          <Icon class="icon" name="wechat" />使用微信登录
+        </Btn>
+        <Btn @click="$notify('该功能暂未实现，抱歉~~')">
+          <Icon class="icon" name="github" />使用Github登录
+        </Btn>
       </div>
       <div class="tip">
         <span>没有账号？</span>
-        <span class="word-btn">点击注册</span>
+        <span class="word-btn" @click="showRegister = true">点击注册</span>
       </div>
     </div>
+    <Register v-model="showRegister" />
   </main>
   <Titlebar :minimize="false" :maximize="false" :height="15" />
 </template>
 
 <script lang="ts" setup>
 import Btn from '@r/components/form/Btn.vue'
-import LoginCard from '@r/components/layout/LoginCard.vue'
+import LoginCard from '@r/views/children/LoginCard.vue'
 import Input from '@r/components/form/Input.vue'
 import Titlebar from '@r/components/layout/Titlebar.vue'
-import { ref } from 'vue'
+import Register from '@r/components/layout/Register.vue'
+import { ref, watch } from 'vue'
 import request from '@r/utils/request'
 import md5 from 'md5'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@r/stores/user'
-import { useSignStore } from '@r/stores/sign'
 import { useSettingStore } from '@r/stores/setting'
 
 // 获取store数据
 const { user, token } = storeToRefs(useUserStore())
-const { newUser, lastSendTime } = storeToRefs(useSignStore())
 const { nav, routeMap } = storeToRefs(useSettingStore())
 
+// 切换注册
+const showRegister = ref(false)
+
+watch(showRegister, (cur) => {
+  msg.value = cur ? "Let's Get Started! ^^" : "Welcome, Let's Chat! :)"
+})
+// 左侧信息
+const msg = ref("Welcome, Let's Chat! :)")
+
+// 登录用户信息
 const curUser = ref({ email: 'young@test.cn', password: '123123' }) // 用户信息
+
 // 用户登录
 async function userLogin() {
   const { email, password } = curUser.value
@@ -87,51 +108,6 @@ async function userLogin() {
     curUser.value.password = ''
   }
 }
-
-// 输入框中的邮箱
-const mail = ref('')
-
-// 验证邮箱
-async function verify() {
-  // 校验邮箱格式
-  const reg =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  const ok = reg.test(String(mail.value).toLowerCase())
-  if (!ok) {
-    alert('邮箱格式有误')
-    return
-  }
-  // 检查邮箱是否已注册
-  try {
-    const res = await request.get('/user/email', { params: { email: mail.value } })
-    if (res.data) {
-      alert('该邮箱已被注册')
-    } else {
-      // 判断上次发送时间
-      if (Date.now() - lastSendTime.value < 60 * 1000) {
-        alert(`请等待 ${60 - parseInt((Date.now() - lastSendTime.value) / 1000)} 秒后再次发送`)
-        return
-      }
-      // 发送验证邮件
-      await request.post('/user/send-verify', { email: mail.value })
-      lastSendTime.value = Date.now()
-      // 验证通过，保存邮箱至本地
-      newUser.value.email = mail.value
-      mail.value = ''
-
-      window.api.openDialog({
-        route: '/register',
-        width: 240,
-        height: 320,
-        modal: true,
-        frame: true
-      })
-    }
-  } catch (e) {
-    alert('验证码发送失败')
-    console.error(e)
-  }
-}
 </script>
 
 <style lang="scss" scoped>
@@ -149,14 +125,16 @@ main {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 50%;
     width: 50%;
-    padding: 20px 10px;
-    box-sizing: border-box;
-    -webkit-app-region: no-drag;
+    height: 100%;
+    transition: 0.4s all;
+    z-index: 0;
 
     .drag {
-      height: 30px;
+      height: 50px;
       width: 100%;
       position: absolute;
       -webkit-app-region: drag;
