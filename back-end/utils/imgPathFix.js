@@ -16,8 +16,11 @@ module.exports = (user) => {
     return fixPath(user)
   }
   function fixPath(user) {
+    if(!user) return user
     if (!user.avatar) return user
-    user.avatar = `${PROTOCOL}://${IP}:${PORT}${user.avatar}`
+    if(!user.avatar.startsWith('http')){
+      user.avatar = `${PROTOCOL}://${IP}:${PORT}${user.avatar}`
+    }
     return user
   }
 }

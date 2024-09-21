@@ -6,8 +6,8 @@
     }"
   >
     <div class="profile">
-      <Avatar :size="60" shape="circle" :src="user.avatar" />
-      <div class="detail">
+      <Avatar :size="60" shape="circle" :src="user.avatar" @click="openProfile" />
+      <div class="detail" @click="openProfile">
         <span class="title">{{ user.username }}</span>
         <span class="subtitle dyh">
           <Icon class="email" name="email" />
@@ -183,6 +183,17 @@ function changeTheme(tm) {
 function openExternal(url) {
   window.api.openExternal(url)
 }
+
+// 打开个人中心
+function openProfile() {
+  window.api.openDialog({
+    width: 600,
+    height: 400,
+    title: user.username,
+    route: '/profile',
+    frame: true
+  })
+}
 </script>
 
 <style lang="scss" scoped>
@@ -205,7 +216,7 @@ function openExternal(url) {
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    margin-left: 30px;
+    padding-left: 30px;
     gap: 20px;
 
     .detail {

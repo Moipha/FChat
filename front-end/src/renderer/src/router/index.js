@@ -25,7 +25,8 @@ const router = createRouter({
       path: '/add-info',
       component: () => import('@r/views/parents/AddInfo.vue'),
       props: true
-    }
+    },
+    { path: '/profile', component: () => import('@r/views/parents/Profile.vue') }
   ]
 })
 

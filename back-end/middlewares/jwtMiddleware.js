@@ -3,7 +3,7 @@
  */
 module.exports = (req, res, next) => {
   // 如果是放行的路径和方法，则直接放行
-  const pass = ['/images', '/user','/user/login',  '/user/send-verify', '/user/email', '/user/verify']
+  const pass = ['/images', '/user','/user/login',  '/user/send-verify', '/user/email', '/user/verify', '/auth/github/callback']
   if (pass.includes(req.path)) {
     return next()
   }

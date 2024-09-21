@@ -1,5 +1,5 @@
 {
-  "name": "chat",
+  "name": "fchat",
   "version": "1.0.0",
   "description": "An Electron application with Vue",
   "main": "./out/main/index.js",
@@ -10,12 +10,20 @@
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
     "start": "electron-vite preview",
     "dev": "electron-vite dev --watch --mode=development",
-    "build": "electron-vite build --mode=production",
+    "build": "electron-vite build --mode=development",
     "postinstall": "electron-builder install-app-deps",
     "build:unpack": "npm run build && electron-builder --config=electron-builder.config.js --dir",
     "build:win": "npm run build && electron-builder --config=electron-builder.config.js --win",
     "build:mac": "npm run build && electron-builder --config=electron-builder.config.js --mac",
     "build:linux": "npm run build && electron-builder --config=electron-builder.config.js --linux"
+  },
+  "build": {
+    "protocols": {
+      "name": "fchat",
+      "schemes": [
+        "fchat"
+      ]
+    }
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
@@ -24,6 +32,7 @@
     "asar": "^3.2.0",
     "axios": "^1.7.2",
     "dayjs": "^1.11.13",
+    "electron-log": "^5.2.0",
     "electron-updater": "^6.1.7",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",

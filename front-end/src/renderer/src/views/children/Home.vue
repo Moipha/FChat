@@ -1,8 +1,13 @@
 <template>
-  <div class="home dyh">LOGO</div>
+  <div class="home dyh">
+    <img :src="icon" alt="logo" />
+    <span>FChat</span>
+  </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import icon from '@/public/icons/icon.png'
+</script>
 
 <style lang="scss" scoped>
 .home {
@@ -15,5 +20,11 @@
   font-size: 40px;
   color: var(--text);
   transition: all 0.2s;
+
+  img {
+    margin-right: 10px;
+    margin-bottom: 15px;
+    width: 60px;
+  }
 }
 </style>

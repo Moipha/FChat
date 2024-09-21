@@ -28,7 +28,7 @@
 <script lang="ts" setup>
 import emoji from '@r/../public/emoji'
 import { ref, inject } from 'vue'
- '@r/components/form/Icon.vue'
+;('@r/components/form/Icon.vue')
 import Wave from '@r/components/form/Wave.vue'
 
 // 接收socket
@@ -167,7 +167,6 @@ function changeMsgMode() {
 function showEmoji() {
   window.api.openDialog({
     route: '/emoji',
-    modal: false,
     height: 420,
     width: 520,
     closeOnBlur: true

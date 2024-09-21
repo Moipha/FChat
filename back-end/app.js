@@ -1,5 +1,5 @@
 // 加载环境变量
-require('dotenv').config({ path: `.env.${process.env.NODE_ENV || 'production'}`})
+require('dotenv').config({ path: `.env.${process.env.NODE_ENV || 'production'}` })
 // require('dotenv').config({ path: './.env.development'})
 
 const express = require('express')
@@ -7,7 +7,7 @@ const path = require('path')
 const db = require('./db')
 const socket = require('./socket')
 const cors = require('cors')
-const {PORT} = process.env
+const { PORT } = process.env
 
 // 启动数据库连接
 db(() => {
@@ -22,6 +22,8 @@ db(() => {
   app.use(express.urlencoded({ extended: false }))
   // jwt验证中间件
   app.use(require('./middlewares/jwtMiddleware'))
+  // github验证
+  app.use('/auth/github', require('./routers/GithubAuth'))
   // 配置路由
   app.use('/user', require('./routers/UserRouter'))
   app.use('/msg', require('./routers/MessageRouter'))

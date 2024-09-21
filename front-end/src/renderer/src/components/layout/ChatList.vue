@@ -146,7 +146,7 @@ function getMsg(msg, type) {
   } else if (type === 'video') {
     res = '[视频消息]'
   } else {
-    res = '[消息]'
+    res = ''
   }
   return res
 }

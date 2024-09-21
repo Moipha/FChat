@@ -1,7 +1,9 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, globalShortcut } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../public/icons/icon.png'
+import axios from 'axios'
+import log from 'electron-log'
 
 /**
  *  绑定通用的ipc事件
@@ -179,21 +181,104 @@ function createMainWindow() {
   })
 }
 
-app.whenReady().then(() => {
-  electronApp.setAppUserModelId('com.electron')
-  app.on('browser-window-created', (_, window) => {
-    optimizer.watchWindowShortcuts(window)
-  })
-  ipcMain.on('ping', () => console.log('pong'))
-  createMainWindow()
+//设置锁保证只有单个实例运行
+const gotTheLock = app.requestSingleInstanceLock()
 
-  app.on('activate', function () {
-    if (BrowserWindow.getAllWindows().length === 0) createMainWindow()
-  })
-})
+if (!gotTheLock) {
+  app.quit() // 如果获取不到锁，退出新启动的实例
+} else {
+  /**
+   * Github OAuth验证
+   */
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
+  // 注册自定义协议
+  app.setAsDefaultProtocolClient('fchat')
+  // 捕获Github校验回调
+  app.on('open-url', async (event, url) => {
+    // 解析GitHub回调中的授权码
+    const urlParams = new URL(url)
+    const authorizationCode = urlParams.searchParams.get('code')
+
+    if (authorizationCode) {
+      console.log('Authorization Code: ', authorizationCode)
+      log.info('Authorization Code: ', authorizationCode)
+      log.info(
+        '地址：',
+        `http://${import.meta.env.VITE_IP}:${import.meta.env.VITE_PORT}/auth/github/callback`
+      )
+      // 将授权码发送到后端处理
+      try {
+        const { data: res } = await axios.get(
+          `http://${import.meta.env.VITE_IP}:${import.meta.env.VITE_PORT}/auth/github/callback`,
+          {
+            params: {
+              code: authorizationCode
+            }
+          }
+        )
+        // 通知渲染进程登录结果
+        const win = BrowserWindow.getAllWindows()[0]
+        if (win) {
+          win.webContents.send('github-login', res)
+          log.info('授权登录', res)
+        } else {
+          log.error('窗口获取失败')
+        }
+      } catch (err) {
+        log.error('服务器内部错误', err)
+      }
+    }
+  })
+
+  app.on('second-instance', (event, commandLine) => {
+    // 检查是否包含 fchat:// 协议的 URL
+    const url = commandLine.find((arg) => arg.startsWith('fchat://'))
+    if (url) {
+      // 手动触发 open-url 事件，确保逻辑处理
+      app.emit('open-url', event, url)
+    }
+
+    // 获取当前已有的窗口，并聚焦该窗口
+    const win = BrowserWindow.getAllWindows()[0]
+    if (win) {
+      if (win.isMinimized()) win.restore()
+      win.focus()
+    }
+  })
+
+  // 就绪后打开窗口
+  app.whenReady().then(() => {
+    // 设置快捷键打开控制台
+    globalShortcut.register('CommandOrControl+Shift+I', () => {
+      const win = BrowserWindow.getAllWindows()[0]
+      if (win) {
+        win.webContents.toggleDevTools() // 开启或关闭控制台
+      }
+    })
+
+    // 检查是否通过协议启动的
+    const url = process.argv.find((arg) => arg.startsWith('fchat://'))
+    if (url) {
+      app.emit('open-url', {}, url)
+    }
+
+    // 创建窗口
+    electronApp.setAppUserModelId('com.electron')
+    app.on('browser-window-created', (_, window) => {
+      optimizer.watchWindowShortcuts(window)
+    })
+    ipcMain.on('ping', () => console.log('pong'))
+    createMainWindow()
+
+    app.on('activate', function () {
+      if (BrowserWindow.getAllWindows().length === 0) createMainWindow()
+    })
+  })
+
+  // 窗口全关闭时退出程序
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      app.quit()
+    }
+  })
+}

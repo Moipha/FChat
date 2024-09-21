@@ -39,9 +39,7 @@
         <Btn @click="$notify('该功能暂未实现，抱歉~~')">
           <Icon class="icon" name="wechat" />使用微信登录
         </Btn>
-        <Btn @click="$notify('该功能暂未实现，抱歉~~')">
-          <Icon class="icon" name="github" />使用Github登录
-        </Btn>
+        <Btn @click="githubAuth"> <Icon class="icon" name="github" />使用Github登录 </Btn>
       </div>
       <div class="tip">
         <span>没有账号？</span>
@@ -89,24 +87,46 @@ async function userLogin() {
   try {
     const res = await request.post('/user/login', { email, password: md5(password) })
     if (res && res.code === 200) {
-      // 在本地保存token
-      token.value = res.data && res.data.token
-      // 本地保存用户信息
-      user.value = res.data && res.data.user
-      // 修改nav
-      nav.value = 'chat'
-      // 打开主界面窗口
-      window.api.openNewWindow({
-        height: 600,
-        width: 900,
-        minWidth: 600,
-        minHeight: 500,
-        route: routeMap.value['chat']
-      })
+      loginSuccess(res.data)
     }
   } catch (err) {
     curUser.value.password = ''
   }
+}
+
+// 登录成功执行
+function loginSuccess(data) {
+  // 在本地保存token
+  token.value = data && data.token
+  // 本地保存用户信息
+  user.value = data && data.user
+  // 修改nav
+  nav.value = 'chat'
+  // 打开主界面窗口
+  window.api.openNewWindow({
+    height: 600,
+    width: 900,
+    minWidth: 640,
+    minHeight: 540,
+    route: routeMap.value['chat']
+  })
+}
+
+// github授权登录
+function githubAuth() {
+  // 打开github授权登录页面
+  const { VITE_GITHUB_CLIENT_ID: id, VITE_REDIRECT_URI: uri } = import.meta.env
+  const url = `https://github.com/login/oauth/authorize?client_id=${id}&redirect_uri=${uri}&scope=user`
+  window.api.openExternal(url)
+  // 开始监听主进程回调
+  window.api.githubLogin((res) => {
+    console.log(res)
+    if (res.code === 200) {
+      loginSuccess(res.data)
+    } else {
+      window.$notify('授权登录失败，请重新进行授权')
+    }
+  })
 }
 </script>
 

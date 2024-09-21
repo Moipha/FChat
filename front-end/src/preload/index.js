@@ -63,6 +63,12 @@ const api = {
   },
   returnRegister: (data) => {
     ipcRenderer.send('return-register', data)
+  },
+  // github登录回调
+  githubLogin: (callback) => {
+    ipcRenderer.on('github-login', (event, data) => {
+      callback(data)
+    })
   }
 }
 

@@ -79,7 +79,6 @@ function openAdd() {
     route: '/add-friend',
     width: 600,
     height: 500,
-    parent: null,
     title: '添加好友'
   })
 }

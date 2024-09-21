@@ -156,6 +156,12 @@ async function search(keyword) {
   return imgPathFix(result)
 }
 
+// 通过githubId获取用户
+async function getGithubUser(githubId) {
+  const user = await User.findOne({ githubId })
+  return imgPathFix(user)
+}
+
 module.exports = {
   registerUser,
   loginUser,
@@ -166,5 +172,6 @@ module.exports = {
   getUserById,
   getUserByEmail,
   getAddList,
-  search
+  search,
+  getGithubUser
 }
