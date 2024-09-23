@@ -162,6 +162,17 @@ async function getGithubUser(githubId) {
   return imgPathFix(user)
 }
 
+// 更新用户的部分字段
+async function updateUser(userId, entries) {
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { $set: entries }, // 使用 $set 明确表示只更新传入的字段
+    { new: true, runValidators: true } // 确保返回更新后的文档并且启用验证
+  )
+  if(!user) return {}
+  return imgPathFix(user)
+}
+
 module.exports = {
   registerUser,
   loginUser,
@@ -173,5 +184,6 @@ module.exports = {
   getUserByEmail,
   getAddList,
   search,
-  getGithubUser
+  getGithubUser,
+  updateUser
 }

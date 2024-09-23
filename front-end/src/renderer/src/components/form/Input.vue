@@ -4,9 +4,12 @@
     <input
       spellcheck="false"
       :type
-      required
+      :style="customStyle"
+      :value="value || modelValue"
       :placeholder
-      :value="modelValue"
+      :disabled
+      :class="{ disabled }"
+      required
       @input="emit('update:modelValue', $event.target.value)"
     />
   </div>
@@ -23,12 +26,22 @@ defineProps({
     default: ''
   },
   modelValue: {
-    type: String,
-    default: ''
+    type: String
+  },
+  value: {
+    type: String
   },
   type: {
     type: String,
     default: 'text'
+  },
+  customStyle: {
+    type: Object,
+    default: () => ({})
+  },
+  disabled: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -67,6 +80,12 @@ const emit = defineEmits(['update:modelValue'])
       background-color: var(--primary);
       color: var(--btn-text);
     }
+  }
+
+  .disabled {
+    cursor: not-allowed;
+    color: var(--light-text);
+    opacity: 0.9;
   }
 }
 </style>

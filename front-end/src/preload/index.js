@@ -69,6 +69,16 @@ const api = {
     ipcRenderer.on('github-login', (event, data) => {
       callback(data)
     })
+  },
+  // 更新用户信息
+  updateUserInfo: (data) => {
+    ipcRenderer.send('update-user', data)
+  },
+  // 更新用户回调
+  onUserUpdate: (callback) => {
+    ipcRenderer.on('update-user', (event, data) => {
+      callback(data)
+    })
   }
 }
 

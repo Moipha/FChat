@@ -6,7 +6,7 @@
     }"
   >
     <div class="profile">
-      <Avatar :size="60" shape="circle" :src="user.avatar" @click="openProfile" />
+      <Avatar class="avatar" :size="60" shape="circle" :src="user.avatar" @click="openProfile" />
       <div class="detail" @click="openProfile">
         <span class="title">{{ user.username }}</span>
         <span class="subtitle dyh">
@@ -79,7 +79,7 @@ watch(theme, (newVal) => {
 })
 
 // 获取用户信息
-const { user } = useUserStore()
+const { user } = storeToRefs(useUserStore())
 
 // 显示状态
 const navShow = ref(false)
@@ -91,26 +91,26 @@ const navList = [
     icon: 'nav-chats',
     text: '聊天'
   },
-  {
-    name: 'group',
-    icon: 'nav-groups',
-    text: '群组'
-  },
+  // {
+  //   name: 'group',
+  //   icon: 'nav-groups',
+  //   text: '群组'
+  // },
   {
     name: 'friend',
     icon: 'nav-friends',
     text: '通讯录'
   },
-  // {
-  //   name: 'profile',
-  //   icon: 'nav-profile',
-  //   text: '个人中心'
-  // },
   {
-    name: 'setting',
-    icon: 'nav-settings',
-    text: '设置'
+    name: 'profile',
+    icon: 'nav-profile',
+    text: '个人中心'
   }
+  // {
+  //   name: 'setting',
+  //   icon: 'nav-settings',
+  //   text: '设置'
+  // }
 ]
 
 // 点击选项
@@ -128,6 +128,7 @@ function jump(name, route) {
     // 打开设置栏
   } else if (name === 'profile') {
     // 打开个人资料
+    return openProfile()
   } else {
     routeMap.value[nav.value] = router.currentRoute.value.fullPath
     nav.value = name
@@ -188,7 +189,7 @@ function openExternal(url) {
 function openProfile() {
   window.api.openDialog({
     width: 600,
-    height: 400,
+    height: 450,
     title: user.username,
     route: '/profile',
     frame: true
@@ -218,6 +219,11 @@ function openProfile() {
     justify-content: center;
     padding-left: 30px;
     gap: 20px;
+
+    .detail,
+    .avatar {
+      cursor: pointer;
+    }
 
     .detail {
       display: flex;

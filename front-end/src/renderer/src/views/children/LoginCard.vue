@@ -97,8 +97,7 @@ function openExternal(url) {
 
     .subtitle {
       margin-top: 40px;
-      margin-left: 100px;
-      align-self: flex-start;
+      align-self: flex-center;
       width: var(--wid);
       white-space: nowrap;
       border-right: 2px solid transparent;

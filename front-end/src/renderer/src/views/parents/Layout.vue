@@ -67,6 +67,11 @@ socket.on('receive-msg', (msg) => {
 // 注入socket
 provide('socket', socket)
 
+// 监听用户更新回调
+window.api.onUserUpdate((data) => {
+  user.value = data
+})
+
 // 结束监听
 onBeforeUnmount(() => {
   socket.off('connect')

@@ -180,7 +180,7 @@ onActivated(() => {
     height: calc(100vh - 128px);
 
     .value {
-      font-size: 16px;
+      font-size: 15px;
     }
 
     .icon {
@@ -197,7 +197,7 @@ onActivated(() => {
     }
 
     .svg {
-      font-size: 23px;
+      font-size: 20px;
       margin-left: 30px;
       margin-right: 40px;
       margin-top: 2px;
@@ -205,11 +205,9 @@ onActivated(() => {
 
     .option {
       height: 60px;
-      font-size: 16px;
       font-weight: bolder;
       display: flex;
       align-items: center;
-      flex-shrink: 0;
       color: var(--text);
 
       .switch {

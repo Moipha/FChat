@@ -23,10 +23,7 @@
         type="password"
       />
       <div class="option">
-        <div class="checkbox-container">
-          <input id="checkbox" type="checkbox" />
-          <label for="checkbox">记住账号</label>
-        </div>
+        <Checkbox v-model="remember">记住账号</Checkbox>
         <span class="word-btn" @click="$notify('该功能暂未实现，抱歉~~')">忘记密码?</span>
       </div>
       <Btn class="btn" type="primary" @click="userLogin">登录</Btn>
@@ -53,6 +50,7 @@
 
 <script lang="ts" setup>
 import Btn from '@r/components/form/Btn.vue'
+import Checkbox from '@r/components/form/Checkbox.vue'
 import LoginCard from '@r/views/children/LoginCard.vue'
 import Input from '@r/components/form/Input.vue'
 import Titlebar from '@r/components/layout/Titlebar.vue'
@@ -65,7 +63,7 @@ import { useUserStore } from '@r/stores/user'
 import { useSettingStore } from '@r/stores/setting'
 
 // 获取store数据
-const { user, token } = storeToRefs(useUserStore())
+const { user, token, chatList } = storeToRefs(useUserStore())
 const { nav, routeMap } = storeToRefs(useSettingStore())
 
 // 切换注册
@@ -76,6 +74,9 @@ watch(showRegister, (cur) => {
 })
 // 左侧信息
 const msg = ref("Welcome, Let's Chat! :)")
+
+// 是否记住账号
+const remember = ref(false)
 
 // 登录用户信息
 const curUser = ref({ email: 'young@test.cn', password: '123123' }) // 用户信息
@@ -95,15 +96,19 @@ async function userLogin() {
 }
 
 // 登录成功执行
-function loginSuccess(data) {
+async function loginSuccess(data) {
   // 在本地保存token
   token.value = data && data.token
   // 本地保存用户信息
   user.value = data && data.user
   // 修改nav
   nav.value = 'chat'
+  // 获取消息列表
+  const res = await request.get('/user/aside')
+  chatList.value = res.data
+
   // 打开主界面窗口
-  window.api.openNewWindow({
+  window.api?.openNewWindow({
     height: 600,
     width: 900,
     minWidth: 640,
@@ -120,7 +125,6 @@ function githubAuth() {
   window.api.openExternal(url)
   // 开始监听主进程回调
   window.api.githubLogin((res) => {
-    console.log(res)
     if (res.code === 200) {
       loginSuccess(res.data)
     } else {
@@ -172,24 +176,6 @@ main {
       width: 80%;
       justify-content: space-between;
       align-items: center;
-
-      .checkbox-container {
-        display: flex;
-        align-items: center;
-
-        label {
-          font-size: 16px;
-          cursor: pointer;
-          font-family: dyh;
-        }
-
-        input {
-          outline: none;
-          width: 16px;
-          height: 16px;
-          cursor: pointer;
-        }
-      }
     }
 
     .word-btn {

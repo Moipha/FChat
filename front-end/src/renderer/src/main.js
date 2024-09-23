@@ -6,7 +6,10 @@ import { createPinia } from 'pinia'
 import piniaPersist from 'pinia-plugin-persist'
 import notifyPlugin from './plugins/notifyPlugin'
 import Icon from '@r/components/form/Icon.vue'
+import _ from 'lodash'
 
+// 使用lodash
+window._ = _
 // 使用pinia持久化插件
 const pinia = createPinia()
 pinia.use(piniaPersist)

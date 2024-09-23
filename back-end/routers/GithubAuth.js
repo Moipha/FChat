@@ -2,7 +2,7 @@ const express = require('express')
 const axios = require('axios')
 const router = express.Router()
 const Result = require('../class/Result')
-const userService = require('../services/userService')
+const userService = require('../services/UserService')
 
 const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRETS, REDIRECT_URI } = process.env
 

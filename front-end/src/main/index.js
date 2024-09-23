@@ -17,15 +17,26 @@ ipcMain.on('open-new', (event, settings) => {
   createBrowserWindow(settings)
 })
 
+// 子窗口
+let childrenWindows = new Map()
+
 // 打开窗口
 ipcMain.on('open-dialog', (event, settings) => {
-  createBrowserWindow({
-    parent: BrowserWindow.fromWebContents(event.sender),
-    resizable: false,
-    maximizable: false,
-    minimizable: false,
-    ...settings
-  })
+  let win = childrenWindows.get(settings.route)
+  if (childrenWindows.has(settings.route) && !win.isDestroyed()) {
+    win.focus()
+  } else {
+    childrenWindows.set(
+      settings.route,
+      createBrowserWindow({
+        parent: BrowserWindow.fromWebContents(event.sender),
+        resizable: false,
+        maximizable: false,
+        minimizable: false,
+        ...settings
+      })
+    )
+  }
 })
 
 // 标题栏按钮事件
@@ -87,6 +98,13 @@ ipcMain.on('return-register', (event, data) => {
   // 获取父窗口
   const browserWindow = BrowserWindow.fromWebContents(event.sender).getParentWindow()
   browserWindow.webContents.send('register-callback', data)
+})
+
+// 主窗口更新用户信息
+ipcMain.on('update-user', (event, data) => {
+  // 获取父窗口
+  const browserWindow = BrowserWindow.fromWebContents(event.sender).getParentWindow()
+  browserWindow.webContents.send('update-user', data)
 })
 
 // 创建新窗口
@@ -166,6 +184,8 @@ function createBrowserWindow({
       win.close()
     })
   }
+
+  return win
 }
 
 // 创建主窗口

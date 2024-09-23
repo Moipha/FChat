@@ -3,9 +3,10 @@
  */
 import axios from 'axios'
 import { useUserStore } from '@r/stores/user'
+import { storeToRefs } from 'pinia'
 import router from '@r/router'
 
-const { token } = useUserStore()
+const { token } = storeToRefs(useUserStore())
 const { VITE_PORT, VITE_IP } = import.meta.env
 
 const request = axios.create({
@@ -35,8 +36,8 @@ request.interceptors.response.use(
 request.interceptors.request.use(
   (config) => {
     // 如果本地保存了token，携带token发送请求
-    if (token) {
-      config.headers['Authorization'] = token
+    if (token.value) {
+      config.headers['Authorization'] = token.value
     }
     return config
   },

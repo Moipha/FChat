@@ -73,7 +73,7 @@ async function verify() {
   }
 }
 // 绑定注册回调
-window.api.registerCallback((res) => {
+window.api?.registerCallback((res) => {
   window.$notify(`注册${res ? '成功!' : '失败..'}`)
 })
 </script>

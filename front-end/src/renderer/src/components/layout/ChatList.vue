@@ -1,33 +1,45 @@
 <template>
   <nav ref="navBar" class="nav scroll-bar" @scroll="handleScroll" @click="selectChat">
-    <div
-      v-for="item in list"
-      :key="item.id"
-      :class="{ active: item.id === activeItem }"
-      :data="item.id"
-      class="chat-list no-transition"
+    <VueDraggable
+      v-model="chatList"
+      :animation="150"
+      ghost-class="ghost"
+      @start="onStart"
+      @end="onEnd"
     >
-      <Avatar :src="item.avatar" shape="circle" />
-      <div class="msg-box">
-        <div class="name">{{ item.name }}</div>
-        <div class="msg dyh">{{ getMsg(item.msg, item.type) }}</div>
-      </div>
-      <div class="time-box">{{ getNormal(item.createdTime) }}</div>
-    </div>
+      <TransitionGroup type="transition" :name="!drag ? 'fade' : undefined">
+        <div
+          v-for="item in chatList"
+          :key="item.id"
+          :class="{ active: item.id === activeItem }"
+          :data="item.id"
+          class="chat-list no-transition"
+        >
+          <Avatar :src="item.avatar" shape="circle" />
+          <div class="msg-box">
+            <div class="name">{{ item.name }}</div>
+            <div class="msg dyh">{{ getMsg(item.msg, item.type) }}</div>
+          </div>
+          <div class="time-box">{{ getNormal(item.createdTime) }}</div>
+        </div>
+      </TransitionGroup>
+    </VueDraggable>
   </nav>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onBeforeUnmount, inject } from 'vue'
+import { ref, onMounted, onBeforeUnmount, inject, nextTick } from 'vue'
 import Avatar from '@r/components/form/Avatar.vue'
 import { getNormal } from '@r/utils/timeFormat'
 import router from '@r/router'
-import request from '@r/utils/request'
 import bus from '@r/utils/bus'
 import { useSettingStore } from '@r/stores/setting'
+import { useUserStore } from '@r/stores/user'
+import { VueDraggable } from 'vue-draggable-plus'
+import { storeToRefs } from 'pinia'
 
 const { routeMap } = useSettingStore()
-
+const { chatList } = storeToRefs(useUserStore())
 /**
  * socket
  */
@@ -43,17 +55,6 @@ bus.on('receive-msg', (msg) => {
     socket.emit('save-read', [msg.receiverId, msg.senderId])
   }
 })
-
-/**
- * 列表数据获取
- */
-const list = ref([])
-async function getList() {
-  const res = await request.get('/user/aside')
-  list.value = res.data
-}
-getList()
-
 /**
  * 打开对应聊天界面
  */
@@ -112,19 +113,34 @@ onMounted(() => {
  */
 bus.on('update-aside', updateAside)
 function updateAside([content, id, time, type]) {
-  const targetIndex = list.value.findIndex((item) => item.id === id)
+  const targetIndex = chatList.value.findIndex((item) => item.id === id)
   // 检查是否找到了对应的item
   if (targetIndex === -1) return
   // 获取对应的item
-  const target = list.value[targetIndex]
+  const target = chatList.value[targetIndex]
   // 更新内容
   target.msg = getMsg(content, type)
   target.createdTime = time
   // 如果该item不是第一个，则将其提到最前面
   if (targetIndex !== 0) {
     // 移除原来的item，然后将其添加到数组前面
-    list.value = [target, ...list.value.slice(0, targetIndex), ...list.value.slice(targetIndex + 1)]
+    chatList.value = [
+      target,
+      ...chatList.value.slice(0, targetIndex),
+      ...chatList.value.slice(targetIndex + 1)
+    ]
   }
+}
+
+// 拖拽相关
+const drag = ref(false)
+function onStart() {
+  drag.value = true
+}
+function onEnd() {
+  nextTick(() => {
+    drag.value = false
+  })
 }
 
 onBeforeUnmount(() => {
@@ -222,5 +238,26 @@ function getMsg(msg, type) {
       color: var(--btn-text);
     }
   }
+}
+
+.fade-move,
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: scaleY(0.01) translate(30px, 0);
+}
+
+.fade-leave-active {
+  position: absolute;
+}
+
+.ghost {
+  transition: opacity 0.2s;
+  opacity: 0.5;
 }
 </style>
