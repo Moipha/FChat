@@ -21,8 +21,8 @@
           label="绑定邮箱"
         />
         <Btn type="primary" class="btn" @click="updateProfile({ username: curUser.username })"
-          >更新资料</Btn
-        >
+          >更新资料
+        </Btn>
       </section>
       <section class="right">
         <span class="text">头像</span>

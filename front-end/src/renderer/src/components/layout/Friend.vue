@@ -1,3 +1,46 @@
+<script lang="ts" setup>
+import { onActivated, onUnmounted, ref } from 'vue'
+import Avatar from '@r/components/form/Avatar.vue'
+import Switch from '@r/components/form/Switch.vue'
+import Mask from '@r/components/layout/Mask.vue'
+import bus from '@r/utils/bus'
+
+// 好友配置
+const config = ref({})
+
+// 边栏显示
+const isShow = ref(false)
+
+// 映射
+const statusMap = {
+  online: '在线',
+  offline: '离线',
+  busy: '忙碌',
+  away: '离开'
+}
+
+// props
+defineProps({
+  friend: {
+    type: Object,
+    default: () => ({})
+  }
+})
+
+function show() {
+  // 显示界面
+  bus.on('friend-detail-toggle', (b) => {
+    isShow.value = b
+  })
+}
+onUnmounted(() => {
+  bus.off('friend-detail-toggle')
+})
+onActivated(() => {
+  show()
+})
+</script>
+
 <template>
   <div ref="container" class="container" :style="{ right: isShow ? '0' : '-400px' }">
     <!-- 头像和基本信息 -->
@@ -66,49 +109,6 @@
   <Mask v-model="isShow" to="body" />
 </template>
 
-<script lang="ts" setup>
-import { onActivated, onUnmounted, ref } from 'vue'
-import Avatar from '@r/components/form/Avatar.vue'
-import Switch from '@r/components/form/Switch.vue'
-import Mask from '@r/components/layout/Mask.vue'
-import bus from '@r/utils/bus'
-
-// 好友配置
-const config = ref({})
-
-// 边栏显示
-const isShow = ref(false)
-
-// 映射
-const statusMap = {
-  online: '在线',
-  offline: '离线',
-  busy: '忙碌',
-  away: '离开'
-}
-
-// props
-defineProps({
-  friend: {
-    type: Object,
-    default: () => ({})
-  }
-})
-
-function show() {
-  // 显示界面
-  bus.on('friend-detail-toggle', (b) => {
-    isShow.value = b
-  })
-}
-onUnmounted(() => {
-  bus.off('friend-detail-toggle')
-})
-onActivated(() => {
-  show()
-})
-</script>
-
 <style lang="scss" scoped>
 .container {
   width: 400px;
@@ -122,7 +122,6 @@ onActivated(() => {
   background-color: var(--bg);
   display: flex;
   flex-direction: column;
-  border-radius: 10px 0 0 10px;
 
   .profile {
     padding: 20px 10px 10px;
@@ -180,7 +179,10 @@ onActivated(() => {
     height: calc(100vh - 128px);
 
     .value {
-      font-size: 15px;
+      font-family: dyh;
+      font-size: 17px;
+      letter-spacing: 1px;
+      font-weight: normal;
     }
 
     .icon {
@@ -199,7 +201,7 @@ onActivated(() => {
     .svg {
       font-size: 20px;
       margin-left: 30px;
-      margin-right: 40px;
+      margin-right: 35px;
       margin-top: 2px;
     }
 

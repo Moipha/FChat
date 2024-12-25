@@ -66,7 +66,7 @@ const emits = defineEmits(['update:modelValue'])
       width: 10px;
       aspect-ratio: 1;
       border-radius: 3px;
-      transition: all 0.2s ease-in-out;
+      transition: all 0.15s ease-in-out;
     }
   }
 }

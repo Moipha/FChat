@@ -1,35 +1,8 @@
-<template>
-  <div class="input-area">
-    <Icon class="icon" name="link" />
-    <Icon class="icon" name="emoji" @click="showEmoji" />
-    <Icon class="icon" :name="mode" @click="changeMsgMode" />
-    <div
-      v-if="mode === 'audio'"
-      ref="textarea"
-      spellcheck="false"
-      contenteditable="true"
-      class="scroll-bar input"
-      @input="handleInput"
-      @keydown.enter="handleKeyup(friend._id, $event)"
-      @paste="handlePaste"
-      @drop="handleDrop"
-    />
-    <Wave v-else :user="user" :friend="friend" class="wave" />
-    <span v-if="mode === 'audio' && newMsg == ''" class="placeholder">请输入消息...</span>
-    <Icon
-      v-if="mode === 'audio'"
-      class="icon send"
-      name="send"
-      @click="sendMessage(friend._id)"
-    ></Icon>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import emoji from '@r/../public/emoji'
 import { ref, inject } from 'vue'
-;('@r/components/form/Icon.vue')
 import Wave from '@r/components/form/Wave.vue'
+import Uploader from '@r/components/layout/Uploader.vue'
 
 // 接收socket
 const socket = inject('socket')
@@ -216,6 +189,15 @@ setTimeout(() => {
 }, 0)
 
 /**
+ * 上传文件
+ */
+const uploader = ref(null)
+
+function openUpload() {
+  uploader.value.openUpload()
+}
+
+/**
  * 工具函数
  */
 // 对输入文本进行过滤
@@ -228,6 +210,34 @@ function checkMsg(msg) {
 }
 </script>
 
+<template>
+  <div class="input-area">
+    <Uploader ref="uploader" />
+    <Icon class="icon" name="link" @click="openUpload" />
+    <Icon class="icon" name="emoji" @click="showEmoji" />
+    <Icon class="icon" :name="mode" @click="changeMsgMode" />
+    <div
+      v-if="mode === 'audio'"
+      ref="textarea"
+      spellcheck="false"
+      contenteditable="true"
+      class="scroll-bar input"
+      @input="handleInput"
+      @keydown.enter="handleKeyup(friend._id, $event)"
+      @paste="handlePaste"
+      @drop="handleDrop"
+    />
+    <Wave v-else :user="user" :friend="friend" class="wave" />
+    <span v-if="mode === 'audio' && newMsg == ''" class="placeholder">请输入消息...</span>
+    <Icon
+      v-if="mode === 'audio'"
+      class="icon send"
+      name="send"
+      @click="sendMessage(friend._id)"
+    ></Icon>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .input-area {
   min-height: 50px;
@@ -236,6 +246,7 @@ function checkMsg(msg) {
   display: flex;
   align-items: flex-end;
   transition: all 0.2s;
+  font-family: Microsoft YaHei;
 
   .icon {
     font-size: 30px;
@@ -269,8 +280,6 @@ function checkMsg(msg) {
     outline: none;
     color: var(--text);
     font-size: 15px;
-    font-weight: bold;
-    letter-spacing: 1px;
     transition: all 0.2s;
 
     &::selection {

@@ -47,7 +47,7 @@ defineExpose({ showMsg })
   border-radius: 5px;
   font-size: 14px;
   font-family: microsoft YaHei;
-  z-index: 100;
+  z-index: 9999;
 }
 
 .fade-enter-active,

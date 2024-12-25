@@ -152,7 +152,10 @@ function createBrowserWindow({
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: false,
+      nodeIntegration: true, // 启用 Node.js 环境
+      contextIsolation: false, // 禁用上下文隔离
+      enableRemoteModule: true // 启用 remote 模块
     }
   })
 

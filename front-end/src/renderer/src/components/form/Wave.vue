@@ -1,89 +1,3 @@
-<template>
-  <div class="audio-container">
-    <div class="tip dyh">
-      {{ recording ? '录制中...' : '按住空格以录制音频' }}
-    </div>
-    <Teleport to="body">
-      <div v-show="recording" class="mask">
-        <div class="listening">
-          <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 76 26">
-            <g id="audio-wave" data-name="audio-wave">
-              <rect id="wave-5" class="wave" x="32" y="7" width="4" height="12" rx="2" ry="2" />
-              <rect id="wave-4" class="wave" x="24" y="2" width="4" height="22" rx="2" ry="2" />
-              <rect id="wave-3" class="wave" x="16" width="4" height="26" rx="2" ry="2" />
-              <rect id="wave-2" class="wave" x="8" y="5" width="4" height="16" rx="2" ry="2" />
-              <rect id="wave-1" class="wave" y="9" width="4" height="8" rx="2" ry="2" />
-              <rect
-                id="wave-5-2"
-                data-name="wave-4"
-                class="wave"
-                x="72"
-                y="7"
-                width="4"
-                height="12"
-                rx="2"
-                ry="2"
-              />
-              <rect
-                id="wave-4-2"
-                data-name="wave-5"
-                class="wave"
-                x="64"
-                y="2"
-                width="4"
-                height="22"
-                rx="2"
-                ry="2"
-              />
-              <rect
-                id="wave-3-2"
-                data-name="wave-3"
-                class="wave"
-                x="56"
-                width="4"
-                height="26"
-                rx="2"
-                ry="2"
-              />
-              <rect
-                id="wave-2-2"
-                data-name="wave-2"
-                class="wave"
-                x="48"
-                y="5"
-                width="4"
-                height="16"
-                rx="2"
-                ry="2"
-              />
-              <rect
-                id="wave-1-2"
-                data-name="wave-1"
-                class="wave"
-                x="40"
-                y="9"
-                width="4"
-                height="8"
-                rx="2"
-                ry="2"
-              />
-            </g>
-          </svg>
-        </div>
-      </div>
-      <div v-show="dialog" class="mask">
-        <div class="dialog">
-          <audio ref="audio" :src="audioUrl" controls></audio>
-          <div class="btn-container">
-            <Btn type="primary" label="发送" @click="sendAudio" />
-            <Btn label="取消" @click="dialog = false" />
-          </div>
-        </div>
-      </div>
-    </Teleport>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted, watch, inject } from 'vue'
 import Btn from '@r/components/form/Btn.vue'
@@ -228,6 +142,92 @@ onUnmounted(() => {
 })
 </script>
 
+<template>
+  <div class="audio-container">
+    <div class="tip dyh">
+      {{ recording ? '录制中...' : '按住空格以录制音频' }}
+    </div>
+    <Teleport to="body">
+      <div v-show="recording" class="mask">
+        <div class="listening">
+          <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 76 26">
+            <g id="audio-wave" data-name="audio-wave">
+              <rect id="wave-5" class="wave" x="32" y="7" width="4" height="12" rx="2" ry="2" />
+              <rect id="wave-4" class="wave" x="24" y="2" width="4" height="22" rx="2" ry="2" />
+              <rect id="wave-3" class="wave" x="16" width="4" height="26" rx="2" ry="2" />
+              <rect id="wave-2" class="wave" x="8" y="5" width="4" height="16" rx="2" ry="2" />
+              <rect id="wave-1" class="wave" y="9" width="4" height="8" rx="2" ry="2" />
+              <rect
+                id="wave-5-2"
+                data-name="wave-4"
+                class="wave"
+                x="72"
+                y="7"
+                width="4"
+                height="12"
+                rx="2"
+                ry="2"
+              />
+              <rect
+                id="wave-4-2"
+                data-name="wave-5"
+                class="wave"
+                x="64"
+                y="2"
+                width="4"
+                height="22"
+                rx="2"
+                ry="2"
+              />
+              <rect
+                id="wave-3-2"
+                data-name="wave-3"
+                class="wave"
+                x="56"
+                width="4"
+                height="26"
+                rx="2"
+                ry="2"
+              />
+              <rect
+                id="wave-2-2"
+                data-name="wave-2"
+                class="wave"
+                x="48"
+                y="5"
+                width="4"
+                height="16"
+                rx="2"
+                ry="2"
+              />
+              <rect
+                id="wave-1-2"
+                data-name="wave-1"
+                class="wave"
+                x="40"
+                y="9"
+                width="4"
+                height="8"
+                rx="2"
+                ry="2"
+              />
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div v-show="dialog" class="mask">
+        <div class="dialog">
+          <audio ref="audio" :src="audioUrl" controls></audio>
+          <div class="btn-container">
+            <Btn type="primary" label="发送" @click="sendAudio" />
+            <Btn label="取消" @click="dialog = false" />
+          </div>
+        </div>
+      </div>
+    </Teleport>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .audio-container {
   display: flex;
@@ -275,8 +275,8 @@ onUnmounted(() => {
     width: 152px;
     padding: 30px 20px;
     border-radius: 10px;
-    background-color: var(--primary);
-    color: var(--btn-text);
+    background-color: var(--bg);
+    color: var(--primary);
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
   }
 
@@ -290,27 +290,27 @@ onUnmounted(() => {
 
   #wave-1,
   #wave-1-2 {
-    animation-delay: 0.2s;
+    animation-delay: 0s;
   }
 
   #wave-2,
   #wave-2-2 {
-    animation-delay: 1s;
+    animation-delay: 0.8s;
   }
 
   #wave-3,
   #wave-3-2 {
-    animation-delay: 0.6s;
+    animation-delay: 0.4s;
   }
 
   #wave-5,
   #wave-5-2 {
-    animation-delay: 0.4s;
+    animation-delay: 0.2s;
   }
 
   #wave-4,
   #wave-4-2 {
-    animation-delay: 0.8s;
+    animation-delay: 0.6s;
   }
 
   @keyframes pulse {

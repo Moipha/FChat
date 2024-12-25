@@ -91,11 +91,11 @@ const navList = [
     icon: 'nav-chats',
     text: '聊天'
   },
-  // {
-  //   name: 'group',
-  //   icon: 'nav-groups',
-  //   text: '群组'
-  // },
+  {
+    name: 'group',
+    icon: 'nav-groups',
+    text: '群组'
+  },
   {
     name: 'friend',
     icon: 'nav-friends',
@@ -105,12 +105,12 @@ const navList = [
     name: 'profile',
     icon: 'nav-profile',
     text: '个人中心'
+  },
+  {
+    name: 'setting',
+    icon: 'nav-settings',
+    text: '设置'
   }
-  // {
-  //   name: 'setting',
-  //   icon: 'nav-settings',
-  //   text: '设置'
-  // }
 ]
 
 // 点击选项

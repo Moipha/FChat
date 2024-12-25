@@ -13,7 +13,7 @@ const UserSchema = new mongoose.Schema({
   githubId: { type: Number, unique: true }, // github授权登录唯一标识
   status: { type: String, enum: ['online', 'offline', 'away', 'busy'], default: 'offline' }, // 状态
   createdTime: { type: Date, default: () => Date.now(), required: true } // 创建时间
-}).index({ email: 1 ,unique: true})
+}).index({ email: 1, unique: true })
 
 // 创建文档模型
 const User = mongoose.model('user', UserSchema)

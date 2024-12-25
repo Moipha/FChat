@@ -1,24 +1,30 @@
-<template>
-  <Teleport :to="to">
-    <Transition name="fade">
-      <div v-if="modelValue" class="nav-mask" @click="emit('update:modelValue', false)" />
-    </Transition>
-  </Teleport>
-</template>
-
 <script lang="ts" setup>
 defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false
-  },
   to: {
     type: String,
     default: 'body'
   }
 })
-const emit = defineEmits(['update:modelValue'])
+const emits = defineEmits(['close'])
+const visible = defineModel({
+  type: Boolean,
+  default: true
+})
+
+// 关闭遮罩
+function closeMask() {
+  visible.value = false
+  emits('close')
+}
 </script>
+
+<template>
+  <Teleport :to="to">
+    <Transition name="fade">
+      <div v-if="modelValue" class="nav-mask" @click="closeMask" />
+    </Transition>
+  </Teleport>
+</template>
 
 <style lang="scss" scoped>
 .nav-mask {

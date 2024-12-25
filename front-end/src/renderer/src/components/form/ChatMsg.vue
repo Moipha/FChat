@@ -1,33 +1,3 @@
-<template>
-  <div
-    class="chat-msg"
-    :class="position"
-    :style="{ flexDirection: position === 'left' ? 'row' : 'row-reverse' }"
-  >
-    <Avatar :src="user.avatar" class="avatar" shape="circle" :size="40" />
-    <div class="msg-box">
-      <!-- 文本消息 -->
-      <template v-if="type === 'text'">
-        <span v-for="(part, index) in parseMsg(msg)" :key="index">
-          <template v-if="part.type === 'text'">
-            {{ part.content }}
-          </template>
-          <template v-else-if="part.type === 'emoji'">
-            <img :src="part.content" alt="emoji" width="30" height="30" />
-          </template>
-        </span>
-      </template>
-      <!-- 音频消息 -->
-      <template v-else-if="type === 'audio'">
-        <AudioMsg :src="msg" :position="position" />
-      </template>
-    </div>
-    <div class="read" :class="read ? 'already' : 'yet'">
-      {{ position === 'right' ? (read ? '已读' : '未读') : '' }}
-    </div>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import Avatar from '@r/components/form/Avatar.vue'
 import emoji from '@r/../public/emoji'
@@ -87,6 +57,36 @@ function parseMsg(msg) {
   return result
 }
 </script>
+
+<template>
+  <div
+    class="chat-msg"
+    :class="position"
+    :style="{ flexDirection: position === 'left' ? 'row' : 'row-reverse' }"
+  >
+    <Avatar :src="user.avatar" class="avatar" shape="circle" :size="40" />
+    <div class="msg-box">
+      <!-- 文本消息 -->
+      <template v-if="type === 'text'">
+        <span v-for="(part, index) in parseMsg(msg)" :key="index">
+          <template v-if="part.type === 'text'">
+            {{ part.content }}
+          </template>
+          <template v-else-if="part.type === 'emoji'">
+            <img :src="part.content" alt="emoji" width="30" height="30" />
+          </template>
+        </span>
+      </template>
+      <!-- 音频消息 -->
+      <template v-else-if="type === 'audio'">
+        <AudioMsg :src="msg" :position="position" />
+      </template>
+    </div>
+    <div class="read" :class="read ? 'already' : 'yet'">
+      {{ position === 'right' ? (read ? '已读' : '未读') : '' }}
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .chat-msg {
