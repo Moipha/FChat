@@ -1,5 +1,6 @@
 const Message = require('../models/Message')
 const mongoose = require('mongoose')
+const File = require('../models/File')
 
 // 创建新消息
 async function createMessage(msg) {
@@ -30,6 +31,13 @@ async function getMsgPage(userId, friendId, limit, lastId) {
   // 如果没有 nextId，或者没有 lastId 并且查到的消息不足 limit，说明是最后一页
   if (!nextId || (lastId === undefined && messages.length < limit)) {
     isLastPage = true
+  }
+  // 如果message为file类型，则获取文件信息
+  for (let i = 0; i < messages.length; i++) {
+    if (messages[i].type === 'file') {
+      const file = await File.findById(messages[i].file).lean()
+      messages[i].file = file
+    }
   }
 
   return { messages, nextId, isLastPage }

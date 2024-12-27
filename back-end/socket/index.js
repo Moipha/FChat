@@ -4,15 +4,19 @@
  */
 const socketIo = require('socket.io')
 const messageService = require('../services/MessageService')
+const fileService = require('../services/FileService')
 const userService = require('../services/UserService')
 const readService = require('../services/ReadService')
+const path = require('path')
+const fs = require('fs')
 
 // 创建一个Map来存储每个用户的socket实例
 const clientSockets = new Map()
+let io = null
 
 module.exports = (server) => {
   // 连接socket
-  const io = socketIo(server, { cors: { origin: '*' } })
+  io = socketIo(server, { cors: { origin: '*' } })
   // 监听连接
   io.on('connection', (socket) => {
     // 存储当前用户id
@@ -63,9 +67,7 @@ module.exports = (server) => {
     socket.on('disconnect', async () => {
       console.log('用户断开连接...')
       // 更改数据库中你的状态
-      if (uid == '') {
-        return
-      }
+      if (uid === '') return
       userService.updateStatus(uid, 'offline')
       // 告诉在线的好友你下线了
       const ids = await userService.getFriendIds(uid)
@@ -80,3 +82,6 @@ module.exports = (server) => {
     })
   })
 }
+
+module.exports.clientSockets = clientSockets
+module.exports.io = () => io

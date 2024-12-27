@@ -2,6 +2,7 @@
 import Avatar from '@r/components/form/Avatar.vue'
 import emoji from '@r/../public/emoji'
 import AudioMsg from '@r/components/form/AudioMsg.vue'
+import FileMsg from '@r/components/form/FileMsg.vue'
 
 defineProps({
   position: {
@@ -26,6 +27,10 @@ defineProps({
   type: {
     type: String,
     default: 'text'
+  },
+  file: {
+    type: Object,
+    default: () => {}
   }
 })
 
@@ -80,6 +85,9 @@ function parseMsg(msg) {
       <!-- 音频消息 -->
       <template v-else-if="type === 'audio'">
         <AudioMsg :src="msg" :position="position" />
+      </template>
+      <template v-else-if="type === 'file'">
+        <FileMsg :file="file" :position="position" />
       </template>
     </div>
     <div class="read" :class="read ? 'already' : 'yet'">

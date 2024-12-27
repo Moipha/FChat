@@ -1,17 +1,3 @@
-<template>
-  <section class="container">
-    <Aside />
-    <main id="right">
-      <router-view :key="$route.params.id" v-slot="{ Component }">
-        <KeepAlive>
-          <component :is="Component" />
-        </KeepAlive>
-      </router-view>
-    </main>
-  </section>
-  <Titlebar />
-</template>
-
 <script setup>
 import Aside from '@r/components/layout/Aside.vue'
 import Titlebar from '@r/components/layout/Titlebar.vue'
@@ -68,7 +54,7 @@ socket.on('receive-msg', (msg) => {
 provide('socket', socket)
 
 // 监听用户更新回调
-window.api.onUserUpdate((data) => {
+window.api?.onUserUpdate((data) => {
   user.value = data
 })
 
@@ -78,6 +64,20 @@ onBeforeUnmount(() => {
   socket.off('receive-msg')
 })
 </script>
+
+<template>
+  <section class="container">
+    <Aside />
+    <main id="right">
+      <router-view :key="$route.params.id" v-slot="{ Component }">
+        <KeepAlive>
+          <component :is="Component" />
+        </KeepAlive>
+      </router-view>
+    </main>
+  </section>
+  <Titlebar />
+</template>
 
 <style lang="scss" scoped>
 .container {

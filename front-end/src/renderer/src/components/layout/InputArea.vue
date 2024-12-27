@@ -7,7 +7,7 @@ import Uploader from '@r/components/layout/Uploader.vue'
 // 接收socket
 const socket = inject('socket')
 // 接受用户信息
-const { user } = defineProps({
+const props = defineProps({
   friend: {
     type: Object,
     default: () => ({})
@@ -30,7 +30,7 @@ function sendMessage(friendId) {
   if (!checkMsg(newMsg.value)) return
   socket.emit('chat', {
     content: newMsg.value,
-    senderId: user._id,
+    senderId: props.user._id,
     receiverId: friendId,
     type: 'text'
   })
@@ -212,7 +212,7 @@ function checkMsg(msg) {
 
 <template>
   <div class="input-area">
-    <Uploader ref="uploader" />
+    <Uploader ref="uploader" :friend-id="friend._id" :user-id="user._id" />
     <Icon class="icon" name="link" @click="openUpload" />
     <Icon class="icon" name="emoji" @click="showEmoji" />
     <Icon class="icon" :name="mode" @click="changeMsgMode" />

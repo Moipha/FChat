@@ -3,6 +3,12 @@ import Dialog from '@r/components/layout/Dialog.vue'
 
 import { ref, computed, onUnmounted, onMounted } from 'vue'
 import formatFileSize from '@r/utils/fileSizeFormat.js'
+import request from '@r/utils/request'
+
+const props = defineProps({
+  friendId: { type: String },
+  userId: { type: String }
+})
 
 // input元素
 const uploader = ref(null)
@@ -24,13 +30,12 @@ function openUpload() {
   }
 }
 
-// 上传文件
+// 触发input元素的change事件
 function onUploadFile(e) {
   const input = e.target
   if (!input || !input.files) return
   // 保存文件信息。不重复添加文件
   Array.from(input.files).forEach(addFile)
-
   // 打开确认弹窗
   dialog.value = true
 }
@@ -44,9 +49,27 @@ function addFile(file) {
   }
 }
 
-// 上传回调
-function onUploadSuccess() {
+// 上传文件
+async function uploadFile() {
   dialog.value = false
+  for (const file of files.value) {
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('senderId', props.userId)
+      formData.append('receiverId', props.friendId)
+
+      const res = await request.post('/file/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+
+      const { data } = res.data
+      console.log('文件已上传成功：', data)
+    } catch (error) {
+      console.error('文件上传失败：', error)
+      window.$notify('文件上传失败，请重试')
+    }
+  }
 }
 
 // 确定弹窗标题
@@ -119,7 +142,7 @@ defineExpose({
     third-label="添加"
     third-btn
     @cancel="cancelUpload"
-    @confirm="onUploadSuccess"
+    @confirm="uploadFile"
     @third="openUpload"
   >
     <div v-for="file of files" :key="file.id" class="file">

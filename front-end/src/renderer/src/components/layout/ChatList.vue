@@ -1,32 +1,3 @@
-<template>
-  <nav ref="navBar" class="nav scroll-bar" @scroll="handleScroll" @click="selectChat">
-    <VueDraggable
-      v-model="chatList"
-      :animation="150"
-      ghost-class="ghost"
-      @start="onStart"
-      @end="onEnd"
-    >
-      <TransitionGroup type="transition" :name="!drag ? 'fade' : undefined">
-        <div
-          v-for="item in chatList"
-          :key="item.id"
-          :class="{ active: item.id === activeItem }"
-          :data="item.id"
-          class="chat-list no-transition"
-        >
-          <Avatar :src="item.avatar" shape="circle" />
-          <div class="msg-box">
-            <div class="name">{{ item.name }}</div>
-            <div class="msg dyh">{{ getMsg(item.msg, item.type) }}</div>
-          </div>
-          <div class="time-box">{{ getNormal(item.createdTime) }}</div>
-        </div>
-      </TransitionGroup>
-    </VueDraggable>
-  </nav>
-</template>
-
 <script lang="ts" setup>
 import { ref, onMounted, onBeforeUnmount, inject, nextTick } from 'vue'
 import Avatar from '@r/components/form/Avatar.vue'
@@ -161,12 +132,43 @@ function getMsg(msg, type) {
     res = '[图片消息]'
   } else if (type === 'video') {
     res = '[视频消息]'
+  } else if (type === 'file') {
+    res = '[文件]'
   } else {
     res = ''
   }
   return res
 }
 </script>
+
+<template>
+  <nav ref="navBar" class="nav scroll-bar" @scroll="handleScroll" @click="selectChat">
+    <VueDraggable
+      v-model="chatList"
+      :animation="150"
+      ghost-class="ghost"
+      @start="onStart"
+      @end="onEnd"
+    >
+      <TransitionGroup type="transition" :name="!drag ? 'fade' : undefined">
+        <div
+          v-for="item in chatList"
+          :key="item.id"
+          :class="{ active: item.id === activeItem }"
+          :data="item.id"
+          class="chat-list no-transition"
+        >
+          <Avatar :src="item.avatar" shape="circle" />
+          <div class="msg-box">
+            <div class="name">{{ item.name }}</div>
+            <div class="msg dyh">{{ getMsg(item.msg, item.type) }}</div>
+          </div>
+          <div class="time-box">{{ getNormal(item.createdTime) }}</div>
+        </div>
+      </TransitionGroup>
+    </VueDraggable>
+  </nav>
+</template>
 
 <style lang="scss" scoped>
 .nav {

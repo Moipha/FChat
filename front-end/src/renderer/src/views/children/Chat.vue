@@ -1,32 +1,3 @@
-<template>
-  <Header :friend="friend" :last-seen="lastReadAt" />
-  <Friend :friend="friend" />
-  <section>
-    <div ref="msgContainer" class="msg-container scroll-bar" @wheel="throttledScroll">
-      <!-- 不是最后一页时，显示获取消息按钮 -->
-      <div v-if="!isLastPage" class="more" @click="throttledFunc">查看更多消息</div>
-      <div v-for="(msg, index) in messages" :key="msg._id">
-        <!-- 判断是否是同一天，不是则添加分隔条 -->
-        <div
-          v-if="index === 0 || needTime(messages[index - 1].createdTime, msg.createdTime)"
-          class="date-separator consolas"
-        >
-          <span class="content">{{ getNormal(msg.createdTime, true) }}</span>
-        </div>
-
-        <ChatMsg
-          :position="msg.senderId === user._id ? 'right' : 'left'"
-          :msg="msg.type === 'audio' ? getUrl(msg.audio) : msg.content"
-          :user="msg.senderId === user._id ? user : friend"
-          :type="msg.type"
-          :read="new Date(lastReadAt) > new Date(msg.createdTime)"
-        />
-      </div>
-    </div>
-    <InputArea :friend="friend" :user="user" />
-  </section>
-</template>
-
 <script lang="ts" setup>
 import Header from '@r/components/layout/Header.vue'
 import ChatMsg from '@r/components/form/ChatMsg.vue'
@@ -281,6 +252,36 @@ onDeactivated(() => {
   bus.off('bottom')
 })
 </script>
+
+<template>
+  <Header :friend="friend" :last-seen="lastReadAt" />
+  <Friend :friend="friend" />
+  <section>
+    <div ref="msgContainer" class="msg-container scroll-bar" @wheel="throttledScroll">
+      <!-- 不是最后一页时，显示获取消息按钮 -->
+      <div v-if="!isLastPage" class="more" @click="throttledFunc">查看更多消息</div>
+      <div v-for="(msg, index) in messages" :key="msg._id">
+        <!-- 判断是否是同一天，不是则添加分隔条 -->
+        <div
+          v-if="index === 0 || needTime(messages[index - 1].createdTime, msg.createdTime)"
+          class="date-separator consolas"
+        >
+          <span class="content">{{ getNormal(msg.createdTime, true) }}</span>
+        </div>
+
+        <ChatMsg
+          :position="msg.senderId === user._id ? 'right' : 'left'"
+          :msg="msg.type === 'audio' ? getUrl(msg.audio) : msg.content"
+          :user="msg.senderId === user._id ? user : friend"
+          :type="msg.type"
+          :read="new Date(lastReadAt) > new Date(msg.createdTime)"
+          :file="msg.file"
+        />
+      </div>
+    </div>
+    <InputArea :friend="friend" :user="user" />
+  </section>
+</template>
 
 <style lang="scss" scoped>
 section {

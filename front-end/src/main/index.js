@@ -4,6 +4,8 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../public/icons/icon.png'
 import axios from 'axios'
 import log from 'electron-log'
+import fs from 'fs'
+import path from 'path'
 
 /**
  *  绑定通用的ipc事件
@@ -105,6 +107,37 @@ ipcMain.on('update-user', (event, data) => {
   // 获取父窗口
   const browserWindow = BrowserWindow.fromWebContents(event.sender).getParentWindow()
   browserWindow.webContents.send('update-user', data)
+})
+
+/**
+ * 下载文件相关
+ */
+const DOWNLOAD_DIR = path.join(app.getPath('downloads'), 'fchat_files')
+
+// 确保下载目录存在
+if (!fs.existsSync(DOWNLOAD_DIR)) {
+  fs.mkdirSync(DOWNLOAD_DIR, { recursive: true })
+}
+
+// 打开文件
+ipcMain.handle('open-path', async (event, filePath) => {
+  try {
+    await shell.openPath(filePath)
+    return null // 成功
+  } catch (error) {
+    return error.message // 失败，返回错误信息
+  }
+})
+
+// 保存文件
+ipcMain.handle('save-file', async (event, { fileName, fileData }) => {
+  try {
+    const filePath = path.join(DOWNLOAD_DIR, fileName)
+    fs.writeFileSync(filePath, Buffer.from(fileData))
+    return filePath // 成功，返回保存路径
+  } catch (error) {
+    throw new Error('保存文件失败: ' + error.message)
+  }
 })
 
 // 创建新窗口

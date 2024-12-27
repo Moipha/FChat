@@ -79,7 +79,9 @@ const api = {
     ipcRenderer.on('update-user', (event, data) => {
       callback(data)
     })
-  }
+  },
+  openPath: (filePath) => ipcRenderer.invoke('open-path', filePath),
+  saveFile: (file) => ipcRenderer.invoke('save-file', file)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

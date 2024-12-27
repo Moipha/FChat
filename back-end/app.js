@@ -29,7 +29,7 @@ db(() => {
   app.use('/msg', require('./routers/MessageRouter'))
   app.use('/friendship', require('./routers/FriendshipRouter'))
   app.use('/read', require('./routers/ReadRouter'))
-
+  app.use('/file', require('./routers/FileRouter'))
   // 全局错误处理
   app.use(require('./middlewares/errorMiddleware'))
 
