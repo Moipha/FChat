@@ -5,4 +5,5 @@ out
 *.log*
 .vscode
 .env*
-./back-end/uploads/*
+uploads
+build
