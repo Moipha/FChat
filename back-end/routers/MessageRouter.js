@@ -28,9 +28,9 @@ router.get(
     const userId = req.userId
     const friendId = req.query.friendId
     const limit = req.query.limit || 20
-    const nextId = req.query.nextId
+    const lastId = req.query.lastId
     // 获取指定页的数据
-    const data = await messageService.getMsgPage(userId, friendId, limit, nextId)
+    const data = await messageService.getMsgPage(userId, friendId, limit, lastId)
     res.json(Result.success(data, '消息获取成功'))
   }
 )

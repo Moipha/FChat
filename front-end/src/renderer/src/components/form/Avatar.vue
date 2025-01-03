@@ -1,16 +1,3 @@
-<template>
-  <img
-    loading="lazy"
-    :src="src"
-    alt="Avatar"
-    :style="{
-      clipPath: shape === 'circle' ? `circle(${size / 2}px)` : 'none',
-      width: `${size}px`,
-      height: `${size}px`
-    }"
-  />
-</template>
-
 <script lang="ts" setup>
 defineProps({
   src: {
@@ -34,6 +21,19 @@ defineProps({
   }
 })
 </script>
+
+<template>
+  <img
+    loading="lazy"
+    :src="src"
+    alt="Avatar"
+    :style="{
+      clipPath: shape === 'circle' ? `circle(${size / 2}px)` : 'none',
+      width: `${size}px`,
+      height: `${size}px`
+    }"
+  />
+</template>
 
 <style lang="scss" scoped>
 img {

@@ -1,52 +1,3 @@
-<template>
-  <nav
-    class="nav-container"
-    :style="{
-      left: navShow ? '0' : '-300px'
-    }"
-  >
-    <div class="profile">
-      <Avatar class="avatar" :size="60" shape="circle" :src="user.avatar" @click="openProfile" />
-      <div class="detail" @click="openProfile">
-        <span class="title">{{ user.username }}</span>
-        <span class="subtitle dyh">
-          <Icon class="email" name="email" />
-          {{ user.email }}
-        </span>
-        <Status class="status" :value="user.status" @click.stop />
-      </div>
-    </div>
-    <hr />
-    <div class="options">
-      <div
-        v-for="item in navList"
-        :key="item.name"
-        class="option"
-        :class="{ active: item.name === nav }"
-        @click="handleClickOption(item.name)"
-      >
-        <Icon :name="item.icon" />
-        <span class="text">{{ item.text }}</span>
-      </div>
-    </div>
-    <div class="option theme" @click="changeTheme()">
-      <Icon name="theme-switch" />
-      <span class="text">夜间模式</span>
-      <Switch v-model="isDark" :size="10" class="switch" />
-    </div>
-    <div class="option theme danger" @click="exit">
-      <Icon name="nav-logout" />
-      <span class="text">退出登录</span>
-    </div>
-    <div class="version">
-      <span @click="openExternal('https://github.com/Moipha/FChat')">FChat</span>
-      <span @click="openExternal('https://github.com/Moipha/FChat')">v1.0.0</span>
-      <span @click="openExternal('https://github.com/Moipha')">©Moipha</span>
-    </div>
-  </nav>
-  <Mask v-model="navShow" to="body" />
-</template>
-
 <script lang="ts" setup>
 import Avatar from '@r/components/form/Avatar.vue'
 import Status from '@r/components/form/Status.vue'
@@ -91,11 +42,11 @@ const navList = [
     icon: 'nav-chats',
     text: '聊天'
   },
-  {
-    name: 'group',
-    icon: 'nav-groups',
-    text: '群组'
-  },
+  // {
+  //   name: 'group',
+  //   icon: 'nav-groups',
+  //   text: '群组'
+  // },
   {
     name: 'friend',
     icon: 'nav-friends',
@@ -107,10 +58,15 @@ const navList = [
     text: '个人中心'
   },
   {
-    name: 'setting',
-    icon: 'nav-settings',
-    text: '设置'
+    name: 'bot',
+    icon: 'ai',
+    text: 'AI BOT'
   }
+  // {
+  //   name: 'setting',
+  //   icon: 'nav-settings',
+  //   text: '设置'
+  // }
 ]
 
 // 点击选项
@@ -196,6 +152,55 @@ function openProfile() {
   })
 }
 </script>
+
+<template>
+  <nav
+    class="nav-container"
+    :style="{
+      left: navShow ? '0' : '-300px'
+    }"
+  >
+    <div class="profile">
+      <Avatar class="avatar" :size="60" shape="circle" :src="user.avatar" @click="openProfile" />
+      <div class="detail" @click="openProfile">
+        <span class="title">{{ user.username }}</span>
+        <span class="subtitle dyh">
+          <Icon class="email" name="email" />
+          {{ user.email }}
+        </span>
+        <Status class="status" :value="user.status" @click.stop />
+      </div>
+    </div>
+    <hr />
+    <div class="options">
+      <div
+        v-for="item in navList"
+        :key="item.name"
+        class="option"
+        :class="{ active: item.name === nav }"
+        @click="handleClickOption(item.name)"
+      >
+        <Icon :name="item.icon" />
+        <span class="text">{{ item.text }}</span>
+      </div>
+    </div>
+    <div class="option theme" @click="changeTheme()">
+      <Icon name="theme-switch" />
+      <span class="text">夜间模式</span>
+      <Switch v-model="isDark" :size="10" class="switch" />
+    </div>
+    <div class="option theme danger" @click="exit">
+      <Icon name="nav-logout" />
+      <span class="text">退出登录</span>
+    </div>
+    <div class="version">
+      <span @click="openExternal('https://github.com/Moipha/FChat')">FChat</span>
+      <span @click="openExternal('https://github.com/Moipha/FChat')">v1.0.0</span>
+      <span @click="openExternal('https://github.com/Moipha')">©Moipha</span>
+    </div>
+  </nav>
+  <Mask v-model="navShow" to="body" />
+</template>
 
 <style lang="scss" scoped>
 .nav-container {

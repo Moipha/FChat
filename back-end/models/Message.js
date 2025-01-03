@@ -5,9 +5,10 @@ const mongoose = require('mongoose')
  */
 
 const MsgSchema = new mongoose.Schema({
-  senderId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' }, // 发送者ID
+  senderId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // 发送者ID
   receiverId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // 接收者ID
   groupId: { type: mongoose.Schema.Types.ObjectId, ref: 'Group' }, // 群组ID
+  botId: { type: mongoose.Schema.Types.ObjectId, ref: 'Bot' }, // ai聊天ID
   content: { type: String }, // 消息内容
   audio: { type: Buffer }, // 音频内容，音频消息使用
   file: { type: mongoose.Schema.Types.ObjectId, ref: 'File' }, // 文件ID

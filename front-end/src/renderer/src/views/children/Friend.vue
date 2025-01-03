@@ -1,3 +1,26 @@
+<script lang="ts" setup>
+import Avatar from '@r/components/form/Avatar.vue'
+import { ref } from 'vue'
+import { useUserStore } from '@r/stores/user'
+import { storeToRefs } from 'pinia'
+import bus from '@r/utils/bus'
+
+// 获取好友列表
+const { friends } = storeToRefs(useUserStore())
+
+// 接收id
+const props = defineProps(['id'])
+
+// 接收好友信息
+const friend = ref({})
+friend.value = friends.value.find((item) => item._id === props.id)
+
+// 跳转到聊天页面
+function chat() {
+  bus.emit('nav-jump', ['chat', '/chat/' + props.id])
+}
+</script>
+
 <template>
   <div class="friend-container">
     <!-- 头像和基本信息 -->
@@ -58,29 +81,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts" setup>
-import Avatar from '@r/components/form/Avatar.vue'
-import { ref } from 'vue'
-import { useUserStore } from '@r/stores/user'
-import { storeToRefs } from 'pinia'
-import bus from '@r/utils/bus'
-
-// 获取好友列表
-const { friends } = storeToRefs(useUserStore())
-
-// 接收id
-const props = defineProps(['id'])
-
-// 接收好友信息
-const friend = ref({})
-friend.value = friends.value.find((item) => item._id === props.id)
-
-// 跳转到聊天页面
-function chat() {
-  bus.emit('nav-jump', ['chat', '/chat/' + props.id])
-}
-</script>
 
 <style lang="scss" scoped>
 .friend-container {

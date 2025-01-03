@@ -14,7 +14,8 @@ const router = createRouter({
           component: () => import('@r/views/children/Friend.vue'),
           props: true
         },
-        { path: '/add-list', component: () => import('@r/views/children/AddList.vue') }
+        { path: '/add-list', component: () => import('@r/views/children/AddList.vue') },
+        { path: '/bot/:id', component: () => import('@r/views/children/AIBot.vue'), props: true }
       ]
     },
     { path: '/login', component: () => import('@r/views/parents/Login.vue') },

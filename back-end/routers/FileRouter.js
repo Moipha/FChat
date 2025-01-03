@@ -1,9 +1,10 @@
 const express = require('express')
 const multer = require('multer')
+const argsCheck = require('../utils/argsCheck')
 const File = require('../models/File')
 const Message = require('../models/Message')
-const fileService = require('../services/fileService')
-const messageService = require('../services/messageService')
+const fileService = require('../services/FileService')
+const messageService = require('../services/MessageService')
 const router = express.Router()
 const path = require('path')
 const fs = require('fs')
@@ -13,6 +14,7 @@ const upload = multer({ dest: 'uploads/' })
 
 // 上传文件接口
 router.post('/upload', upload.single('file'), async (req, res) => {
+  if (!argsCheck(req, res)) return
   try {
     const file = req.file // multer 提供的文件信息
     const { senderId, receiverId } = req.body // 从表单中获取额外信息

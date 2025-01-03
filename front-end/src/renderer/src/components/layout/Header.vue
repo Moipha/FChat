@@ -1,19 +1,3 @@
-<template>
-  <header>
-    <div class="title">{{ friend.username }}</div>
-    <div class="status-container">
-      <Status :value="friend.status" />
-      <div class="last-check">
-        <span>上次查看于</span>
-        <span class="time">{{ getRecent(lastSeen) }}</span>
-      </div>
-    </div>
-    <div class="else-btn" @click.stop="showFriendDetail">
-      <Icon class="icon" name="else" />
-    </div>
-  </header>
-</template>
-
 <script lang="ts" setup>
 import Status from '@r/components/form/Status.vue'
 import bus from '@r/utils/bus'
@@ -24,10 +8,17 @@ import { toRef } from 'vue'
 const props = defineProps({
   friend: {
     type: Object,
-    required: true,
     default: () => {}
   },
   lastSeen: {
+    type: String,
+    default: ''
+  },
+  bot: {
+    type: Boolean,
+    default: false
+  },
+  botTitle: {
     type: String,
     default: ''
   }
@@ -42,6 +33,23 @@ function showFriendDetail() {
   bus.emit('friend-detail-toggle', true)
 }
 </script>
+
+<template>
+  <header>
+    <div v-if="bot" class="bot-title">{{ botTitle }}</div>
+    <div v-else class="title">{{ friend.username }}</div>
+    <div v-if="!bot" class="status-container">
+      <Status :value="friend.status" />
+      <div class="last-check">
+        <span>上次查看于</span>
+        <span class="time">{{ getRecent(lastSeen) }}</span>
+      </div>
+    </div>
+    <div v-if="!bot" class="else-btn" @click.stop="showFriendDetail">
+      <Icon class="icon" name="else" />
+    </div>
+  </header>
+</template>
 
 <style lang="scss" scoped>
 header {
@@ -70,6 +78,18 @@ header {
     }
   }
 
+  .bot-title {
+    width: calc(100% - 160px);
+    font-size: 18px;
+    font-weight: bolder;
+    color: var(--text);
+    padding-left: 20px;
+    transition: 0.2s all;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    line-height: 60px;
+  }
   .title {
     width: calc(100% - 160px);
     font-size: 16px;

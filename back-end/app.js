@@ -30,6 +30,7 @@ db(() => {
   app.use('/friendship', require('./routers/FriendshipRouter'))
   app.use('/read', require('./routers/ReadRouter'))
   app.use('/file', require('./routers/FileRouter'))
+  app.use('/bot', require('./routers/BotRouter'))
   // 全局错误处理
   app.use(require('./middlewares/errorMiddleware'))
 

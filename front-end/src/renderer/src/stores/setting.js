@@ -7,7 +7,7 @@ export const useSettingStore = defineStore(
     // 主题
     const theme = ref('light-theme')
 
-    // 导航栏 chat/friend/group
+    // 导航栏 chat/friend/group/bot
     const nav = ref('chat')
     // 二级路由
     const routeMap = ref({})

@@ -14,8 +14,8 @@ defineProps({
     default: ''
   },
   avatar: {
-    type: String,
-    default: ''
+    type: Boolean,
+    default: true
   },
   user: {
     type: Object,
@@ -69,8 +69,14 @@ function parseMsg(msg) {
     :class="position"
     :style="{ flexDirection: position === 'left' ? 'row' : 'row-reverse' }"
   >
-    <Avatar :src="user.avatar" class="avatar" shape="circle" :size="40" />
-    <div class="msg-box">
+    <Avatar v-if="avatar" :src="user.avatar" class="avatar" shape="circle" :size="40" />
+    <div
+      class="msg-box"
+      :style="{
+        marginRight: avatar ? '0' : '20px',
+        marginLeft: avatar ? '0' : '15px'
+      }"
+    >
       <!-- 文本消息 -->
       <template v-if="type === 'text'">
         <span v-for="(part, index) in parseMsg(msg)" :key="index">
@@ -90,7 +96,7 @@ function parseMsg(msg) {
         <FileMsg :file="file" :position="position" />
       </template>
     </div>
-    <div class="read" :class="read ? 'already' : 'yet'">
+    <div v-if="read !== null" class="read" :class="read ? 'already' : 'yet'">
       {{ position === 'right' ? (read ? '已读' : '未读') : '' }}
     </div>
   </div>
@@ -101,6 +107,7 @@ function parseMsg(msg) {
   padding: 10px 0;
   overflow: hidden;
   display: flex;
+  min-height: 40px;
 
   .read {
     font-weight: bolder;

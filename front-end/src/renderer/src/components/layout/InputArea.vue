@@ -228,7 +228,9 @@ function checkMsg(msg) {
       @drop="handleDrop"
     />
     <Wave v-else :user="user" :friend="friend" class="wave" />
-    <span v-if="mode === 'audio' && newMsg == ''" class="placeholder">请输入消息...</span>
+    <span v-if="mode === 'audio' && (newMsg === '' || newMsg === '\n')" class="placeholder"
+      >请输入消息...</span
+    >
     <Icon
       v-if="mode === 'audio'"
       class="icon send"

@@ -1,22 +1,11 @@
-<template>
-  <aside ref="aside">
-    <div ref="drag" class="resize-handle" @mousedown="startDrag"></div>
-    <header>
-      <Icon name="menu" class="icon" @click="openMenu"></Icon>
-      <SearchInput />
-    </header>
-    <Nav />
-    <ChatList v-if="nav === 'chat'" />
-    <FriendList v-else-if="nav === 'friend'" />
-  </aside>
-</template>
-
 <script lang="ts" setup>
-import { ref } from 'vue'
 import SearchInput from '@r/components/form/SearchInput.vue'
 import Nav from '@r/components/layout/Nav.vue'
 import ChatList from '@r/components/layout/ChatList.vue'
 import FriendList from '@r/components/layout/FriendList.vue'
+import BotHistory from '@r/components/layout/BotHistory.vue'
+
+import { ref } from 'vue'
 import bus from '@r/utils/bus'
 import { useSettingStore } from '@r/stores/setting'
 import { storeToRefs } from 'pinia'
@@ -66,6 +55,20 @@ function openMenu() {
   bus.emit('nav-toggle', true)
 }
 </script>
+
+<template>
+  <aside ref="aside">
+    <div ref="drag" class="resize-handle" @mousedown="startDrag"></div>
+    <header>
+      <Icon name="menu" class="icon" @click="openMenu"></Icon>
+      <SearchInput />
+    </header>
+    <Nav />
+    <ChatList v-if="nav === 'chat'" />
+    <FriendList v-else-if="nav === 'friend'" />
+    <BotHistory v-else-if="nav === 'bot'" />
+  </aside>
+</template>
 
 <style lang="scss" scoped>
 aside {

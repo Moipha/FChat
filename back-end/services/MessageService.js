@@ -54,8 +54,50 @@ async function getPageCount(userId, friendId) {
   return count
 }
 
+// 保存ai对话消息
+async function createBotMsg(botId, senderId, content, receiverId) {
+  const message = await Message.create({
+    senderId,
+    receiverId,
+    botId,
+    type: 'text',
+    content
+  })
+  return message
+}
+
+// 获取ai对话消息分页数据
+async function getBotMsgPage(userId, botId, limit, lastId) {
+  // 添加查询条件：id在上一页最后一条数据id之前，并且botId和当前一致
+  const query = {
+    botId,
+    $or: [{ senderId: userId }, { receiverId: userId }]
+  }
+  if (lastId) {
+    query._id = { $lt: new mongoose.Types.ObjectId(lastId) }
+  }
+
+  // 查询数据
+  const messages = (
+    await Message.find(query).limit(limit).sort({ createdTime: -1 }).lean()
+  ).reverse()
+
+  // 判断是否是最后一页
+  let isLastPage = messages.length < limit
+  const nextId = messages.length ? messages[0]._id : null
+
+  // 如果没有 nextId，或者没有 lastId 并且查到的消息不足 limit，说明是最后一页
+  if (!nextId || (lastId === undefined && messages.length < limit)) {
+    isLastPage = true
+  }
+
+  return { messages, nextId, isLastPage }
+}
+
 module.exports = {
   createMessage,
   getMsgPage,
-  getPageCount
+  getPageCount,
+  createBotMsg,
+  getBotMsgPage
 }
