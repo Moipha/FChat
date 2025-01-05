@@ -21,9 +21,15 @@ async function findByUserId(userId) {
   return bots
 }
 
+// 删除对话
+async function deleteBot(botId) {
+  await Bot.deleteOne({ _id: botId })
+}
+
 module.exports = {
   createBot,
   findById,
   update,
-  findByUserId
+  findByUserId,
+  deleteBot
 }

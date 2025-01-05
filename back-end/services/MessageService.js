@@ -94,10 +94,16 @@ async function getBotMsgPage(userId, botId, limit, lastId) {
   return { messages, nextId, isLastPage }
 }
 
+// 删除指定bot的全部消息
+async function deleteByBotId(botId) {
+  await Message.deleteMany({ botId })
+}
+
 module.exports = {
   createMessage,
   getMsgPage,
   getPageCount,
   createBotMsg,
-  getBotMsgPage
+  getBotMsgPage,
+  deleteByBotId
 }

@@ -1,5 +1,8 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import Popup from '@r/components/form/Popup.vue'
+import Dialog from '@r/components/layout/Dialog.vue'
+
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import router from '@r/router'
 import { useSettingStore } from '@r/stores/setting'
 import { useSocketStore } from '@r/stores/socket'
@@ -106,7 +109,113 @@ const handleScroll = () => {
 }
 
 /**
- * 发送请求获取对话列表
+ * popup
+ */
+const showPopup = ref(false)
+// 当前点击的对话信息
+const curItem = ref({})
+// 弹出框距顶部的距离
+const top = ref(0)
+// 正在编辑标题的对话
+const editingBot = ref()
+// 临时编辑中的标题
+const tempTitle = ref('')
+// 输入框元素
+const inputRef = ref(null)
+// 确认删除弹窗
+const showDialog = ref(false)
+// 打开popup
+function openPopup(item, e) {
+  // 获取目标元素的相关位置
+  const targetElem = e.target.parentNode.parentNode
+  const rect = targetElem.getBoundingClientRect()
+  const elementHeight = rect.bottom - rect.top
+
+  // 计算 1/4 和 3/4 的位置
+  const quarterHeight = elementHeight / 4
+  const threeQuarterHeight = (elementHeight * 3) / 4
+
+  // 计算页面顶部到目标元素的 1/4 高度的位置
+  const targetPosition = rect.bottom - quarterHeight
+  const y1 = targetPosition + window.scrollY
+
+  // 获取页面底部到该位置的距离
+  const bottomSpace = window.innerHeight - rect.bottom + quarterHeight
+
+  // 判断是否需要调整位置
+  const y = bottomSpace < 80 ? rect.bottom - threeQuarterHeight + window.scrollY - 80 : y1
+
+  // 设置位置
+  top.value = y
+
+  // 设置当前点击的对话信息
+  curItem.value = item
+  showPopup.value = true
+}
+// 取消编辑
+function cancelEdit() {
+  editingBot.value = ''
+  curItem.value = {}
+  showPopup.value = false
+}
+// 修改标题
+async function editTitle(id) {
+  const res = await request.put('/bot/', {
+    botId: id,
+    title: tempTitle.value
+  })
+  if (res && res.code === 200) {
+    window.$notify('修改成功')
+    getBotList()
+    cancelEdit()
+  }
+}
+// 删除对话
+async function onConfirmDialog() {
+  if (!curItem.value._id) return
+  const res = await request.delete('/bot/' + curItem.value._id)
+  if (res && res.code === 200) {
+    // 如果当前对话正在聊天，则退出聊天
+    if (activeItem.value === curItem.value._id) {
+      router.push('/bot/new')
+      routeMap['bot'] = '/bot/new'
+    }
+    getBotList()
+    showDialog.value = false
+    curItem.value = {}
+    window.$notify('删除成功')
+  }
+}
+// 取消删除
+function onCancelDialog() {
+  showDialog.value = false
+}
+// popup中的选项
+const popupOptions = [
+  {
+    label: '删除对话',
+    icon: 'delete',
+    action: () => {
+      showDialog.value = true
+    },
+    type: 'danger'
+  },
+  {
+    label: '重命名',
+    icon: 'edit',
+    action: (bot) => {
+      editingBot.value = bot._id
+      tempTitle.value = bot.title
+      showPopup.value = false
+      nextTick(() => {
+        inputRef.value[0].focus()
+      })
+    }
+  }
+]
+
+/**
+ * 获取对话列表
  */
 async function getBotList() {
   const res = await request.get('/bot/list')
@@ -148,13 +257,46 @@ onBeforeUnmount(() => {
       <li
         v-for="item of group.items"
         :key="item._id"
-        :class="{ active: activeItem == item._id }"
+        :class="{ active: activeItem == item._id, hover: showPopup && item._id == curItem._id }"
         class="record"
         @click="jumpToBot(item._id)"
       >
-        <div class="title">{{ item.title }}</div>
+        <template v-if="editingBot === item._id">
+          <input
+            ref="inputRef"
+            v-model="tempTitle"
+            type="text"
+            @keydown.enter="editTitle(item._id)"
+            @click.stop
+            @blur="cancelEdit"
+          />
+          <div class="title">$nbsp</div>
+        </template>
+        <template v-else>
+          <div class="title">{{ item.title }}</div>
+          <Icon class="icon" name="else" @click.stop="openPopup(item, $event)" />
+        </template>
       </li>
     </div>
+    <Popup
+      v-model="showPopup"
+      :style="{ top: top + 'px' }"
+      :items="popupOptions"
+      :obj="curItem"
+      class="popup"
+    />
+    <Dialog
+      v-model="showDialog"
+      title="删除聊天？"
+      confirm-label="删除"
+      @cancel="onCancelDialog"
+      @confirm="onConfirmDialog"
+    >
+      <div class="confirm">
+        这会删除<span>{{ curItem.title }}</span
+        >并清除该对话的所有聊天。
+      </div>
+    </Dialog>
   </nav>
 </template>
 
@@ -196,16 +338,57 @@ onBeforeUnmount(() => {
       list-style: none;
       padding: 10px 28px;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
 
       .title {
         font-size: 14px;
       }
+      input {
+        border: 1.5px solid var(--text);
+        border-radius: 4px;
+        outline: none;
+        font-size: 14px;
+        padding: 5px 10px;
+        position: absolute;
+        left: 3%;
+        right: 3%;
+        background-color: var(--bg);
+        color: var(--text);
+      }
+
       &:last-child {
         margin-bottom: 10px;
       }
 
       &:hover {
         background-color: var(--hover);
+
+        .icon {
+          display: flex;
+        }
+      }
+
+      .icon {
+        display: none;
+        font-size: 25px;
+        position: absolute;
+        right: 10px;
+        transition: all 0.2s;
+        padding: 5px;
+
+        &:hover {
+          scale: 1.2;
+        }
+      }
+    }
+
+    .hover {
+      background-color: var(--hover);
+
+      .icon {
+        display: flex;
       }
     }
 
@@ -213,6 +396,21 @@ onBeforeUnmount(() => {
       background-color: var(--primary) !important;
       color: var(--btn-text);
     }
+  }
+  .popup {
+    right: 30px;
+    transform: translate(100%);
+  }
+}
+.confirm {
+  font-size: 16px;
+  font-family: Microsoft YaHei;
+  margin: 0 10px;
+
+  span {
+    color: var(--primary);
+    font-weight: bold;
+    margin: 0 5px;
   }
 }
 </style>

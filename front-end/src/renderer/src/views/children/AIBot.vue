@@ -5,7 +5,6 @@ import ChatMsg from '@r/components/form/ChatMsg.vue'
 import { ref, onActivated, computed, nextTick } from 'vue'
 import request from '@r/utils/request'
 import { useUserStore } from '@r/stores/user'
-import { useMsgStore } from '@r/stores/msg'
 import { useSocketStore } from '@r/stores/socket'
 import { storeToRefs } from 'pinia'
 import bus from '@r/utils/bus'
@@ -27,13 +26,14 @@ webSocket.value.onWillStatusChange = function (old, status) {
 }
 // 设置结束事件
 webSocket.value.onWillClose = async function () {
+  const tempContent = newAiMsg.value.content
+  messages.value.push({ ...newAiMsg.value })
+  newAiMsg.value.content = ''
   await request.post('/bot/msg', {
-    content: newAiMsg.value.content,
+    content: tempContent,
     botId: bot.value._id,
     receiverId: user.value._id
   })
-  messages.value.push({ ...newAiMsg.value })
-  newAiMsg.value.content = ''
 }
 
 // 发送图标
@@ -138,6 +138,7 @@ async function firstSend() {
   // 发送消息
   await sendMessage()
   // ai生成本次聊天标题
+  console.log(texts.value)
   const aiTitle = await webSocket.value.start(
     [
       ...texts.value,

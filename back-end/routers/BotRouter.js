@@ -82,4 +82,13 @@ router.get('/list', async (req, res) => {
   res.json(Result.success(bots, '获取对话列表成功'))
 })
 
+// 删除当前对话
+router.delete('/:id', async (req, res) => {
+  const botId = req.params.id
+  await botService.deleteBot(botId)
+  // 删除本对话所有消息
+  await messageService.deleteByBotId(botId)
+  res.json(Result.success('对话删除成功'))
+})
+
 module.exports = router
