@@ -27,8 +27,9 @@ body #app {
 
 // 自定滚动条样式
 .scroll-bar {
-  overflow-x: hidden;
-  overflow-y: overlay;
+  overflow-x: auto;
+  overflow-y: auto;
+
   &:hover::-webkit-scrollbar-thumb {
     display: block;
     width: 8px;
@@ -89,4 +90,12 @@ body #app {
       transition: 0.2s background-color ease !important;
     }
   }
+}
+.os-scrollbar {
+  padding: 0 !important;
+  width: 8px !important;
+}
+
+.os-scrollbar-handle {
+  background-color: var(--thumb) !important;
 }

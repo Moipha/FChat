@@ -1,6 +1,7 @@
 <script setup>
 import Popup from '@r/components/form/Popup.vue'
 import Dialog from '@r/components/layout/Dialog.vue'
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-vue'
 
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import router from '@r/router'
@@ -87,24 +88,6 @@ function jumpToBot(id) {
     routeMap['bot'] = '/bot/' + id
   } else {
     window.$notify('消息生成中，请勿切换对话')
-  }
-}
-
-/**
- * 滚动条事件
- */
-const navBar = ref(null)
-
-const handleScroll = () => {
-  if (navBar.value) {
-    // 检查滚动条是否在顶端
-    if (navBar.value.scrollTop > 0) {
-      // 如果不在顶端，添加add-border类
-      navBar.value.classList.add('add-border')
-    } else {
-      // 如果在顶端，移除add-border类
-      navBar.value.classList.remove('add-border')
-    }
   }
 }
 
@@ -224,11 +207,20 @@ async function getBotList() {
   }
 }
 
-onMounted(() => {
-  // 挂载完成后添加滚动事件监听
-  if (navBar.value) {
-    navBar.value.addEventListener('scroll', handleScroll)
+/**
+ * 滚动条事件
+ */
+function handleScroll(e) {
+  // 判断是否在顶端
+  if (e.elements().scrollEventElement.scrollTop !== 0) {
+    containerRef.value.classList.add('add-border')
+  } else {
+    containerRef.value.classList.remove('add-border')
   }
+}
+const containerRef = ref(null)
+
+onMounted(() => {
   getBotList()
   // bus事件
   // 更新列表
@@ -247,37 +239,46 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <nav ref="navBar" class="nav scroll-bar" @scroll="handleScroll">
-    <div class="addition" @click="jumpToBot('new')">
-      <Icon class="icon" name="add" />
-      <span>开启新的对话</span>
-    </div>
-    <div v-for="group of groupedHistory" :key="group.date" class="group">
-      <div class="date-header">{{ group.date }}</div>
-      <li
-        v-for="item of group.items"
-        :key="item._id"
-        :class="{ active: activeItem == item._id, hover: showPopup && item._id == curItem._id }"
-        class="record"
-        @click="jumpToBot(item._id)"
-      >
-        <template v-if="editingBot === item._id">
-          <input
-            ref="inputRef"
-            v-model="tempTitle"
-            type="text"
-            @keydown.enter="editTitle(item._id)"
-            @click.stop
-            @blur="cancelEdit"
-          />
-          <div class="title">$nbsp</div>
-        </template>
-        <template v-else>
-          <div class="title">{{ item.title }}</div>
-          <Icon class="icon" name="else" @click.stop="openPopup(item, $event)" />
-        </template>
-      </li>
-    </div>
+  <div ref="containerRef" class="bot-container no-border">
+    <OverlayScrollbarsComponent
+      :options="{ scrollbars: { autoHide: 'scroll' } }"
+      defer
+      element="div"
+      :events="{ scroll: handleScroll }"
+    >
+      <nav class="nav">
+        <div class="addition" @click="jumpToBot('new')">
+          <Icon class="icon" name="add" />
+          <span>开启新的对话</span>
+        </div>
+        <div v-for="group of groupedHistory" :key="group.date" class="group">
+          <div class="date-header">{{ group.date }}</div>
+          <li
+            v-for="item of group.items"
+            :key="item._id"
+            :class="{ active: activeItem == item._id, hover: showPopup && item._id == curItem._id }"
+            class="record"
+            @click="jumpToBot(item._id)"
+          >
+            <template v-if="editingBot === item._id">
+              <input
+                ref="inputRef"
+                v-model="tempTitle"
+                type="text"
+                @keydown.enter="editTitle(item._id)"
+                @click.stop
+                @blur="cancelEdit"
+              />
+              <div class="title">$nbsp</div>
+            </template>
+            <template v-else>
+              <div class="title">{{ item.title }}</div>
+              <Icon class="icon" name="else" @click.stop="openPopup(item, $event)" />
+            </template>
+          </li>
+        </div>
+      </nav>
+    </OverlayScrollbarsComponent>
     <Popup
       v-model="showPopup"
       :style="{ top: top + 'px' }"
@@ -297,34 +298,40 @@ onBeforeUnmount(() => {
         >并清除该对话的所有聊天。
       </div>
     </Dialog>
-  </nav>
+  </div>
 </template>
 
 <style lang="scss" scoped>
+.bot-container {
+  height: calc(100vh - 61px);
+  border-top: 1px solid transparent;
+  transition: border 0.2s;
+}
+
+.addition {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 25px;
+  font-size: 16px;
+  cursor: pointer;
+  font-family: dyh;
+  color: var(--text);
+
+  .icon {
+    font-size: 18px;
+  }
+
+  &:hover {
+    background-color: var(--hover);
+  }
+}
 .nav {
   height: calc(100vh - 60px);
   transition: border 0.2s;
   border-top: 1px solid transparent;
   color: var(--text);
   font-family: Microsoft YaHei;
-
-  .addition {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 10px 25px;
-    font-size: 16px;
-    cursor: pointer;
-    font-family: dyh;
-
-    .icon {
-      font-size: 18px;
-    }
-
-    &:hover {
-      background-color: var(--hover);
-    }
-  }
 
   .group {
     padding-top: 10px;
@@ -336,11 +343,12 @@ onBeforeUnmount(() => {
     }
     .record {
       list-style: none;
-      padding: 10px 28px;
+      padding: 0px 28px;
       cursor: pointer;
       display: flex;
       align-items: center;
       overflow: hidden;
+      line-height: 40px;
 
       .title {
         font-size: 14px;
@@ -373,10 +381,10 @@ onBeforeUnmount(() => {
       .icon {
         display: none;
         font-size: 25px;
-        position: absolute;
-        right: 10px;
         transition: all 0.2s;
         padding: 5px;
+        margin-left: auto;
+        margin-right: -18px;
 
         &:hover {
           scale: 1.2;
@@ -397,11 +405,13 @@ onBeforeUnmount(() => {
       color: var(--btn-text);
     }
   }
-  .popup {
-    right: 30px;
-    transform: translate(100%);
-  }
 }
+
+.popup {
+  right: 30px;
+  transform: translate(100%);
+}
+
 .confirm {
   font-size: 16px;
   font-family: Microsoft YaHei;

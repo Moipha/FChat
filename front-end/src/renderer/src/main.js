@@ -7,6 +7,7 @@ import piniaPersist from 'pinia-plugin-persist'
 import notifyPlugin from './plugins/notifyPlugin'
 import Icon from '@r/components/form/Icon.vue'
 import _ from 'lodash'
+import 'overlayscrollbars/overlayscrollbars.css'
 
 // 使用lodash
 window._ = _
