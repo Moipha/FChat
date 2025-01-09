@@ -8,9 +8,10 @@ import { useSettingStore } from '@r/stores/setting'
 import { useUserStore } from '@r/stores/user'
 import { VueDraggable } from 'vue-draggable-plus'
 import { storeToRefs } from 'pinia'
+import { decryptMessage } from '@r/utils/rsaUtils'
 
 const { routeMap } = useSettingStore()
-const { chatList } = storeToRefs(useUserStore())
+const { chatList, user } = storeToRefs(useUserStore())
 /**
  * socket
  */
@@ -18,8 +19,7 @@ const socket = inject('socket')
 
 // 接收到非当前好友的新消息，标记未读，更新最后消息
 bus.on('receive-msg', (msg) => {
-  updateAside([msg.content, msg.senderId, msg.createdTime, msg.type])
-
+  updateAside(msg)
   // 如果是正在聊天的，滚动到底部，同时更新已读时间
   if (msg.senderId === activeItem.value) {
     bus.emit('bottom')
@@ -72,33 +72,52 @@ const handleScroll = () => {
   }
 }
 
-onMounted(() => {
+// 可供渲染的chatList
+const renderChatList = ref([])
+
+onMounted(async () => {
   // 挂载完成后添加滚动事件监听
   if (navBar.value) {
     navBar.value.addEventListener('scroll', handleScroll)
   }
+  await decryptMsg()
 })
 
+// 解密加密的消息
+async function decryptMsg() {
+  renderChatList.value = []
+  // 获取每个聊天条目的消息
+  for (const item of chatList.value) {
+    const msg = await getMsg(item.msg, item.type)
+    renderChatList.value.push({ ...item, msg })
+  }
+}
+
 /**
- * 更新最后一条消息
+ * 更新侧边栏消息
  */
 bus.on('update-aside', updateAside)
-function updateAside([content, id, time, type]) {
-  const targetIndex = chatList.value.findIndex((item) => item.id === id)
+async function updateAside(msg) {
+  const content = msg.senderId === user.value._id ? msg.senderContent : msg.content
+  const targetIndex = chatList.value.findIndex((item) => item.id === msg.receiverId)
   // 检查是否找到了对应的item
   if (targetIndex === -1) return
   // 获取对应的item
   const target = chatList.value[targetIndex]
   // 更新内容
-  target.msg = getMsg(content, type)
-  target.createdTime = time
+  target.msg = content
+  target.createdTime = msg.createdTime
+  // 获取renderChatList中的对应item
+  const targetRenderIndex = renderChatList.value.findIndex((item) => item.id === msg.receiverId)
+  // 解密
+  const decryptedMsg = await getMsg(content, msg.type)
   // 如果该item不是第一个，则将其提到最前面
-  if (targetIndex !== 0) {
+  if (targetRenderIndex !== -1) {
     // 移除原来的item，然后将其添加到数组前面
-    chatList.value = [
-      target,
-      ...chatList.value.slice(0, targetIndex),
-      ...chatList.value.slice(targetIndex + 1)
+    renderChatList.value = [
+      { ...target, msg: decryptedMsg },
+      ...renderChatList.value.slice(0, targetRenderIndex),
+      ...renderChatList.value.slice(targetRenderIndex + 1)
     ]
   }
 }
@@ -122,10 +141,11 @@ onBeforeUnmount(() => {
 /**
  * 工具函数
  */
-function getMsg(msg, type) {
+async function getMsg(msg, type) {
   let res
   if (type === 'text') {
-    res = msg
+    // 如果是文本消息，则解密后返回
+    res = await decryptMessage(msg)
   } else if (type === 'audio') {
     res = '[语音消息]'
   } else if (type === 'img') {
@@ -144,7 +164,7 @@ function getMsg(msg, type) {
 <template>
   <nav ref="navBar" class="nav scroll-bar" @scroll="handleScroll" @click="selectChat">
     <VueDraggable
-      v-model="chatList"
+      v-model="renderChatList"
       :animation="150"
       ghost-class="ghost"
       @start="onStart"
@@ -152,7 +172,7 @@ function getMsg(msg, type) {
     >
       <TransitionGroup type="transition" :name="!drag ? 'fade' : undefined">
         <div
-          v-for="item in chatList"
+          v-for="item in renderChatList"
           :key="item.id"
           :class="{ active: item.id === activeItem }"
           :data="item.id"
@@ -161,12 +181,16 @@ function getMsg(msg, type) {
           <Avatar :src="item.avatar" shape="circle" />
           <div class="msg-box">
             <div class="name">{{ item.name }}</div>
-            <div class="msg dyh">{{ getMsg(item.msg, item.type) }}</div>
+            <div class="msg dyh">{{ item.msg }}</div>
           </div>
           <div class="time-box">{{ getNormal(item.createdTime) }}</div>
         </div>
       </TransitionGroup>
     </VueDraggable>
+    <div v-if="!chatList.length" class="empty">
+      <Icon class="icon" name="empty" />
+      <span>暂无对话</span>
+    </div>
   </nav>
 </template>
 
@@ -175,6 +199,24 @@ function getMsg(msg, type) {
   height: calc(100vh - 60px);
   transition: border 0.2s;
   border-top: 1px solid transparent;
+
+  .empty {
+    padding: 10px 25px;
+    font-size: 16px;
+    color: var(--text);
+    height: 85%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: bolder;
+    font-size: 20px;
+    font-family: microsoft yahei;
+
+    .icon {
+      font-size: 36px;
+    }
+  }
 
   .chat-list {
     height: 64px;

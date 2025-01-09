@@ -12,6 +12,7 @@ const UserSchema = new mongoose.Schema({
   avatar: { type: String, default: '/images/default01.jpg' }, // 头像
   githubId: { type: Number, unique: true }, // github授权登录唯一标识
   status: { type: String, enum: ['online', 'offline', 'away', 'busy'], default: 'offline' }, // 状态
+  publicKey: { type: String, default: '' }, // 公钥
   createdTime: { type: Date, default: () => Date.now(), required: true } // 创建时间
 }).index({ email: 1, unique: true })
 

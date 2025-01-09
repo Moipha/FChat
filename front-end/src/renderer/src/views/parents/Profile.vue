@@ -72,6 +72,7 @@ async function updateProfile(obj) {
     // 通知父窗口更新用户信息
     const { data } = res
     window.api.updateUserInfo(data)
+    console.log(data)
   } else {
     window.$notify('资料更新失败')
   }

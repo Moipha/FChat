@@ -277,6 +277,10 @@ onBeforeUnmount(() => {
             </template>
           </li>
         </div>
+        <div v-if="!groupedHistory.length" class="empty">
+          <Icon class="icon" name="empty" />
+          <span>暂无对话</span>
+        </div>
       </nav>
     </OverlayScrollbarsComponent>
     <Popup
@@ -332,6 +336,23 @@ onBeforeUnmount(() => {
   border-top: 1px solid transparent;
   color: var(--text);
   font-family: Microsoft YaHei;
+
+  .empty {
+    padding: 10px 25px;
+    font-size: 16px;
+    color: var(--text);
+    height: 75%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: bold;
+    font-size: 20px;
+
+    .icon {
+      font-size: 36px;
+    }
+  }
 
   .group {
     padding-top: 10px;

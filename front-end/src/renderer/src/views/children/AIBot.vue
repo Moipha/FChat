@@ -250,6 +250,7 @@ onActivated(async () => {
           :user="user"
           :read="null"
           :avatar="msg.senderId === user._id"
+          bot
         />
       </div>
       <div v-if="newAiMsg.content !== ''" class="msg">
@@ -260,6 +261,7 @@ onActivated(async () => {
           :user="user"
           :read="null"
           :avatar="false"
+          bot
         />
       </div>
     </div>

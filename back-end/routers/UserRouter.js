@@ -152,4 +152,12 @@ router.put('/update', async (req, res) => {
   res.json(Result.success(updated, '更新用户信息成功'))
 })
 
+// 更新用户信息
+router.put('/:id', async (req, res) => {
+  const userId = req.params.id
+  const user = req.body
+  const updated = await userService.updateUser(userId, user)
+  res.json(Result.success(updated, '更新用户信息成功'))
+})
+
 module.exports = router

@@ -3,6 +3,7 @@ import emoji from '@r/../public/emoji'
 import { ref, inject } from 'vue'
 import Wave from '@r/components/form/Wave.vue'
 import Uploader from '@r/components/layout/Uploader.vue'
+import { encryptMessage } from '@r/utils/rsaUtils'
 
 // 接收socket
 const socket = inject('socket')
@@ -25,11 +26,14 @@ const props = defineProps({
 // 当前要发送的消息
 const newMsg = ref('')
 // 通过websocket发送消息
-function sendMessage(friendId) {
+async function sendMessage(friendId) {
   // 检查
   if (!checkMsg(newMsg.value)) return
+  const content = await encryptMessage(props.friend.publicKey, newMsg.value)
+  const senderContent = await encryptMessage(props.user.publicKey, newMsg.value)
   socket.emit('chat', {
-    content: newMsg.value,
+    content,
+    senderContent,
     senderId: props.user._id,
     receiverId: friendId,
     type: 'text'

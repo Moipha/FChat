@@ -1,3 +1,106 @@
+<script lang="ts" setup>
+import Btn from '@r/components/form/Btn.vue'
+import Checkbox from '@r/components/form/Checkbox.vue'
+import LoginCard from '@r/views/children/LoginCard.vue'
+import Input from '@r/components/form/Input.vue'
+import Titlebar from '@r/components/layout/Titlebar.vue'
+import Register from '@r/components/layout/Register.vue'
+import { ref, watch } from 'vue'
+import request from '@r/utils/request'
+import md5 from 'md5'
+import { storeToRefs } from 'pinia'
+import { useUserStore } from '@r/stores/user'
+import { useSettingStore } from '@r/stores/setting'
+import { generateRSAKeyPair } from '@r/utils/rsaUtils'
+
+// 获取store数据
+const { user, token, chatList } = storeToRefs(useUserStore())
+const { nav, routeMap } = storeToRefs(useSettingStore())
+
+// 切换注册
+const showRegister = ref(false)
+
+watch(showRegister, (cur) => {
+  msg.value = cur ? "Let's Get Started! ^^" : "Welcome, Let's Chat! :)"
+})
+// 左侧信息
+const msg = ref("Welcome, Let's Chat! :)")
+
+// 是否记住账号
+const remember = ref(false)
+
+// 登录用户信息
+const curUser = ref({ email: 'young@test.cn', password: '123123' }) // 用户信息
+
+// 用户登录
+async function userLogin() {
+  const { email, password } = curUser.value
+  // 输入校验
+  try {
+    const res = await request.post('/user/login', { email, password: md5(password) })
+    if (res && res.code === 200) {
+      loginSuccess(res.data)
+    }
+  } catch (err) {
+    curUser.value.password = ''
+  }
+}
+
+// 登录成功执行
+async function loginSuccess(data) {
+  // 在本地保存token
+  token.value = data && data.token
+  // 本地保存用户信息
+  user.value = data && data.user
+  // 如果用户没有公钥，在本地生成公私钥，私钥存储在本地，公钥上传服务器
+  if (!user.value.publicKey) {
+    const { publicKey, privateKey } = await generateRSAKeyPair()
+    // 本地存储私钥
+    const account = user.value._id
+    const key = JSON.stringify(privateKey)
+    window.api.storePrivateKey(account, key)
+    // 上传公钥
+    const res = await request.put('/user/' + user.value._id, {
+      publicKey: JSON.stringify(publicKey)
+    })
+    if (res.code === 200) {
+      const { data } = res
+      user.value = data
+    }
+  }
+  // 修改nav
+  nav.value = 'chat'
+  // 获取消息列表
+  const res = await request.get('/user/aside')
+  chatList.value = res.data
+
+  // 打开主界面窗口
+  window.api?.openNewWindow({
+    height: 600,
+    width: 900,
+    minWidth: 640,
+    minHeight: 540,
+    route: routeMap.value['chat']
+  })
+}
+
+// github授权登录
+function githubAuth() {
+  // 打开github授权登录页面
+  const { VITE_GITHUB_CLIENT_ID: id, VITE_REDIRECT_URI: uri } = import.meta.env
+  const url = `https://github.com/login/oauth/authorize?client_id=${id}&redirect_uri=${uri}&scope=user`
+  window.api.openExternal(url)
+  // 开始监听主进程回调
+  window.api.githubLogin((res) => {
+    if (res.code === 200) {
+      loginSuccess(res.data)
+    } else {
+      window.$notify('授权登录失败，请重新进行授权')
+    }
+  })
+}
+</script>
+
 <template>
   <main>
     <LoginCard :msg="msg" />
@@ -47,92 +150,6 @@
   </main>
   <Titlebar :minimize="false" :maximize="false" :height="15" />
 </template>
-
-<script lang="ts" setup>
-import Btn from '@r/components/form/Btn.vue'
-import Checkbox from '@r/components/form/Checkbox.vue'
-import LoginCard from '@r/views/children/LoginCard.vue'
-import Input from '@r/components/form/Input.vue'
-import Titlebar from '@r/components/layout/Titlebar.vue'
-import Register from '@r/components/layout/Register.vue'
-import { ref, watch } from 'vue'
-import request from '@r/utils/request'
-import md5 from 'md5'
-import { storeToRefs } from 'pinia'
-import { useUserStore } from '@r/stores/user'
-import { useSettingStore } from '@r/stores/setting'
-
-// 获取store数据
-const { user, token, chatList } = storeToRefs(useUserStore())
-const { nav, routeMap } = storeToRefs(useSettingStore())
-
-// 切换注册
-const showRegister = ref(false)
-
-watch(showRegister, (cur) => {
-  msg.value = cur ? "Let's Get Started! ^^" : "Welcome, Let's Chat! :)"
-})
-// 左侧信息
-const msg = ref("Welcome, Let's Chat! :)")
-
-// 是否记住账号
-const remember = ref(false)
-
-// 登录用户信息
-const curUser = ref({ email: 'young@test.cn', password: '123123' }) // 用户信息
-
-// 用户登录
-async function userLogin() {
-  const { email, password } = curUser.value
-  // 输入校验
-  try {
-    const res = await request.post('/user/login', { email, password: md5(password) })
-    if (res && res.code === 200) {
-      loginSuccess(res.data)
-    }
-  } catch (err) {
-    curUser.value.password = ''
-  }
-}
-
-// 登录成功执行
-async function loginSuccess(data) {
-  // 在本地保存token
-  token.value = data && data.token
-  // 本地保存用户信息
-  user.value = data && data.user
-  // 修改nav
-  nav.value = 'chat'
-  // 获取消息列表
-  const res = await request.get('/user/aside')
-  chatList.value = res.data
-
-  // 打开主界面窗口
-  window.api?.openNewWindow({
-    height: 600,
-    width: 900,
-    minWidth: 640,
-    minHeight: 540,
-    route: routeMap.value['chat']
-  })
-}
-
-// github授权登录
-function githubAuth() {
-  // 打开github授权登录页面
-  const { VITE_GITHUB_CLIENT_ID: id, VITE_REDIRECT_URI: uri } = import.meta.env
-  const url = `https://github.com/login/oauth/authorize?client_id=${id}&redirect_uri=${uri}&scope=user`
-  window.api.openExternal(url)
-  // 开始监听主进程回调
-  window.api.githubLogin((res) => {
-    if (res.code === 200) {
-      loginSuccess(res.data)
-    } else {
-      window.$notify('授权登录失败，请重新进行授权')
-    }
-  })
-}
-</script>
 
 <style lang="scss" scoped>
 main {

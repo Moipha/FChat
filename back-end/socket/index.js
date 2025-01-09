@@ -84,4 +84,3 @@ module.exports = (server) => {
 }
 
 module.exports.clientSockets = clientSockets
-module.exports.io = () => io

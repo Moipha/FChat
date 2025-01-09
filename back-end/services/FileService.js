@@ -1,5 +1,4 @@
 const File = require('../models/File')
-const { clientSockets, io } = require('../socket')
 
 // 保存文件信息
 async function createFile(file) {
@@ -16,6 +15,7 @@ async function saveFile(file) {
 
 // 通知客户端
 async function notifyClient({ receiverId, senderId, message, savedFile }) {
+  const { clientSockets } = require('../socket')
   const data = {
     _id: message._id,
     senderId: message.senderId,

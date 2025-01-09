@@ -31,12 +31,7 @@ function receiveMsg() {
   socket.on('callback-msg', (savedMsg) => {
     messages.value.push(savedMsg)
     // 告诉aside更新最后一条消息
-    bus.emit('update-aside', [
-      savedMsg.content,
-      friend.value._id,
-      savedMsg.createdTime,
-      savedMsg.type
-    ])
+    bus.emit('update-aside', savedMsg)
     // 滚动到底部
     nextTick(() => {
       scrollToBottom(true)
@@ -153,7 +148,7 @@ const limit = ref(30)
 // 下一次请求的lastId
 const nextId = ref(null)
 // 是否是最后一页
-const isLastPage = ref(false)
+const isLastPage = ref(true)
 // 载入时获取好友信息
 async function getFriend() {
   const res = await request.get('/user', {
@@ -271,7 +266,13 @@ onDeactivated(() => {
 
         <ChatMsg
           :position="msg.senderId === user._id ? 'right' : 'left'"
-          :msg="msg.type === 'audio' ? getUrl(msg.audio) : msg.content"
+          :msg="
+            msg.type === 'audio'
+              ? getUrl(msg.audio)
+              : msg.senderId === user._id
+                ? msg.senderContent
+                : msg.content
+          "
           :user="msg.senderId === user._id ? user : friend"
           :type="msg.type"
           :read="new Date(lastReadAt) > new Date(msg.createdTime)"

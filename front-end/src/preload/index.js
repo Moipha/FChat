@@ -80,8 +80,18 @@ const api = {
       callback(data)
     })
   },
+  // 打开指定路径的文件
   openPath: (filePath) => ipcRenderer.invoke('open-path', filePath),
-  saveFile: (file) => ipcRenderer.invoke('save-file', file)
+  // 保存文件到指定路径
+  saveFile: (file) => ipcRenderer.invoke('save-file', file),
+  // 存储私钥
+  storePrivateKey: (account, privateKey) => {
+    return ipcRenderer.invoke('store-private-key', account, privateKey)
+  },
+  // 获取私钥
+  getPrivateKey: (account) => {
+    return ipcRenderer.invoke('get-private-key', account)
+  }
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

@@ -1,30 +1,3 @@
-<template>
-  <nav>
-    <div class="about-add">
-      <span class="text dyh">共 {{ friends.length }} 位好友</span>
-      <Icon class="icon" name="add-friend" @click="openAdd" />
-      <Icon
-        class="icon"
-        name="log"
-        :class="activeItem === 'list' ? 'active' : ''"
-        @click="toAddList"
-      />
-    </div>
-    <div class="list scroll-bar" @click="selectFriend">
-      <div
-        v-for="friend in friends"
-        :key="friend._id"
-        :data="friend._id"
-        class="friend no-transition"
-        :class="activeItem === friend._id ? 'active' : ''"
-      >
-        <Avatar :size="45" class="avatar" :src="friend.avatar" shape="circle" />
-        <span class="text text-no-transition">{{ friend.username }}</span>
-      </div>
-    </div>
-  </nav>
-</template>
-
 <script lang="ts" setup>
 import Avatar from '@r/components/form/Avatar.vue'
 import request from '@r/utils/request'
@@ -114,6 +87,37 @@ onBeforeUnmount(() => {
 })
 </script>
 
+<template>
+  <nav>
+    <div class="about-add">
+      <span class="text dyh">共 {{ friends.length }} 位好友</span>
+      <Icon class="icon" name="add-friend" @click="openAdd" />
+      <Icon
+        class="icon"
+        name="log"
+        :class="activeItem === 'list' ? 'active' : ''"
+        @click="toAddList"
+      />
+    </div>
+    <div class="list scroll-bar" @click="selectFriend">
+      <div
+        v-for="friend in friends"
+        :key="friend._id"
+        :data="friend._id"
+        class="friend no-transition"
+        :class="activeItem === friend._id ? 'active' : ''"
+      >
+        <Avatar :size="45" class="avatar" :src="friend.avatar" shape="circle" />
+        <span class="text text-no-transition">{{ friend.username }}</span>
+      </div>
+      <div v-if="!friends.length" class="empty">
+        <Icon class="icon" name="empty" />
+        <span>暂无好友</span>
+      </div>
+    </div>
+  </nav>
+</template>
+
 <style lang="scss" scoped>
 nav {
   height: calc(100vh - 60px);
@@ -182,6 +186,24 @@ nav {
     .active {
       background-color: var(--primary) !important;
       color: var(--btn-text) !important;
+    }
+  }
+
+  .empty {
+    padding: 10px 25px;
+    font-size: 16px;
+    color: var(--text);
+    height: 75vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: bolder;
+    font-size: 20px;
+    font-family: microsoft yahei;
+
+    .icon {
+      font-size: 36px;
     }
   }
 }

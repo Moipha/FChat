@@ -6,6 +6,7 @@ import axios from 'axios'
 import log from 'electron-log'
 import fs from 'fs'
 import path from 'path'
+import keytar from 'keytar'
 
 /**
  *  绑定通用的ipc事件
@@ -140,6 +141,29 @@ ipcMain.handle('save-file', async (event, { fileName, fileData }) => {
   }
 })
 
+/**
+ * RSA相关
+ */
+// 存储私钥到系统密钥库
+ipcMain.handle('store-private-key', async (event, account, privateKey) => {
+  try {
+    await keytar.setPassword('F_CHAT', account, privateKey)
+    return { success: true }
+  } catch (err) {
+    console.error('Error storing private key:', err)
+    return { success: false, error: err.message }
+  }
+})
+// 获取私钥
+ipcMain.handle('get-private-key', async (event, account) => {
+  try {
+    const privateKey = await keytar.getPassword('F_CHAT', account)
+    return { success: true, privateKey }
+  } catch (err) {
+    console.error('Error retrieving private key:', err)
+    return { success: false, error: err.message }
+  }
+})
 // 创建新窗口
 function createBrowserWindow({
   route,

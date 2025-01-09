@@ -29,10 +29,11 @@ socket.on('connect', () => {
 const au = new Audio(audio)
 
 // 接收消息
-socket.on('receive-msg', (msg) => {
-  // 获取消息Map
+socket.on('receive-msg', async (msg) => {
+  // 获取聊天记录缓存
   const { msgMap } = storeToRefs(useMsgStore())
-  // 更新对应的消息列表
+
+  // 更新对应的聊天记录
   if (msgMap.value[msg.senderId]) {
     msgMap.value[msg.senderId].messages.push(msg)
   } else {

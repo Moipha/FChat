@@ -3,8 +3,10 @@ import Avatar from '@r/components/form/Avatar.vue'
 import emoji from '@r/../public/emoji'
 import AudioMsg from '@r/components/form/AudioMsg.vue'
 import FileMsg from '@r/components/form/FileMsg.vue'
+import { decryptMessage } from '@r/utils/rsaUtils'
+import { ref, onMounted } from 'vue'
 
-defineProps({
+const props = defineProps({
   position: {
     type: String,
     default: 'left'
@@ -31,7 +33,23 @@ defineProps({
   file: {
     type: Object,
     default: () => {}
+  },
+  bot: {
+    type: Boolean,
+    default: false
   }
+})
+
+const texts = ref([])
+
+onMounted(async () => {
+  if (props.type !== 'text') return
+  if (props.bot) {
+    texts.value = parseMsg(props.msg)
+    return
+  }
+  const decryptedMsg = await decryptMessage(props.msg)
+  texts.value = parseMsg(decryptedMsg)
 })
 
 function parseMsg(msg) {
@@ -79,7 +97,7 @@ function parseMsg(msg) {
     >
       <!-- 文本消息 -->
       <template v-if="type === 'text'">
-        <span v-for="(part, index) in parseMsg(msg)" :key="index">
+        <span v-for="(part, index) in texts" :key="index">
           <template v-if="part.type === 'text'">
             {{ part.content }}
           </template>

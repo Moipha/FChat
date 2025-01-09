@@ -80,7 +80,7 @@ async function getAsideMessages(userId) {
       id: friend._id,
       name: friend.username,
       avatar: friend.avatar,
-      msg: msg && msg.content,
+      msg: msg && (msg.senderId == userId ? msg.senderContent : msg.content),
       type: msg && msg.type,
       createdTime: msg && msg.createdTime
     })
@@ -169,7 +169,6 @@ async function updateUser(userId, entries) {
     { $set: entries }, // 使用 $set 明确表示只更新传入的字段
     { new: true, runValidators: true } // 确保返回更新后的文档并且启用验证
   )
-  if(!user) return {}
   return imgPathFix(user)
 }
 
