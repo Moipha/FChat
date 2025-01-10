@@ -8,7 +8,7 @@ import { useSettingStore } from '@r/stores/setting'
 import { useUserStore } from '@r/stores/user'
 import { VueDraggable } from 'vue-draggable-plus'
 import { storeToRefs } from 'pinia'
-import { decryptMessage } from '@r/utils/rsaUtils'
+import { RSAEncryption, AESEncryption } from '@r/utils/cryptoUtils'
 
 const { routeMap } = useSettingStore()
 const { chatList, user } = storeToRefs(useUserStore())
@@ -88,7 +88,7 @@ async function decryptMsg() {
   renderChatList.value = []
   // 获取每个聊天条目的消息
   for (const item of chatList.value) {
-    const msg = await getMsg(item.msg, item.type)
+    const msg = await getMsg(item.msg, item.encryptedKey, item.type)
     renderChatList.value.push({ ...item, msg })
   }
 }
@@ -98,19 +98,18 @@ async function decryptMsg() {
  */
 bus.on('update-aside', updateAside)
 async function updateAside(msg) {
-  const content = msg.senderId === user.value._id ? msg.senderContent : msg.content
+  const decryptedKey = msg.senderId === user.value._id ? msg.encryptBySender : msg.encryptByReceiver
   const targetIndex = chatList.value.findIndex((item) => item.id === msg.receiverId)
   // 检查是否找到了对应的item
   if (targetIndex === -1) return
   // 获取对应的item
   const target = chatList.value[targetIndex]
   // 更新内容
-  target.msg = content
   target.createdTime = msg.createdTime
   // 获取renderChatList中的对应item
   const targetRenderIndex = renderChatList.value.findIndex((item) => item.id === msg.receiverId)
   // 解密
-  const decryptedMsg = await getMsg(content, msg.type)
+  const decryptedMsg = await getMsg(msg.content, decryptedKey, msg.type)
   // 如果该item不是第一个，则将其提到最前面
   if (targetRenderIndex !== -1) {
     // 移除原来的item，然后将其添加到数组前面
@@ -141,11 +140,16 @@ onBeforeUnmount(() => {
 /**
  * 工具函数
  */
-async function getMsg(msg, type) {
+async function getMsg(encryptedMsg, encryptedKey, type) {
   let res
   if (type === 'text') {
     // 如果是文本消息，则解密后返回
-    res = await decryptMessage(msg)
+    const privateKey = await RSAEncryption.getPrivateKey()
+    const RSA = await RSAEncryption.create(user.value.publicKey, privateKey)
+    // 获取AES密钥
+    const key = await RSA.decrypt(encryptedKey)
+    const AES = await AESEncryption.create(key)
+    res = await AES.decrypt(encryptedMsg)
   } else if (type === 'audio') {
     res = '[语音消息]'
   } else if (type === 'img') {
@@ -187,7 +191,7 @@ async function getMsg(msg, type) {
         </div>
       </TransitionGroup>
     </VueDraggable>
-    <div v-if="!chatList.length" class="empty">
+    <div v-if="!renderChatList.length" class="empty">
       <Icon class="icon" name="empty" />
       <span>暂无对话</span>
     </div>

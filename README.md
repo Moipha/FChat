@@ -1,6 +1,6 @@
 # FChat
 
-> 这是一个基于Electron + Vue3 + Node.js + MongoDB + Mongoose + Vite的桌面端在线聊天软件，支持实时消息推送和用户认证。更多功能正在开发中..
+> 这是一个基于 Electron + Vue3 + Node.js + MongoDB + Mongoose + Vite 的桌面端在线聊天软件，支持实时消息推送和用户认证。更多功能正在开发中..
 
 ![demo01](./file/img/demo.gif)
 
@@ -37,19 +37,19 @@
 
 1. `cd back-end`：进入后端目录
 2. `npm install`：安装依赖
-3. `npm run start`：启动后端（development模式）
-4. `npm run serve`：启动后端（production模式）
+3. `npm run start`：启动后端（development 模式）
+4. `npm run serve`：启动后端（production 模式）
 
 ##### 前端
 
 1. `cd front-end`：进入前端目录
 2. `npm install`：安装依赖
-3. `npm run dev`：启动前端项目（development模式）
-4. `npm run build:win`：打包前端项目，生成可执行文件（production模式）
+3. `npm run dev`：启动前端项目（development 模式）
+4. `npm run build:win`：打包前端项目，生成可执行文件（production 模式）
 
 ## 配置说明
 
-- 在 `/back-end/.env.development` 和 `/back-end/.env.production` 中分别配置对应环境的服务端信息、MongoDB数据库和JWT密钥
+- 在 `/back-end/.env.development` 和 `/back-end/.env.production` 中分别配置对应环境的服务端信息、MongoDB 数据库和 JWT 密钥
 
   - 配置参考：
 
@@ -66,6 +66,7 @@
     MAIL_USER=test@qq.com
     MAIL_PASS=123123123123
     ```
+
 - 在 `/front-end/.env.development` 和 `/front-end/.env.production` 中配置客户端信息
 
   - 配置参考

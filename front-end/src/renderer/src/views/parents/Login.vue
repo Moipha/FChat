@@ -11,7 +11,7 @@ import md5 from 'md5'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@r/stores/user'
 import { useSettingStore } from '@r/stores/setting'
-import { generateRSAKeyPair } from '@r/utils/rsaUtils'
+import { RSAEncryption } from '@r/utils/cryptoUtils'
 
 // 获取store数据
 const { user, token, chatList } = storeToRefs(useUserStore())
@@ -54,7 +54,7 @@ async function loginSuccess(data) {
   user.value = data && data.user
   // 如果用户没有公钥，在本地生成公私钥，私钥存储在本地，公钥上传服务器
   if (!user.value.publicKey) {
-    const { publicKey, privateKey } = await generateRSAKeyPair()
+    const { publicKey, privateKey } = await RSAEncryption().create()
     // 本地存储私钥
     const account = user.value._id
     const key = JSON.stringify(privateKey)

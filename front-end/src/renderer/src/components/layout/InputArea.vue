@@ -3,7 +3,7 @@ import emoji from '@r/../public/emoji'
 import { ref, inject } from 'vue'
 import Wave from '@r/components/form/Wave.vue'
 import Uploader from '@r/components/layout/Uploader.vue'
-import { encryptMessage } from '@r/utils/rsaUtils'
+import { RSAEncryption, AESEncryption } from '@r/utils/cryptoUtils'
 
 // 接收socket
 const socket = inject('socket')
@@ -29,11 +29,32 @@ const newMsg = ref('')
 async function sendMessage(friendId) {
   // 检查
   if (!checkMsg(newMsg.value)) return
-  const content = await encryptMessage(props.friend.publicKey, newMsg.value)
-  const senderContent = await encryptMessage(props.user.publicKey, newMsg.value)
+  /**
+   * 消息加密
+   */
+  // 生成新的AES密钥
+  const AES = await AESEncryption.create() // 使用静态方法创建AES实例
+  const key = await AES.exportKey() // 导出AES密钥为JWK格式
+
+  // 获取当前用户的私钥
+  const privateKeyJWK = await RSAEncryption.getPrivateKey()
+
+  // 生成当前用户和对方的RSA对象，其中当前用户已知密钥
+  const RSASender = await RSAEncryption.create(props.user.publicKey, privateKeyJWK)
+  const RSAReceiver = await RSAEncryption.create(props.friend.publicKey, privateKeyJWK)
+
+  // 使用AES密钥加密消息
+  const content = await AES.encrypt(newMsg.value)
+
+  // 分别用当前用户和对方的公钥将使用到的AES密钥加密
+  const encryptBySender = await RSASender.encrypt(JSON.stringify(key))
+  const encryptByReceiver = await RSAReceiver.encrypt(JSON.stringify(key))
+
+  // 发送消息
   socket.emit('chat', {
     content,
-    senderContent,
+    encryptBySender,
+    encryptByReceiver,
     senderId: props.user._id,
     receiverId: friendId,
     type: 'text'

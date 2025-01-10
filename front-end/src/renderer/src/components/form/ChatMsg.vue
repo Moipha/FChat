@@ -3,7 +3,7 @@ import Avatar from '@r/components/form/Avatar.vue'
 import emoji from '@r/../public/emoji'
 import AudioMsg from '@r/components/form/AudioMsg.vue'
 import FileMsg from '@r/components/form/FileMsg.vue'
-import { decryptMessage } from '@r/utils/rsaUtils'
+import { RSAEncryption, AESEncryption } from '@r/utils/cryptoUtils'
 import { ref, onMounted } from 'vue'
 
 const props = defineProps({
@@ -37,6 +37,9 @@ const props = defineProps({
   bot: {
     type: Boolean,
     default: false
+  },
+  encryptedKey: {
+    type: String
   }
 })
 
@@ -48,7 +51,13 @@ onMounted(async () => {
     texts.value = parseMsg(props.msg)
     return
   }
-  const decryptedMsg = await decryptMessage(props.msg)
+  // 解密消息
+  const privateKey = await RSAEncryption.getPrivateKey()
+  const RSA = await RSAEncryption.create(props.user.publicKey, privateKey)
+  // 获取AES密钥
+  const key = await RSA.decrypt(props.encryptedKey)
+  const AES = await AESEncryption.create(key)
+  const decryptedMsg = await AES.decrypt(props.msg)
   texts.value = parseMsg(decryptedMsg)
 })
 

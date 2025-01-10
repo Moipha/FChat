@@ -80,7 +80,8 @@ async function getAsideMessages(userId) {
       id: friend._id,
       name: friend.username,
       avatar: friend.avatar,
-      msg: msg && (msg.senderId == userId ? msg.senderContent : msg.content),
+      msg: msg && msg.content,
+      encryptedKey: msg && (msg.senderId == userId ? msg.encryptBySender : msg.encryptByReceiver),
       type: msg && msg.type,
       createdTime: msg && msg.createdTime
     })

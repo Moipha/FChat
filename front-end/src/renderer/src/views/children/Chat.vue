@@ -266,17 +266,12 @@ onDeactivated(() => {
 
         <ChatMsg
           :position="msg.senderId === user._id ? 'right' : 'left'"
-          :msg="
-            msg.type === 'audio'
-              ? getUrl(msg.audio)
-              : msg.senderId === user._id
-                ? msg.senderContent
-                : msg.content
-          "
+          :msg="msg.type === 'audio' ? getUrl(msg.audio) : msg.content"
           :user="msg.senderId === user._id ? user : friend"
           :type="msg.type"
           :read="new Date(lastReadAt) > new Date(msg.createdTime)"
           :file="msg.file"
+          :encrypted-key="msg.senderId === user._id ? msg.encryptBySender : msg.encryptByReceiver"
         />
       </div>
     </div>
