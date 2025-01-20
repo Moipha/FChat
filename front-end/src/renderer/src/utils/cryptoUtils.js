@@ -35,7 +35,7 @@ class RSAEncryption {
   }
 
   // 生成 RSA 密钥对
-  async generateRSAKeyPair() {
+  static async generateRSAKeyPair() {
     const keyPair = await window.crypto.subtle.generateKey(
       {
         name: 'RSA-OAEP', // 加密算法类型，使用 RSA 加密

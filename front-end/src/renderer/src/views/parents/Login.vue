@@ -54,7 +54,7 @@ async function loginSuccess(data) {
   user.value = data && data.user
   // 如果用户没有公钥，在本地生成公私钥，私钥存储在本地，公钥上传服务器
   if (!user.value.publicKey) {
-    const { publicKey, privateKey } = await RSAEncryption().create()
+    const { publicKey, privateKey } = await RSAEncryption.generateRSAKeyPair()
     // 本地存储私钥
     const account = user.value._id
     const key = JSON.stringify(privateKey)
